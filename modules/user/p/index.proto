@@ -183,8 +183,6 @@ message BookmarkEntry {
     // return the slot
     rpc replaceTag(ReplaceTag) returns (ParamInt);
     
-    // TODO serialized
-    //@Nginx(redis2_pass = "bookmarks-serial")
     rpc create(BookmarkEntry.PNew) returns (BookmarkEntry.M.PList);
     
     @X(op = update)
