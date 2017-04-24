@@ -190,7 +190,7 @@ export class BookmarkTagView {
         if (!mc/* && !TODO */)
             return
 
-        $.ForUser.update(ds.ParamUpdate.$create(original['1'], mc))
+        $.ForUser.update(ds.ParamUpdate.$create(original['1'], mc, selected.id))
             .then(this.pupdate$$S).then(undefined, this.pupdate$$F)
     }
     // TODO toggles/actions
