@@ -18,10 +18,6 @@ option link = UserServices;
 // placeholders
 
 @Exclude
-@int8
-enum Tags { NONE = 1; }
-
-@Exclude
 @uint32(bit_flags = true)
 enum Role { NONE = 1; }
 
@@ -32,60 +28,439 @@ enum AuthFilter { NONE = 1 [ f0 = Role.NONE ]; }
 
 // ==================================================
 
-@Entity(kind = 10)
-message Todo {
+@Exclude(unless_output = "tags.java")
+@int8
+enum Tags {
+    option stgs = "_stg_tags";
+
+    /// Reserved for startup/initialization logic.
+    INIT = 1;
+
+    /// Entities that will be needed on startup/initialization.
+    /// <pre>
+    /// k: $KEY(Any), 
+    /// t: 
+    /// v: $VALUE
+    /// </pre>
+    ENTITY_INIT = 2;
+
+    /// Reserved for startup/initialization logic.
+    POST_ENTITY_INIT = 3;
+}
+
+// ==================================================
+// common messages
+
+// Act as constants for regex/msg/etc
+message Ref {
+  
+  @Pattern(regex = "^[a-zA-Z0-9@:%._+~#!;=/?&,$'|*(){}\\\\[\\\\]-]{1,1024}$")
+  required string url = 1 [json_escape = true];
+}
+
+message ParamInt {
+
+  required int32 p = 1 [varint = true]; 
+}
+
+// ==================================================
+
+@Entity(kind = 10,
+  cache = true, serial = true,
+  tx_create = true,
+  validate_update = true,
+  no_delete = true
+)
+message BookmarkTag {
 
   option stgs = "_stg_ops, _stg_qform";
 
   service ForUser {
-
+    
     @ListV
-    rpc list(ParamRangeKey) returns (Todo.PList);
-
+    rpc listAllBookmarkTag(void) returns (BookmarkTag.PList);
+    
+    rpc listMostBookmarkTag(ParamInt) returns (BookmarkTag.PList);
+    
+    @ListV
+    rpc listBookmarkTag(ParamRangeKey) returns (BookmarkTag.PList);
+    
     @X
-    rpc create(Todo) returns (Todo.PList);
-
+    rpc create(BookmarkTag) returns (BookmarkTag.PList);
+    
     @X
     rpc update(ParamUpdate) returns (void);
-
-    // delete is a reserved keyword in one of the target languages
-    @X(op = "delete")
-    rpc del(ParamKey) returns (void);
   }
-
+  
   // ==================================================
-
+  
   @Config(link = SI, service = UserServices.ForUser)
   @Include(client = true)
   @int8 enum Q {
-
-    ACTIVE = 1 [
-      f0 = "completed", default_f0 = false, immutable_f0 = true
-    ];
-
-    COMPLETED = 2 [
-      f0 = "completed", default_f0 = true, immutable_f0 = true
+    
+    NAME = 1 [
+      f0 = "name", end_f0 = true, // prefix search
+      autocomplete_f0 = true
     ];
   }
-
+  
   // ==================================================
-
+  
+  option code_new_index = "
+    .add(Tags.ENTITY_INIT, $KEY, 0)
+  ";
+  
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
+  
+    NAME = 224 [gen_kb = true];
+  }
+  
+  // ==================================================
+  
+  optional bytes key = 1 [provided = true, immutable = true];
+  optional uint64 ts = 2 [provided = true, immutable = true, datetime = true];
+  
+  @Pattern(regex = "^[a-z0-9_~:;.+!()-]{1,127}$", 
+    msg = "Must all be lowercase characters and can contain [_~:;.+!()-]."
+  )
+  required string name = 3 [immutable = true];
+  
+  @Display(hint = "6 characters alphanumeric: a-f, A-F, 0-9")
+  @Pattern(regex = "^[a-fA-F0-9]{6}$", msg = "Invalid color (must be 6 characters alphanumeric: a-f, A-F, 0-9)")
+  optional string color = 4 [default = "", dvoor = true];
+  
+  optional uint32 id = 5 [provided = true, readonly = true, immutable = true, default = 0];
+  
+  message PList {
+    
+    repeated BookmarkTag p = 1;
+  }
+}
 
-    COMPLETED = 224;
+message UpdateTag {
+  
+  @Key(entity = BookmarkEntry)
+  required bytes key = 1;
+  
+  @Id(entity = BookmarkTag)
+  required uint32 tag_id = 2;
+  
+  optional bool remove = 3 [default = false];
+}
+
+message ReplaceTag {
+  
+  @Key(entity = BookmarkEntry)
+  required bytes key = 1;
+  
+  @Id(entity = BookmarkTag)
+  required uint32 tag_id = 2;
+  
+  @Id(entity = BookmarkTag)
+  required uint32 replacement_tag_id = 3;
+  
+  option code_is_initialized = "
+    com.dyuproject.protostuff.RpcValidation.invalidIf(
+      message.tagId.intValue() == message.replacementTagId.intValue(), \"Invalid replacement.\");
+  ";
+}
+
+@Entity(kind = 11, custom_ps = BookmarkEntry.M,
+  update_ts = true, rev = true,
+  tx_create = true, tx_validate_with_key = true,
+  no_delete = true
+)
+message BookmarkEntry {
+
+  option stgs = "_stg_ops, _stg_qform";
+
+  service ForUser {
+  
+    // return the slot
+    rpc updateTag(UpdateTag) returns (ParamInt);
+    
+    // return the slot
+    rpc replaceTag(ReplaceTag) returns (ParamInt);
+    
+    // TODO serialized
+    //@Nginx(redis2_pass = "bookmarks-serial")
+    rpc create(BookmarkEntry.PNew) returns (BookmarkEntry.M.PList);
+    
+    @X(op = update)
+    rpc updateBookmarkEntry(ParamUpdate) returns (void);
+    
+    @ListV
+    rpc listBookmarkEntry(ParamRangeKey) returns (BookmarkEntry.M.PList);
+    
+    rpc listBookmarkEntryByTag(PTags) returns (BookmarkEntry.M.PList);
+  }
+  
+  // ==================================================
+  
+  @Config(link = SI, service = UserServices.ForUser)
+  @Include(client = true)
+  @int8 enum Q {
+  
+    option qform_exclude = Q.UNIQUE;
+    
+    DISCARDED = 1 [ f0 = "active", default_f0 = false, immutable_f0 = true ];
+    URL = 2 [
+      f0 = "normalized", end_f0 = true, // prefix search
+      autocomplete_f0 = true
+    ];
+    TAG_COUNT = 3 [ f0 = "tag_count" ];
+    DATE = 4 [
+      f0 = "date", end_f0 = true
+    ];
+    IDENTIFIER = 5 [ f0 = "identifier" ];
+    RECENTLY_UPDATED = 6 [
+      f0 = "update_ts", default_f0 = 0, immutable_f0 = true, 
+        end_f0 = 281474956800000// 0xFFFFFFFFFFFFL rounded to the day
+    ];
+    UNIQUE = 7 [ f0 = "url" ];
+  }
+  
+  // ==================================================
+  
+  @Config(link = Tags)
+  @Exclude @uint8 enum SI {
+  
+    ACTIVE = 224;
+    URL = 225 [unique_prefix = 0];
+    NORMALIZED = 226;
+    IDENTIFIER = 227;
+    TAG_COUNT = 228;
+    DATE = 229;
+    UPDATE_TS = 230;
+  }
+  
+  // ==================================================
+  
+  optional bytes key = 1 [provided = true, immutable = true];
+  optional uint64 ts = 2 [provided = true, immutable = true, datetime = true];
+  
+  @Pattern(ref = Ref)
+  required string url = 3 [json_escape = true, immutable = true];
+  
+  @Display(value = "Url")
+  optional string normalized = 4 [default = "", provided = true, readonly = true, immutable = true];
+  
+  optional string identifier = 5 [default = "", provided = true, readonly = true, immutable = true];
+  
+  @Length(max = 1024, msg = "Title: too long.")
+  //@AsciiSafeHtml(msg = "Title: only printable ascii characters are allowed that excludes '&', '<', '>' and '\\\\'.")
+  optional string title = 6 [json_escape = true, default = "", dvoor = true];
+  
+  @Length(max = 1024, msg = "Notes: too long.")
+  //@AsciiSafeHtml(msg = "Notes: only printable ascii characters are allowed that excludes '&', '<', '>' and '\\\\'.")
+  optional string notes = 7 [json_escape = true, textarea = true, default = "", dvoor = true];
+  
+  optional bytes ser_tags = 8 [provided = true, readonly = true, default = ""];
+  
+  optional uint32 tag_count = 9 [provided = true, readonly = true, default = 0];
+  
+  optional bool www = 10 [provided = true, immutable = true, readonly = true, default = false];
+  
+  optional uint64 date = 11 [date = true, provided = true, immutable = true, readonly = true, default = 0];
+  
+  optional uint32 rev = 12 [provided = true, readonly = true, default = 0, pdv = true];
+  
+  optional uint64 update_ts = 13 [datetime = true, provided = true, readonly = true, default = 0];
+  
+  optional bool active = 14 [separate_update = true, default = true, provided = true, pdv = true];
+  
+  @MergeParent
+  message M {
+    required bytes page_key = 32;
+    repeated string tags = 33;
+    
+    message PList {
+    
+      repeated M p = 1;
+    }
+  }
+  
+  message PList {
+    
+    repeated BookmarkEntry p = 1;
+  }
+  
+  message PNew {
+    
+    required BookmarkEntry p = 1;
+    
+    repeated uint32 tags = 2;
+  }
+  
+  message PTags {
+    
+    @NotNull
+    @Size(min = 1, max = 4)
+    //@Unique // resolved during sort
+    repeated uint32 tag_id = 1;
+    
+    required ParamRangeKey prk = 2;
+  }
+  
+  @Exclude(server = true)
+  message Item {
+    @Pattern(ref = Ref)
+    required string url = 1;
+    
+    @Id(entity = BookmarkTag)
+    optional uint32 tag_id = 2;
+  }
+  
+  @Exclude(server = true)
+  message Tag {
+    @Id(entity = BookmarkTag)
+    required uint32 id = 1;
+    required string name = 2;
+  }
+}
+
+@Entity(kind = 21)
+message TagIndex1 {
+  
+  service ForUser {
+    
+    @ListV
+    rpc listTagIndex1(ParamRangeKey) returns (TagIndex1.PList);
   }
 
   // ==================================================
-
+  
+  @Config(link = Tags)
+  @Exclude @uint8 enum SI {
+  
+    TAG1_ID__ENTRY_KEY = 225 [gen_kb = true];
+  }
+  
+  // ==================================================
+  
   optional bytes key = 1 [provided = true, immutable = true];
   optional uint64 ts = 2 [provided = true, immutable = true, datetime = true];
+  
+  @Key(entity = BookmarkEntry)
+  required bytes entry_key = 3 [immutable = true];
+  
+  required uint32 tag1_id = 4 [readonly = true];
+  
+  message PList {
+    
+    repeated TagIndex1 p = 1;
+  }
+}
 
-  @Length(min = 1, max = 1024)
-  required string title = 3 [json_escape = true];
+@Entity(kind = 22)
+message TagIndex2 {
+  
+  service ForUser {
+    
+    @ListV
+    rpc listTagIndex2(ParamRangeKey) returns (TagIndex2.PList);
+  }
 
-  optional bool completed = 4 [provided = true, default = false, pdv = true];
+  // ==================================================
+  
+  @Config(link = Tags)
+  @Exclude @uint8 enum SI {
+  
+    TAG1_ID__TAG2_ID__ENTRY_KEY = 225 [gen_kb = true];
+  }
+  
+  // ==================================================
+  
+  optional bytes key = 1 [provided = true, immutable = true];
+  optional uint64 ts = 2 [provided = true, immutable = true, datetime = true];
+  
+  @Key(entity = BookmarkEntry)
+  required bytes entry_key = 3 [immutable = true];
+  
+  required uint32 tag1_id = 4 [readonly = true];
+  
+  required uint32 tag2_id = 5 [readonly = true];
+  
+  message PList {
+    
+    repeated TagIndex2 p = 1;
+  }
+}
 
-  message PList { repeated Todo p = 1; }
+@Entity(kind = 23)
+message TagIndex3 {
+  
+  service ForUser {
+    
+    @ListV
+    rpc listTagIndex3(ParamRangeKey) returns (TagIndex3.PList);
+  }
+
+  // ==================================================
+  
+  @Config(link = Tags)
+  @Exclude @uint8 enum SI {
+  
+    TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY = 225 [gen_kb = true];
+  }
+  
+  // ==================================================
+  
+  optional bytes key = 1 [provided = true, immutable = true];
+  optional uint64 ts = 2 [provided = true, immutable = true, datetime = true];
+  
+  @Key(entity = BookmarkEntry)
+  required bytes entry_key = 3 [immutable = true];
+  
+  required uint32 tag1_id = 4 [readonly = true];
+  
+  required uint32 tag2_id = 5 [readonly = true];
+  
+  required uint32 tag3_id = 6 [readonly = true];
+  
+  message PList {
+    
+    repeated TagIndex3 p = 1;
+  }
+}
+
+@Entity(kind = 24)
+message TagIndex4 {
+  
+  service ForUser {
+    
+    @ListV
+    rpc listTagIndex4(ParamRangeKey) returns (TagIndex4.PList);
+  }
+
+  // ==================================================
+  
+  @Config(link = Tags)
+  @Exclude @uint8 enum SI {
+  
+    TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY = 225 [gen_kb = true];
+  }
+  
+  // ==================================================
+  
+  optional bytes key = 1 [provided = true, immutable = true];
+  optional uint64 ts = 2 [provided = true, immutable = true, datetime = true];
+  
+  @Key(entity = BookmarkEntry)
+  required bytes entry_key = 3 [immutable = true];
+  
+  required uint32 tag1_id = 4 [readonly = true];
+  
+  required uint32 tag2_id = 5 [readonly = true];
+  
+  required uint32 tag3_id = 6 [readonly = true];
+  
+  required uint32 tag4_id = 7 [readonly = true];
+  
+  message PList {
+    
+    repeated TagIndex4 p = 1;
+  }
 }
 
