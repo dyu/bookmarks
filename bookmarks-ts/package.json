@@ -43,7 +43,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "ts-loader": "^2.0.1",
-    "typescript": "^2.2.2",
+    "typescript": "2.2.2",
     "url-loader": "^0.5.8",
     "vue-loader": "9.9.5",
     "vue-template-compiler": "2.1.10",
