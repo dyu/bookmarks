@@ -64,6 +64,8 @@ public class UserProvider extends RpcServiceProvider implements Visitor<WriteCon
         store.scan(false, -1, false, 
                 KeyUtil.newTagIndexRangeKeyStart(Tags.POST_ENTITY_INIT + 1), 
                 context, this, null);
+        
+        EntityRegistry.initSeq(store, context);
     }
 
     @Override
