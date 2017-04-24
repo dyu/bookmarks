@@ -226,13 +226,13 @@ message BookmarkEntry {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
-    ACTIVE = 224;
-    URL = 225 [unique_prefix = 0];
-    NORMALIZED = 226;
-    IDENTIFIER = 227;
-    TAG_COUNT = 228;
-    DATE = 229;
-    UPDATE_TS = 230;
+    ACTIVE = 224 [ raw_csv_values = "$KEY" ];
+    URL = 225 [ unique_prefix = 0, raw_csv_values = "$KEY" ];
+    NORMALIZED = 226 [ raw_csv_values = "FN_NORMALIZED" ];
+    IDENTIFIER = 227 [ raw_csv_values = "$KEY" ];
+    TAG_COUNT = 228 [ raw_csv_values = "$KEY" ];
+    DATE = 229 [ raw_csv_values = "$KEY" ];
+    UPDATE_TS = 230 [ raw_csv_values = "$KEY" ];
   }
   
   // ==================================================
