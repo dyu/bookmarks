@@ -3794,9 +3794,9 @@ vueds-ui@^0.7.1:
     hammerjs "^2.0.8"
     vuets "^0.10.0"
 
-vueds@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/vueds/-/vueds-0.8.1.tgz#a6c0fd7af0c43baea1eba38cbe54d540f029581d"
+vueds@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/vueds/-/vueds-0.8.2.tgz#6072d7cd13f0116a4e514a29986c6c2c5b7bee69"
   dependencies:
     "@types/numeral" "0.0.16"
     numeral "^1.5.3"
