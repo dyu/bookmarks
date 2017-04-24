@@ -1,0 +1,118 @@
+// Mixins & variables first
+@import "~pavilion/scss/pavilion-parts/functions";
+@import "~pavilion/scss/pavilion-parts/mixins";
+@import "./_variables.scss";
+
+// Core pavilion-parts
+@import "~pavilion/scss/pavilion-parts/normalize";
+@import "~pavilion/scss/pavilion-parts/base";
+@import "~pavilion/scss/pavilion-parts/grid";
+@import "~pavilion/scss/pavilion-parts/typography";
+@import "~pavilion/scss/pavilion-parts/buttons";
+@import "~pavilion/scss/pavilion-parts/lists";
+@import "~pavilion/scss/pavilion-parts/forms";
+@import "~pavilion/scss/pavilion-parts/tables";
+@import "~pavilion/scss/pavilion-parts/utilities";
+
+
+@import "./fa.scss";
+
+i.icon.desc-yes { @extend i.icon.down-big; }
+i.icon.desc-no { @extend i.icon.up-big; }
+i.icon.close { @extend i.icon.cancel; }
+
+@import "./list.scss";
+
+ul.ui.horizontal.list > li.item > a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+// tab
+
+.ui.tab {
+  display:none;
+  position: relative;
+  > i.close {
+    position: absolute;
+    margin: 0;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+  }
+}
+.ui.tab.active, .ui.tab.open {
+  display:block;
+}
+
+.ui.tab.box > * {
+  background-color: $subtleTransparentBlack;
+  padding: 0.5em;
+}
+
+.field {
+  border: 0;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+
+.ui.msg,
+.ui.message {
+  position: relative;
+  padding: 1em 0.5em 0.5em 0.5em;
+  margin-bottom: 0.5em;
+  cursor: default;
+  > .close {
+    position: absolute;
+    padding: 0.2em 0.3em;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+}
+
+.ui.msg.success,
+.ui.message.status-1 {
+  background-color: $success-bg-color;
+  color: $success-color;
+  border-left: 4px solid $success-color;
+}
+
+.ui.msg.error,
+.ui.message.status-2 {
+  background-color: $error-bg-color;
+  color: $error-color;
+  border-left: 4px solid $error-color;
+}
+.ui.msg.warning,
+.ui.message.status-4 {
+  background-color: $warning-bg-color;
+  color: $warning-color;
+  border-left: 4px solid $warning-color;
+}
+
+.ui.button {
+  &:hover, &:focus {
+    color: $primary-color;
+  }
+}
+
+@import "./spectre.scss";
+
+div.detail > hr {
+  margin: 0.5em 0;
+}
+
+.content.dd {
+  margin-left: 1.25em;
+}
+
+small.description {
+  color: $alt-color !important;
+}
+
+// app specific
+div.content.completed {
+  text-decoration: line-through;
+}

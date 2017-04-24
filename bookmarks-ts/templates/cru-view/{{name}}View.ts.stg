@@ -1,0 +1,303 @@
+import "fbsgen/base"
+import "fbsgen/dict"
+
+p_block(p, module) ::= <<
+«p_main_block(p, module, module.w.v.(p.("name")).val, p.("dir_name"), module.w.vfmt.("UC"), module.w.vfmt.("UC&&_==-"))»
+>>
+
+p_main_block(p, module, name, module_name, nameUC, nameKC) ::= <<
+import { component } from 'vuets'
+import { PojoState, PojoSO, Pager, PagerState, ItemSO, SelectionFlags } from 'vueds/lib/types'
+import { defp, nullp } from 'vueds/lib/util'
+import { mergeVmFrom } from 'vueds/lib/diff'
+import {
+    initObservable, 
+    formPrepare, formSuccess, bindFormFailed,
+    formUpdate, formUpdateSuccess, bindFormUpdateFailed
+} from 'vueds'
+import { PojoStore, bindFetchFailed } from 'vueds/lib/store/'
+import { HasToken } from 'vueds/lib/rpc/'
+import { focus } from 'vueds-ui/lib/dom_util'
+import * as form from 'vueds-ui/lib/tpl/legacy/form'
+import * as list from 'vueds-ui/lib/tpl/legacy/list'
+import * as icons from 'vueds-ui/lib/tpl/legacy/icons'
+
+import { ds } from 'vueds/lib/ds/'
+import { «module_name» } from '../../g/«module_name»/'
+import { qd, QForm } from '../../g/«module_name»/«name»QForm'
+import * as qform from 'vueds-ui/lib/tpl/legacy/qform'
+
+const PAGE_SIZE = 10,
+    MULTIPLIER = 3
+
+// dummy
+const HT: HasToken = {
+    token: ''
+}
+
+const $ = «module_name».«name»,
+    $$ = $.$
+
+export class «name»View {
+    // provided
+    initialized = false
+    pager: Pager
+    pstore: PojoStore<«module_name».«name»>
+    qform = new QForm()
+
+    fetch$$S: any
+    fetch$$F: any
+
+    pnew = initObservable($.$createObservable(), $.$descriptor)
+    pnew$$S: any
+    pnew$$F: any
+
+    pupdate = initObservable($.$createObservable(), $.$descriptor)
+    pupdate$$S: any
+    pupdate$$F: any
+
+    constructor() {
+        nullp(this, 'pager')
+    }
+
+    static created(self: «name»View) {
+        self.pager = defp(self, 'pstore', new PojoStore([], {
+            desc: true,
+            pageSize: PAGE_SIZE,
+            multiplier: MULTIPLIER,
+            descriptor: $.$descriptor,
+            createObservable(so: ItemSO, idx: number) {
+                return $.$createObservable()
+            },
+            onSelect(selected: «module_name».«name», flags: SelectionFlags): number {
+                if (!(flags & SelectionFlags.CLICKED_UPDATE))
+                    return 0
+
+                let selected_ = selected['_'] as PojoSO,
+                    state = selected_.state,
+                    pupdate = self.pupdate,
+                    pupdate_: PojoSO,
+                    original
+                
+                if ((flags & SelectionFlags.REFRESH)) {
+                    if (!(state & PojoState.UPDATE))
+                        return 0
+                } else if (!(state & PojoState.UPDATE)) {
+                    selected_.state = state | PojoState.UPDATE
+                    if (selected.key === pupdate.key)
+                        return 0
+                } else if (selected.key === pupdate.key) {
+                    selected_.state = state ^ PojoState.UPDATE
+                    return 0
+                }
+                
+                pupdate_ = pupdate['_'] as PojoSO
+                original = self.pstore.getOriginal(selected)
+                
+                mergeVmFrom(original, selected['$d'], pupdate)
+                if (pupdate_.msg)
+                    pupdate_.msg = ''
+                
+                // TODO fetch extra fields here
+
+                return 0
+            },
+            fetch(prk: ds.ParamRangeKey, pager: Pager) {
+                self.qform.send(prk)
+            }
+        })).pager
+
+        self.fetch$$S = «name»View.fetch$$S.bind(self)
+        self.fetch$$F = bindFetchFailed(self.pstore)
+        QForm.init(self.qform, self, {
+            pager: self.pager, 
+            cbSuccess: self.fetch$$S, 
+            cbFailed: self.fetch$$F,
+            hasToken: HT,
+            list(prk: ds.ParamRangeKey, hasToken: HasToken): PromiseLike<any> {
+                return $.ForUser.list(prk)
+            }
+        })
+        // TODO fetched fields init
+
+        self.pnew$$S = «name»View.pnew$$S.bind(self)
+        self.pnew$$F = bindFormFailed(self.pnew)
+
+        let update_scope = { pager: self.pager, pojo: self.pupdate }
+        self.pupdate$$S = «name»View.pupdate$$S.bind(self)
+        self.pupdate$$F = bindFormUpdateFailed(update_scope)
+
+        // TODO toggles/actions init
+
+        // TODO fetch fields state defaults
+    }
+
+    static activate(self: «name»View) {
+        if (self.initialized || (self.pager.state & PagerState.LOADING))
+            return
+
+        self.pstore.requestNewer()
+    }
+
+    static fetch$$S(this: «name»View, data: any): boolean {
+        if (!this.initialized)
+            this.initialized = true
+        
+        this.pstore.cbFetchSuccess(data['1'])
+        return true
+    }
+
+    static pnew$$S(this: «name»View, data): boolean {
+        this.pstore.addAll(data['1'], true, true)
+
+        // TODO reset
+
+        let pnew = this.pnew
+        pnew.key = ''
+
+        formSuccess(pnew)
+        focus('«nameKC»-pnew-ff')
+        return true
+    }
+    pnew$$() {
+        let req = this.pnew/*,
+            pnew_ = pnew['_'] as PojoSO*/
+
+        // TODO validation for fetched data
+
+        if (!formPrepare(req))
+            return
+
+        let lastSeen = this.pstore.getLastSeenObj()
+
+        if (lastSeen)
+            req.key = lastSeen['1']
+
+        $.ForUser.create(req)
+            .then(this.pnew$$S).then(undefined, this.pnew$$F)
+    }
+
+    static pupdate$$S(this: «name»View): boolean {
+        let pager = this.pager,
+            selected = pager.pojo as «module_name».«name»,
+            original = this.pstore.getOriginal(selected)
+
+        // TODO fetched fields check update and merge to original
+
+        formUpdateSuccess(this.pupdate, pager, original, selected)
+        return true
+    }
+    pupdate$$() {
+        let pager = this.pager,
+            selected = pager.pojo as «module_name».«name»,
+            original = this.pstore.getOriginal(selected),
+            // TODO fetched fields
+            mc = formUpdate(this.pupdate, pager, original/*, TODO*/)
+
+        if (!mc/* && !TODO */)
+            return
+
+        $.ForUser.update(ds.ParamUpdate.$create(original['1'], mc))
+            .then(this.pupdate$$S).then(undefined, this.pupdate$$F)
+    }
+    // TODO toggles/actions
+}
+export default component({
+    created(this: «name»View) { «name»View.created(this) },
+    template: /**/`
+<div class="col-pp-100 col-pl-50 col-tl-33" v-pager="pager">
+<template v-if="initialized">
+  <ul class="ui right floated horizontal list">
+    <li class="item" title="sort">
+      <a v-disable="2 > pager.size || (pager.state & ${PagerState.LOADING})"
+          @click.prevent="pager.store.repaint((pager.state ^= ${PagerState.DESC}))">
+        <i class="icon" v-pclass:desc-="(pager.state & ${PagerState.DESC}) ? 'yes' : 'no'"></i>
+      </a>
+    </li>
+    <li class="item" title="refresh">
+      <a v-disable="(pager.state & ${PagerState.MASK_RPC_DISABLE}) || pager.size === 0"
+          @click.prevent="pager.store.reload()">
+        <i class="icon cw"></i>
+      </a>
+    </li>
+    <li class="item">
+      <a v-disable="(pager.state & ${PagerState.LOADING}) || pager.page === 0"
+          @click.prevent="pager.store.repaint((pager.page = 0))">
+        <i class="icon angle-double-left"></i>
+      </a>
+    </li>
+    <li class="item">
+      <a v-disable="(pager.state & ${PagerState.MASK_RPC_DISABLE})"
+          @click.prevent="pager.store.pagePrevOrLoad(0)">
+        <i class="icon angle-left"></i>
+      </a>
+    </li>
+    <li class="item">
+      <a v-disable="(pager.state & ${PagerState.MASK_RPC_DISABLE}) || pager.size === 0"
+          @click.prevent="pager.store.pageNextOrLoad(0)">
+        <i class="icon angle-right"></i>
+      </a>
+    </li>
+    <li class="item">
+      <a v-disable="(pager.state & ${PagerState.LOADING}) || pager.page === pager.page_count"
+          @click.prevent="pager.store.repaint((pager.page = pager.page_count))">
+        <i class="icon angle-double-right"></i>
+      </a>
+    </li>
+    <li class="item" title="add" v-toggle="'1__.2'">
+      <a><i class="icon plus"></i></a>
+    </li>
+    <li class="item" title="filter" v-toggle="'1__.3'">
+      <a><i class="icon filter"></i></a>
+    </li>
+  </ul>
+  <ul class="ui horizontal list">
+    <li class="item">
+      <sup>
+        <span v-show="pager.size !== 0" v-text="pager.page_from"></span>
+        <span v-show="pager.page_from !== pager.page_to">
+          <span v-show="pager.size !== 0" >-</span>
+          <span v-text="pager.page_to"></span>
+        </span> of <span v-text="pager.size"></span>
+      </sup>
+    </li>
+  </ul>
+  <div class="ui tab">
+    <i class="icon close" v-close="'1'"></i>
+    ${form.main({
+      pojo: 'pnew',
+      $d: $.$descriptor,
+      on_submit: 'pnew$$',
+      ffid: '«nameKC»-pnew-ff'
+    })}
+  </div>
+  <div class="ui tab">
+    ${qform.main({ qd })}
+  </div>
+  ${list.main({ pager: 'pager' }, `
+    <div class="content">
+      <small class="description">
+        ${icons.timeago({ pojo: 'pojo' })}
+      </small>
+    </div>
+    <div class="content dd">
+      <!-- TODO {{ pojo.${$$.title} }} -->
+    </div>
+    <div v-show="pojo._.state & ${PojoState.UPDATE}" v-append:«nameKC»-detail="pojo._.state & ${PojoState.UPDATE}"></div>
+  `
+  )}
+  <div style="display:none">
+    <div id="«nameKC»-detail" class="detail" v-show="pupdate.key">
+      <hr />
+      ${form.main({
+        pojo: 'pupdate',
+        $d: $.$descriptor,
+        on_submit: 'pupdate$$',
+        update: true
+      })}
+    </div>
+  </div>
+</template>
+</div>`/**/
+}, «name»View)
+>>

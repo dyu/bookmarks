@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ ! -n "$JAR_DIR" ]; then
+    JAR_DIR=target
+    [ -e target/bookmarks-cli-jarjar.jar ] || { rm -f target/*.jar; mvn -o -Pjwd -Djwd=compile -Dmaven.javadoc.skip=true compile; }
+fi
+
+java -Dcli.separator='!' -jar $JAR_DIR/bookmarks-cli-jarjar.jar $@

@@ -1,0 +1,82 @@
+Arguments: 
+  /data/dyu/downloads/devtools/node/node-v6.9.0-linux-x64/bin/node /opt/dyu/node/bin/yarn install
+
+PATH: 
+  /opt/dyu/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/dyu/fbsgen-scaffold/bin:/data/dyu/dotdirs/android-sdk/platform-tools:/data/dyu/dotdirs/android-sdk/tools:/opt/dyu/nimble/bin:/data/dyu/dotdirs/cargo/bin:/opt/dyu/swift/usr/bin:/opt/dyu/go/bin:/data/dyu/dev/workspace/go/bin:/opt/dyu/node/bin:/opt/dyu/pyub/bin:/opt/dyu/flutter/bin:/usr/lib/dart/bin:/data/dyu/dotdirs/pub-cache/bin:/opt/build2/bin
+
+Yarn version: 
+  0.19.1
+
+Node version: 
+  6.9.0
+
+Platform: 
+  linux x64
+
+npm manifest: 
+  {
+    "name": "bookmarks-ts",
+    "description": "app using ts 2.0 and vue 2.0",
+    "author": "dyu",
+    "private": true,
+    "main": "nw/main.js",
+    "inject_js_start": "nw/start.js",
+    "webkit": {
+      "plugin": false
+    },
+    "window": {
+      "icon": "nw/icon.png"
+    },
+    "scripts": {
+      "dev": "webpack-dev-server --inline --hot",
+      "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    },
+    "dependencies": {
+      "pavilion": "^2.0.3",
+      "toprogress": "^0.1.3",
+      "vue": "2.1.10",
+      "vue-router": "2.1.3",
+      "vueds": "^0.8.1",
+      "vueds-ui": "^0.7.1",
+      "vuets": "^0.10.0",
+      "whatwg-fetch": "^1.0.0"
+    },
+    "devDependencies": {
+      "autoprefixer": "^6.4.0",
+      "cross-env": "^3.2.4",
+      "css-loader": "^0.27.3",
+      "cssnano": "^3.7.5",
+      "extract-text-webpack-plugin": "^2.1.0",
+      "file-loader": "^0.10.1",
+      "json-loader": "^0.5.4",
+      "less": "^2.7.2",
+      "less-loader": "^2.2.3",
+      "node-sass": "^4.5.0",
+      "noop2": "^2.0.0",
+      "postcss-loader": "^1.3.3",
+      "postcss-unique-selectors": "^2.0.2",
+      "sass-loader": "^6.0.3",
+      "stylus": "^0.54.5",
+      "stylus-loader": "^3.0.1",
+      "ts-loader": "^2.0.1",
+      "typescript": "^2.2.2",
+      "url-loader": "^0.5.8",
+      "vue-loader": "9.9.5",
+      "vue-template-compiler": "2.1.10",
+      "webpack": "2.2.1",
+      "webpack-closure-compiler": "2.0.2",
+      "webpack-dev-server": "2.2.1"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: connect ETIMEDOUT 104.16.62.173:443
+      at Object.exports._errnoException (util.js:1026:11)
+      at exports._exceptionWithHostPort (util.js:1049:20)
+      at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1085:14)

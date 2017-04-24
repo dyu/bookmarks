@@ -1,0 +1,16 @@
+import "fbsgen/base"
+import "fbsgen/dict"
+
+p_block(p, module) ::= <<
+package «p.("package_name")»;
+
+/**
+ * TODO
+ */
+public final class «p.("name")»
+{
+    private «p.("name")»() {}
+    
+    
+}
+>>

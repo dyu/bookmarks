@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "lib": ["dom", "scripthost", "es5", "es2015.promise"],
+        "sourceMap": false,
+        "declaration": false,
+        "noImplicitAny": false,
+        "preserveConstEnums": false,
+        "emitDecoratorMetadata": false,
+        "experimentalDecorators": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "removeComments": true
+    },
+    "compileOnSave": false,
+    "exclude": [
+        "node_modules",
+        "g",
+        "dist",
+        "target",
+        "templates"
+    ]
+}

@@ -1,0 +1,109 @@
+/**
+  * Rem units: normal and small, defined on the <html> tag. Switches to small on $size-switch.
+  * Rem's are used in Pavilion for box model sizing, positioning and adjustments.
+  */
+
+$remsize-normal: 16px;
+$remsize-small: 14px;
+
+/**
+  * Em units: normal and small, defined on the <body> tag. Switches to small on $size-switch.
+  * Em's are used in Pavilion for typographic elements.
+  */
+
+$emsize-normal: 18px;
+$emsize-small: 16px;
+
+/**
+  * Breakpoints
+  */
+
+$phone-landscape-size: 540px;         /* Minimum screenwidth for phone landscape. */
+$tablet-portrait-size: 768px;         /* Minimum screenwidth for tablet portrait. */
+$tablet-landscape-size: 992px;        /* Minimum screenwidth for tablet landscape. */
+$desktop-size: 1200px;                /* Minimum screenwidth for desktop. */
+
+$breakmargin: 20px;                   /* Margin added to each breakpoints minimum width. */
+$size-switch: $phone-landscape-size + ($tablet-portrait-size - $phone-landscape-size) / 2;  /* Minimum screenwidth at which the EM & REM sizes switch from small to normal. */
+
+/**
+  * Border width and radius for buttons and inputs.
+  */
+
+$default-border-width: 1px; /* also used on horizontal rules */
+$default-border-radius: 4px;
+
+/**
+  * Colors and tints.
+  */
+
+$body-copy-color: #333333;
+$primary-color: #0080ff;
+$heading-color: $body-copy-color;
+
+$soft-gray: #D9D9D9;
+$medium-gray: darken($soft-gray, 20%);
+$hard-gray: darken($medium-gray, 20%);
+
+/**
+  * Heading sizes with modular scaling.
+  * Increase or decrease the number behind the decimal point.
+  * For scale ratios see: http://type-scale.com/
+  */
+
+$scale-ratio: 1.200;
+
+$h1: fontscale(4); 
+$h2: fontscale(3); 
+$h3: fontscale(2); 
+$h4: fontscale(1); 
+$h5: fontscale(0); /* equals 1em. */
+$h6: fontscale(-1);
+
+/**
+  * Font-weights, you can set your own values to match your font specs.
+  */
+
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+/**
+  * Base and heading font-weights.
+  */
+
+$base-font-weight: $font-weight-regular; 
+$heading-font-weight: $base-font-weight;
+
+/**
+  * Base line-height.
+  */
+
+$base-line-height: 1.45; 
+
+/**
+  * Base and heading font stack.
+  */
+
+@font-face {
+  font-family: 'Karla';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./assets/fonts/Karla-Regular.ttf) format('truetype');
+}
+
+$base-font-family: Karla, "Helvetica Neue", Helvetica, Arial, sans-serif;
+$heading-font-family: $base-font-family;
+$mono-font-family: "Lucida Console", Monaco, monospace;
+
+// additions
+
+$alt-color: #737373;
+$success-color: #52A954;
+$success-bg-color: #DEFCD5;
+$error-color: #A95252;
+$error-bg-color: #F1D7D7;
+$warning-color: #96904D;
+$warning-bg-color: #F6F3D5;
+

@@ -1,0 +1,91 @@
+package bookmarks.user;
+
+import "ds/prk.proto"; // Param* types, loaded from classpath
+
+// ==================================================
+
+option stgs = "_stg_service_all";
+option link = UserServices;
+
+@ServiceGroup
+@Config(link = AuthFilter)
+@Exclude @uint8 enum UserServices {
+
+  ForUser = 1 [ f0 = AuthFilter.NONE ];
+}
+
+// ==================================================
+// placeholders
+
+@Exclude
+@int8
+enum Tags { NONE = 1; }
+
+@Exclude
+@uint32(bit_flags = true)
+enum Role { NONE = 1; }
+
+@Config(link = Role)
+@Exclude
+@int8
+enum AuthFilter { NONE = 1 [ f0 = Role.NONE ]; }
+
+// ==================================================
+
+@Entity(kind = 10)
+message Todo {
+
+  option stgs = "_stg_ops, _stg_qform";
+
+  service ForUser {
+
+    @ListV
+    rpc list(ParamRangeKey) returns (Todo.PList);
+
+    @X
+    rpc create(Todo) returns (Todo.PList);
+
+    @X
+    rpc update(ParamUpdate) returns (void);
+
+    // delete is a reserved keyword in one of the target languages
+    @X(op = "delete")
+    rpc del(ParamKey) returns (void);
+  }
+
+  // ==================================================
+
+  @Config(link = SI, service = UserServices.ForUser)
+  @Include(client = true)
+  @int8 enum Q {
+
+    ACTIVE = 1 [
+      f0 = "completed", default_f0 = false, immutable_f0 = true
+    ];
+
+    COMPLETED = 2 [
+      f0 = "completed", default_f0 = true, immutable_f0 = true
+    ];
+  }
+
+  // ==================================================
+
+  @Config(link = Tags)
+  @Exclude @uint8 enum SI {
+
+    COMPLETED = 224;
+  }
+
+  // ==================================================
+
+  optional bytes key = 1 [provided = true, immutable = true];
+  optional uint64 ts = 2 [provided = true, immutable = true, datetime = true];
+
+  @Length(min = 1, max = 1024)
+  required string title = 3 [json_escape = true];
+
+  optional bool completed = 4 [provided = true, default = false, pdv = true];
+
+  message PList { repeated Todo p = 1; }
+}
+
