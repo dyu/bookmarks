@@ -1,22 +1,22 @@
 import { component } from 'vuets'
 
-import { TodoView, default as TodoViewC } from './TodoView'
+import { BookmarkTagView, default as BookmarkTagViewC } from './BookmarkTagView'
 
 export class HomePage {
-    todo_v: TodoView
+    bookmark_tag_v: BookmarkTagView
 
     static activate(self: HomePage) {
-        let todo_v = self.todo_v || (self.todo_v = self['$refs']['todo_v'])
-        TodoView.activate(todo_v)
+        let bookmark_tag_v = self.bookmark_tag_v || (self.bookmark_tag_v = self['$refs']['bookmark_tag_v'])
+        BookmarkTagView.activate(bookmark_tag_v)
     }
 }
 export default component({
     mounted(this: HomePage) { HomePage.activate(this) },
     components: {
-        TodoViewC
+        BookmarkTagViewC
     },
     template: /**/`
 <div class="row">
-  <todo-view-c ref="todo_v"></todo-view-c>
+  <bookmark-tag-view-c ref="bookmark_tag_v"></bookmark-tag-view-c>
 </div>`/**/
 }, HomePage)
