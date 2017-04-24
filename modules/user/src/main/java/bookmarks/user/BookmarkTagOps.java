@@ -41,7 +41,7 @@ public final class BookmarkTagOps
         if (!param.color.isEmpty())
             param.color = BookmarkUtil.normalizeColor(param.color);
         
-        return param.provide(EntityRegistry.BOOKMARK_TAG_CACHE.newId());
+        return param.provide(now, EntityRegistry.BOOKMARK_TAG_CACHE.newId());
     }
 
     static MultiCAS validate(ParamUpdate param, byte[] value, OpChain chain)

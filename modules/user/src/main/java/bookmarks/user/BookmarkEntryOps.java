@@ -105,6 +105,7 @@ public final class BookmarkEntryOps
                 TagUtil.insert(tags, BookmarkTagIndexFactory.INSTANCE, chain, now, key);
         
         return param.p.provide(
+                now,
                 param.p.normalized,
                 param.p.identifier,
                 serTags,

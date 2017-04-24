@@ -65,7 +65,7 @@ message ParamInt {
 
 // ==================================================
 
-@Entity(kind = 10,
+@Entity(kind = 10, seq = true,
   cache = true, serial = true,
   tx_create = true,
   validate_update = true,
@@ -166,7 +166,7 @@ message ReplaceTag {
   ";
 }
 
-@Entity(kind = 11, custom_ps = BookmarkEntry.M,
+@Entity(kind = 11, seq = true, custom_ps = BookmarkEntry.M,
   update_ts = true, rev = true,
   tx_create = true, tx_validate_with_key = true,
   no_delete = true
