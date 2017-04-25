@@ -264,7 +264,7 @@ export default component({
     )}
     <div style="display:none">
       <div id="bookmark-tag-detail">
-        <div class="dcontainer">
+        <div class="detail">
           <hr />
           ${form.main({
             pojo: 'pupdate',
