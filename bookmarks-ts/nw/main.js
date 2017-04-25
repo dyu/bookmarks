@@ -100,7 +100,7 @@ function onClose() {
 
 function onOpen(w) {
     wnd = w
-    w.resizeTo(430, 715)
+    w.resizeTo(767, 715)
     w.moveTo(430, 0)
     if (pdb)
         w.on('close', onClose)
