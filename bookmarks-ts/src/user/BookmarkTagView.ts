@@ -4,40 +4,43 @@ import { defp, nullp } from 'vueds/lib/util'
 import { mergeVmFrom } from 'vueds/lib/diff'
 import {
     initObservable, 
-    formPrepare, formSuccess, bindFormFailed,
+    formPrepare, formSuccess, bindFormFailed, 
     formUpdate, formUpdateSuccess, bindFormUpdateFailed
 } from 'vueds'
-import { PojoStore, bindFetchFailed } from 'vueds/lib/store/'
+import {
+    PojoStore, bindFetchFailed
+} from 'vueds/lib/store/'
 import { HasToken } from 'vueds/lib/rpc/'
 import { focus } from 'vueds-ui/lib/dom_util'
+import * as menu from 'vueds-ui/lib/tpl/legacy/menu'
 import * as form from 'vueds-ui/lib/tpl/legacy/form'
 import * as list from 'vueds-ui/lib/tpl/legacy/list'
+import * as pager_controls from 'vueds-ui/lib/tpl/legacy/pager_controls'
 import * as icons from 'vueds-ui/lib/tpl/legacy/icons'
-import { UI_MENU_BAR } from './context'
 
 import { ds } from 'vueds/lib/ds/'
+// TODO import common module
+import { HT, stores } from './context'
 import { user } from '../../g/user/'
 import { qd, QForm } from '../../g/user/BookmarkTagQForm'
 import * as qform from 'vueds-ui/lib/tpl/legacy/qform'
 
-const PAGE_SIZE = 10,
-    MULTIPLIER = 3
-
-// dummy
-const HT: HasToken = {
-    token: ''
-}
-
 const $ = user.BookmarkTag,
-    $$ = $.$
+    $$ = $.$,
+    $0 = $.$descriptor.$
+
+const FETCH_INITIAL = 900,
+    PAGE_SIZE = 10
 
 export class BookmarkTagView {
-    // provided
+
+    lazy_count = 0
     initialized = false
     pager: Pager
     pstore: PojoStore<user.BookmarkTag>
     qform = new QForm()
 
+    fetched_all = false
     fetch$$S: any
     fetch$$F: any
 
@@ -54,10 +57,9 @@ export class BookmarkTagView {
     }
 
     static created(self: BookmarkTagView) {
-        self.pager = defp(self, 'pstore', new PojoStore([], {
+        self.pager = defp(self, 'pstore', stores.tag = new PojoStore([], {
             desc: true,
             pageSize: PAGE_SIZE,
-            multiplier: MULTIPLIER,
             descriptor: $.$descriptor,
             createObservable(so: ItemSO, idx: number) {
                 return $.$createObservable()
@@ -91,12 +93,16 @@ export class BookmarkTagView {
                 if (pupdate_.msg)
                     pupdate_.msg = ''
 
-                // TODO fetch extra fields here
+                // TODO
+                // call renderDetail or fetchDetail based on original's props
 
                 return 0
             },
-            fetch(prk: ds.ParamRangeKey, pager: Pager) {
-                self.qform.send(prk)
+            fetch(req: ds.ParamRangeKey, pager: Pager) {
+                if (req.limit && !(pager.state & PagerState.RELOAD))
+                    req.limit = 500
+                
+                self.qform.send(req)
             }
         })).pager
 
@@ -126,50 +132,73 @@ export class BookmarkTagView {
     }
 
     static activate(self: BookmarkTagView) {
-        if (self.initialized || (self.pager.state & PagerState.LOADING))
+        if (!self.lazy_count || (self.pager.state & PagerState.LOADING))
             return
 
-        self.pstore.requestNewer()
+        // reload existing or retry the initial fetch
+        if (self.initialized)
+            self.pstore.reload()
+        else
+            self.lazy_init(true)
+    }
+
+    lazy_init(from_activate?: boolean) {
+        if (!from_activate && this.lazy_count++)
+            return
+
+        let pager = this.pager
+        if (pager.msg)
+            pager.msg = ''
+        pager.state |= PagerState.LOADING
+        $.ForUser.listMostBookmarkTag(user.ParamInt.$create(FETCH_INITIAL))
+            .then(this.fetch$$S).then(undefined, this.fetch$$F)
     }
 
     static fetch$$S(this: BookmarkTagView, data: any): boolean {
-        if (!this.initialized)
+        if (!this.initialized) {
             this.initialized = true
+            this.pager.msg = ''
+            this.pager.state ^= PagerState.LOADING
+            this.pstore.addAll(data['1'], false, false)
+        } else if (this.fetched_all) {
+            this.pstore.cbFetchSuccess(data['1'])
+        } else {
+            this.fetched_all = 0 !== (this.pager.state & PagerState.LOAD_NEWER) &&
+                    (!data['1'] || !data['1'].length)
+            
+            this.pstore.cbFetchSuccess(data['1'])
+        }
 
-        this.pstore.cbFetchSuccess(data['1'])
         return true
     }
 
     static pnew$$S(this: BookmarkTagView, data): boolean {
-        this.pstore.addAll(data['1'], true, true)
-
-        // TODO reset
-
         let pnew = this.pnew
-        pnew.key = ''
-
+        if (pnew.key) {
+            pnew.key = ''
+            this.pstore.addAll(data['1'], true, true)
+        }
+        
         formSuccess(pnew)
         focus('bookmark-tag-pnew-ff')
         return true
     }
     pnew$$() {
-        let req = this.pnew/*,
-            pnew_ = pnew['_'] as PojoSO*/
+        let pnew = this.pnew
 
         // TODO validation for fetched data
 
-        if (!formPrepare(req))
+        if (!formPrepare(pnew))
             return
 
         let lastSeen = this.pstore.getLastSeenObj()
 
-        if (lastSeen)
-            req.key = lastSeen['1']
-
-        $.ForUser.create(req)
+        if (this.fetched_all && lastSeen)
+            pnew.key = lastSeen['1']
+        
+        $.ForUser.create(pnew)
             .then(this.pnew$$S).then(undefined, this.pnew$$F)
     }
-
     static pupdate$$S(this: BookmarkTagView): boolean {
         let pager = this.pager,
             selected = pager.pojo as user.BookmarkTag,
@@ -189,7 +218,7 @@ export class BookmarkTagView {
 
         if (!mc/* && !TODO */)
             return
-
+        
         $.ForUser.update(ds.ParamUpdate.$create(original['1'], mc, selected.id))
             .then(this.pupdate$$S).then(undefined, this.pupdate$$F)
     }
@@ -198,10 +227,18 @@ export class BookmarkTagView {
 export default component({
     created(this: BookmarkTagView) { BookmarkTagView.created(this) },
     template: /**/`
-<div class="col-pp-100 col-pl-50 col-tl-33" v-pager="pager">
-<template v-if="initialized">
-  ${UI_MENU_BAR}
-  <div class="ui tab">
+<div v-pager="pager">
+  ${menu.pager_lazy({ title: 'Tags', pager: 'pager', search_fk: $0.name }, `
+    <li v-toggle="'5__.2__0.0'"><a><i class="icon filter"></i></a></li>
+  `
+  ,
+  `
+    <div class="item">
+      <a v-toggle="'3__.1'"><i class="icon plus"></i></a>
+    </div>
+  `
+  )}
+  <div class="ui tab attached message">
     <i class="icon close" v-close="'1'"></i>
     ${form.main({
       pojo: 'pnew',
@@ -210,32 +247,34 @@ export default component({
       ffid: 'bookmark-tag-pnew-ff'
     })}
   </div>
-  <div class="ui tab">
-    ${qform.main({ qd })}
-  </div>
-  ${list.main({ pager: 'pager' }, `
-    <div class="content">
-      <small class="description">
+  <div v-if="initialized" v-show="lazy_count % 2">
+    <div class="ui tab">
+      ${qform.main({ qd })}
+    </div>
+    ${pager_controls.main({ pager: 'pager', top: true })}
+    ${list.main({ pager: 'pager' }, `
+      <div class="right floated">
         ${icons.timeago({ pojo: 'pojo' })}
-      </small>
-    </div>
-    <div class="content dd">
-      {{ pojo.${$$.name} }}
-    </div>
-    <div v-show="pojo._.state & ${PojoState.UPDATE}" v-append:bookmark-tag-detail="pojo._.state & ${PojoState.UPDATE}"></div>
-  `
-  )}
-  <div style="display:none">
-    <div id="bookmark-tag-detail" class="detail" v-show="pupdate.key">
-      <hr />
-      ${form.main({
-        pojo: 'pupdate',
-        $d: $.$descriptor,
-        on_submit: 'pupdate$$',
-        update: true
-      })}
+      </div>
+      <div class="content main">
+        <span :style="{ color: '#' + (pojo.${$$.color} || '555555') }">{{ pojo.${$$.name} }}</span>
+      </div>
+      <div v-show="pojo._.state & ${PojoState.UPDATE}" v-append:bookmark-tag-detail="pojo._.state & ${PojoState.UPDATE}"></div>
+    `
+    )}
+    <div style="display:none">
+      <div id="bookmark-tag-detail">
+        <div class="dcontainer">
+          <hr />
+          ${form.main({
+            pojo: 'pupdate',
+            $d: $.$descriptor,
+            on_submit: 'pupdate$$',
+            update: true
+          })}
+        </div>
+      </div>
     </div>
   </div>
-</template>
 </div>`/**/
 }, BookmarkTagView)
