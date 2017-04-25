@@ -281,7 +281,7 @@ export function list_view(detail_id: string, tag_input_id: string ): string {
     return /**/`
 ${pager_controls.main({ pager: 'pager', top: true })}
 ${list.main({ pager: 'pager' }, `
-  <div class="right floated">
+  <div class="content right floated">
     ${icons.timeago({ pojo: 'pojo' })}
     <i class="icon calendar"></i>{{ pojo.${$$.date} | ymd }}
     ${icons.toggle({
