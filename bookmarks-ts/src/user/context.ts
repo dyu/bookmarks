@@ -31,7 +31,7 @@ export interface Tag extends user.BookmarkEntry.Tag {
     styles: any
 }
 
-const DEFAULT_TAG_COLOR = '#888888'
+const DEFAULT_TAG_COLOR = '#777777'
 
 function updateTag(tag: user.BookmarkTag, styles: any, target?: Tag) {
     let color = tag[Tag0.color]
