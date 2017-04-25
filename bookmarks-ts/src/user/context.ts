@@ -1,4 +1,3 @@
-import { PagerState } from 'vueds/lib/types'
 import { HasToken } from 'vueds/lib/rpc/'
 import { PojoStore } from 'vueds/lib/store/'
 import { user } from '../../g/user/'
