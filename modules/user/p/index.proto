@@ -11,7 +11,7 @@ option link = UserServices;
 @Config(link = AuthFilter)
 @Exclude @uint8 enum UserServices {
 
-  ForUser = 1 [ f0 = AuthFilter.NONE ];
+  ForUser = 2 [ f0 = AuthFilter.NONE ];
 }
 
 // ==================================================
