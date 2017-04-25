@@ -325,7 +325,8 @@ ${list.main({ pager: 'pager' }, `
           pojo: 'pupdate',
           $d: $.$descriptor,
           on_submit: 'pupdate$$',
-          update: true, use_switch: true
+          use_switch: true,
+          update: true
         })}
         </div>
       </div>

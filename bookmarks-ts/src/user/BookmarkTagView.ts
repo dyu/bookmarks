@@ -244,6 +244,7 @@ export default component({
       pojo: 'pnew',
       $d: $.$descriptor,
       on_submit: 'pnew$$',
+      use_switch: true,
       ffid: 'bookmark-tag-pnew-ff'
     })}
   </div>
@@ -270,6 +271,7 @@ export default component({
             pojo: 'pupdate',
             $d: $.$descriptor,
             on_submit: 'pupdate$$',
+            use_switch: true,
             update: true
           })}
         </div>
