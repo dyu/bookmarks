@@ -379,16 +379,6 @@ ul.dropdown-menu > li {
     }
 }
 
-ul.dropdown-menu > li.tags {
-  cursor: default;
-  > .ui.label {
-    margin: 0.2em 0.4em;
-  }
-  i {
-    cursor: pointer;
-  }
-}
-
 ul.dropdown-menu > div.content {
   > i {
     cursor: pointer;

@@ -1,0 +1,48 @@
+div.tags.inline {
+  margin-top: 0.3em;
+}
+
+div.tags.noop i {
+  display: none;
+}
+
+ul.noop > li.tags {
+  i {
+    display: none;
+  }
+}
+
+div.tags.inline > .ui.label,
+.ui.label.tag.inline {
+  margin: 0.3em 0.5em 0.3em 0;
+  padding: 0.15em 1em;
+}
+
+.ui.label.tag {
+  text-transform: none;
+  padding: 0.15em 1em;
+}
+
+.ui.label.tag.noop > i {
+  display: none;
+}
+
+div.dcontainer .ui.label.tag {
+  border: 1px solid $primary-color;
+}
+
+div.tags > .ui.label {
+  border: 1px solid $primary-color;
+  text-transform: none;
+}
+
+ul.dropdown-menu > li.tags {
+  cursor: default;
+  > .ui.label {
+    margin: 0.2em 0.4em;
+  }
+  i {
+    cursor: pointer;
+  }
+}
+
