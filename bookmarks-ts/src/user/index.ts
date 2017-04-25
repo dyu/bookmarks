@@ -10,6 +10,7 @@ import { default as BookmarkEntryV } from './BookmarkEntryView'
 export class HomePage {
     bookmark_tag_v: BookmarkTagView
 
+    backup_enabled = true
     backup_msg = ''
     backup_state = 0
 
@@ -29,6 +30,8 @@ export class HomePage {
     }
 
     static activate(self: HomePage) {
+        self.backup_enabled = !window['hide_backup']
+        
         let bookmark_tag_v = self.bookmark_tag_v || (self.bookmark_tag_v = self['$refs']['bookmark_tag_v'])
         BookmarkTagView.activate(bookmark_tag_v)
     }
@@ -47,7 +50,7 @@ export default component({
   <div class="col-pl-100 col-tp-50 col-tl-33">
     <bookmark-tag-v ref="bookmark_tag_v" />
   </div>
-  <div style="position:fixed; top:0; right:0">
+  <div style="position:fixed; top:0; right:0" v-show="backup_enabled">
     <i style="margin-right:-5px" class="icon ellipsis-vert" v-toggle="'.1'"></i>
     <div class="dropdown pull-right">
       <ul class="dropdown-menu mhalf">

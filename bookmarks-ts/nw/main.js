@@ -4,9 +4,10 @@ var fs = require('fs'),
     win32 = os.platform() === 'win32',
     start_str = 'jni rpc: ',
     pdb_started = false,
+    hide_backup = false,
     pdb,
     wnd,
-    rpc_http_host
+    rpc_host
 
 function println(str) {
     process.stdout.write(str + '\n')
@@ -38,11 +39,13 @@ function startProtostuffdb() {
         child_cwd = path.join(__dirname, '..'),
         bin = path.join(child_cwd, 'target/protostuffdb'),
         port = fs.readFileSync(path.join(child_cwd, 'PORT.txt'), 'utf8').trim(),
-        extra_args = fs.readFileSync(path.join(child_cwd, 'ARGS.txt'), 'utf8').trim().split(' '),
+        raw_args = fs.readFileSync(path.join(child_cwd, 'ARGS.txt'), 'utf8').trim(),
+        extra_args = raw_args.split(' '),
         child_args = getChildArgs([port, path.join(__dirname, 'g/user/UserServices.json')], extra_args, child_cwd),
         target_cwd,
         p
 
+    hide_backup = raw_args.indexOf('-Dprotostuffdb.with_backup=true') === -1
     if (!win32) {
         target_cwd = child_cwd
     } else if (isDir(target_cwd = 'C:/Program Files/Java/jdk1.7.0_79/jre/bin/server')) {
@@ -68,7 +71,7 @@ function startProtostuffdb() {
     pdb = spawn(bin, child_args, { cwd: target_cwd })
     pdb.stdout.on('data', onChildOut)
     pdb.on('close', onChildClose)
-    rpc_http_host = 'http://127.0.0.1:' + port
+    rpc_host = 'http://127.0.0.1:' + port
 }
 
 function isStart(data) {
@@ -108,7 +111,8 @@ function onOpen(w) {
 }
 
 function openWindow() {
-    global.rpc_host = rpc_http_host
+    global.rpc_host = rpc_host
+    global.hide_backup = hide_backup
     nw.Window.open('index.html', { show: false }, onOpen)
 }
 
