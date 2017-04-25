@@ -59,11 +59,18 @@ message Ref {
 }
 
 message ParamInt {
-
   required int32 p = 1 [varint = true]; 
 }
 
+message ParamString {
+  required string p = 1;
+}
+
 // ==================================================
+
+service ForUser {
+  rpc backup(void) returns (ParamString);
+}
 
 @Entity(kind = 10, seq = true,
   cache = true, serial = true,

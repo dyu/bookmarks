@@ -2,12 +2,17 @@
 
 package bookmarks.user;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import com.dyuproject.protostuff.Pipe;
+import com.dyuproject.protostuff.RpcHeader;
 import com.dyuproject.protostuff.RpcLogin;
+import com.dyuproject.protostuff.RpcResponse;
 import com.dyuproject.protostuff.RpcService;
 import com.dyuproject.protostuff.RpcServiceProvider;
+import com.dyuproject.protostuff.RpcWorker;
 import com.dyuproject.protostuffdb.Datastore;
 import com.dyuproject.protostuffdb.DatastoreManager;
 import com.dyuproject.protostuffdb.KeyUtil;
@@ -19,6 +24,8 @@ import com.dyuproject.protostuffdb.WriteContext;
  */
 public class UserProvider extends RpcServiceProvider implements Visitor<WriteContext>
 {
+    static final boolean WITH_BACKUP = Boolean.getBoolean("protostuffdb.with_backup");
+    
     
     final Object[] visitorsByKind = new Object[64];
     
@@ -74,6 +81,23 @@ public class UserProvider extends RpcServiceProvider implements Visitor<WriteCon
         return null;
     }
 
-    public static final UserServices.ForUser FOR_USER = new UserServices.ForUser(){};
+    public static final UserServices.ForUser FOR_USER = new UserServices.ForUser()
+    {
+        @Override
+        public boolean backup(Datastore store, RpcResponse res, 
+                Pipe.Schema<ParamString> resPipeSchema,
+                RpcHeader header) throws IOException
+        {
+            if (!WITH_BACKUP)
+                return res.fail("Backup not available.");
+            
+            String backupName = RpcWorker.get().backup(store);
+            if (backupName == null)
+                return res.fail("Backup failed.");
+            
+            res.output.writeString(ParamString.FN_P, backupName, false);
+            return true;
+        }
+    };
 }
 

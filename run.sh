@@ -1,6 +1,10 @@
 #!/bin/sh
+ARGS=$(cat ARGS.txt)
 
-if [ -e /opt/protostuffdb/bin/protostuffdb ]; then
+if [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
+    BIN=/opt/protostuffdb/bin/hprotostuffdb
+    ARGS="$ARGS -Dprotostuffdb.with_backup=true"
+elif [ -e /opt/protostuffdb/bin/protostuffdb ]; then
     BIN=/opt/protostuffdb/bin/protostuffdb
 elif [ -e target/protostuffdb ]; then
     BIN=./target/protostuffdb
@@ -11,7 +15,6 @@ fi
 
 DATA_DIR=target/data/main
 JAR=bookmarks-all/target/bookmarks-all-jarjar.jar
-ARGS=$(cat ARGS.txt)
 PORT=$(cat PORT.txt)
 
 jarjar() {
