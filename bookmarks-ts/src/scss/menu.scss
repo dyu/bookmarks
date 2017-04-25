@@ -529,10 +529,14 @@
 	border-bottom: 3px solid rgba(0, 0, 0, 0.1);
 	>.right.menu {
 		>.item {
-			padding-right: 0;
-			//margin-bottom: -2.2em;
-		}
-	}
+            padding-right: 0;
+            margin-bottom: -2.2em;
+            > a {
+                text-decoration: none;
+                cursor: pointer;
+            }
+        }
+    }
 	>.menu {
 		>.item {
 			margin: 0em 0em -3px;
@@ -721,12 +725,15 @@
   }
 }
 
-.right.menu > .item > a {
-  text-decoration: none;
-  cursor: pointer;
+.ui.tiny.icon.buttons > button.button {
+  padding: 0.15rem 0.2rem 0.1rem 0.4rem;
+  margin: 0;
 }
 
-.ui.tiny.icon.buttons > button.button {
-  padding: 0.25rem 0.5rem;
-  margin: 0;
+.ui.slim.tiny.icon.buttons > button.button {
+  padding: 0.15rem 0.1rem 0.1rem 0.2rem;
+}
+
+.skimped > .item > span {
+  font-size: 0.8em;
 }

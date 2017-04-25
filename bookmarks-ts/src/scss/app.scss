@@ -119,3 +119,8 @@ small.description {
 div.content.completed {
   text-decoration: line-through;
 }
+
+div.help-text {
+  padding-top: 0.25em;
+  color: lighten($alt-color, 25%);
+}
