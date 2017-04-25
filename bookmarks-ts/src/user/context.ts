@@ -14,9 +14,16 @@ export interface Stores {
 }
 export const stores: Stores = {} as Stores
 
+const DOMAIN_REGEX = /\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}\b/
+
 export const filters = {
     href(url: string) {
-        return url.indexOf('http') === 0 ? url : null
+        if (url.indexOf('http') === 0)
+            return url
+        else if (DOMAIN_REGEX.test(url))
+            return 'http://' + url
+        else
+            return null
     }
 }
 
