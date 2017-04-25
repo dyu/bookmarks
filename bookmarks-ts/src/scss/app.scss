@@ -98,6 +98,11 @@ ul.ui.horizontal.list > li.item > a {
   }
 }
 
+div.help-text {
+  padding-top: 0.25em;
+  color: lighten($alt-color, 25%);
+}
+
 @import "./suggest.scss";
 @import "./spectre.scss";
 @import "./mdl.scss";
@@ -121,9 +126,4 @@ small.description {
 // app specific
 div.content.completed {
   text-decoration: line-through;
-}
-
-div.help-text {
-  padding-top: 0.25em;
-  color: lighten($alt-color, 25%);
 }
