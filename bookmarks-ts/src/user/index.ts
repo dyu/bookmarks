@@ -4,8 +4,8 @@ import { PojoState } from 'vueds/lib/types'
 import { extractMsg } from 'vueds/lib/util'
 import { user } from '../../g/user/'
 
-import { BookmarkTagView, default as BookmarkTagViewC } from './BookmarkTagView'
-import { default as BookmarkEntryViewC } from './BookmarkEntryView'
+import { BookmarkTagView, default as BookmarkTagV } from './BookmarkTagView'
+import { default as BookmarkEntryV } from './BookmarkEntryView'
 
 export class HomePage {
     bookmark_tag_v: BookmarkTagView
@@ -36,16 +36,16 @@ export class HomePage {
 export default component({
     mounted(this: HomePage) { HomePage.activate(this) },
     components: {
-        BookmarkTagViewC,
-        BookmarkEntryViewC
+        BookmarkTagV,
+        BookmarkEntryV
     },
     template: /**/`
 <div class="row">
   <div class="col-pl-100 col-tp-50 col-tl-66">
-    <bookmark-entry-view-c />
+    <bookmark-entry-v />
   </div>
   <div class="col-pl-100 col-tp-50 col-tl-33">
-    <bookmark-tag-view-c ref="bookmark_tag_v" />
+    <bookmark-tag-v ref="bookmark_tag_v" />
   </div>
   <div style="position:fixed; top:0; right:0">
     <i style="margin-right:-5px" class="icon ellipsis-vert" v-toggle="'.1'"></i>
