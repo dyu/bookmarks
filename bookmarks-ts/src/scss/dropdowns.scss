@@ -1,0 +1,425 @@
+//
+// Dropdown menus
+// --------------------------------------------------
+
+$brand-primary:         #428bca;
+$gray-dark:              lighten(#000, 20%);   // #333
+$gray-light:             lighten(#000, 60%);   // #999
+
+//** Global color for active items (e.g., navs or dropdowns).
+$component-active-color:    #fff;
+//** Global background color for active items (e.g., navs or dropdowns).
+$component-active-bg:       $brand-primary;
+
+$caret-width-base:          4px;
+$caret-width-large:         5px;
+$zindex-dropdown:          1000;
+
+$font-size-base:          14px;
+$font-size-large:         ceil(($font-size-base * 1.25)); // ~18px
+$font-size-small:         ceil(($font-size-base * 0.85)); // ~12px
+
+//** Background for the dropdown menu.
+$dropdown-bg:                    #fff;
+//** Dropdown menu `border-color`.
+$dropdown-border:                rgba(0,0,0,.15);
+//** Dropdown menu `border-color` **for IE8**.
+$dropdown-fallback-border:       #ccc;
+//** Divider color for between dropdown items.
+$dropdown-divider-bg:            #e5e5e5;
+
+//** Dropdown link text color.
+$dropdown-link-color:            $gray-dark;
+//** Hover color for dropdown links.
+$dropdown-link-hover-color:      darken($gray-dark, 5%);
+//** Hover background for dropdown links.
+$dropdown-link-hover-bg:         #f5f5f5;
+
+//** Active dropdown menu item text color.
+$dropdown-link-active-color:     $component-active-color;
+//** Active dropdown menu item background color.
+$dropdown-link-active-bg:        $component-active-bg;
+
+//** Disabled dropdown menu item background color.
+$dropdown-link-disabled-color:   $gray-light;
+
+//** Text color for headers within dropdown menus.
+$dropdown-header-color:          $gray-light;
+
+// Note: Deprecated $dropdown-caret-color as of v3.1.0
+$dropdown-caret-color:           #000;
+
+$border-radius-base:        4px;
+$border-radius-large:       6px;
+$border-radius-small:       3px;
+
+//** Unit-less `line-height` for use in components like buttons.
+$line-height-base:        1.428571429; // 20/14
+//** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
+$line-height-computed:    floor(($font-size-base * $line-height-base)); // ~20px
+
+// Horizontal dividers
+//
+// Dividers (basically an hr) within dropdowns and nav lists
+
+@mixin nav-divider($color: #e5e5e5) {
+  height: 1px;
+  margin: (($line-height-computed / 2) - 1) 0;
+  overflow: hidden;
+  background-color: $color;
+}
+
+// Dropdown arrow/caret
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  vertical-align: middle;
+  border-top:   $caret-width-base solid;
+  border-right: $caret-width-base solid transparent;
+  border-left:  $caret-width-base solid transparent;
+}
+
+// The dropdown wrapper (div)
+.dropdown {
+  position: relative;
+}
+
+// Prevent the focus on the dropdown toggle when closing dropdowns
+.dropdown-toggle:focus {
+  outline: 0;
+}
+
+@mixin noselect() {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+// The dropdown menu (ul)
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: $zindex-dropdown;
+  display: none; // none by default, but block on "open" of the menu
+  float: left;
+  //min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0; // override default ul
+  list-style: none;
+  font-size: $font-size-base;
+  text-align: left; // Ensures proper alignment if parent has it changed (e.g., modal footer)
+  background-color: $dropdown-bg;
+  border: 1px solid $dropdown-fallback-border; // IE8 fallback
+  border: 1px solid $dropdown-border;
+  border-radius: $border-radius-base;
+  //@include box-shadow(0 6px 12px rgba(0,0,0,.175));
+  background-clip: padding-box;
+
+  // Aligns the dropdown menu to right
+  //
+  // Deprecated as of 3.1.0 in favor of `.dropdown-menu-[dir]`
+  &.pull-right {
+    right: 0;
+    left: auto;
+  }
+
+  // Dividers (basically an hr) within the dropdown
+  .divider {
+    @include nav-divider($dropdown-divider-bg);
+  }
+
+  // Links within the dropdown menu
+  > li > a {
+    cursor: pointer;
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: $line-height-base;
+    color: $dropdown-link-color;
+    white-space: nowrap; // prevent links from randomly breaking onto new lines
+    @include noselect();
+  }
+
+  > li.right {
+    text-align: right;
+  }
+}
+
+// Hover/Focus state
+.dropdown-menu > li > a {
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    color: $dropdown-link-hover-color;
+    background-color: $dropdown-link-hover-bg;
+  }
+}
+
+.dropdown-menu > li.current > a, .dropdown-menu > li > a.current {
+  text-decoration: none;
+  color: $dropdown-link-hover-color;
+  background-color: $dropdown-link-hover-bg;
+}
+
+// Active state
+.dropdown-menu > .active > a, .dropdown-menu > li > a.active {
+  &,
+  &:hover,
+  &:focus {
+    color: $dropdown-link-active-color;
+    text-decoration: none;
+    outline: 0;
+    background-color: $dropdown-link-active-bg;
+  }
+}
+
+// Disabled state
+//
+// Gray out text and ensure the hover/focus state remains gray
+
+.dropdown-menu > .disabled > a {
+  &,
+  &:hover,
+  &:focus {
+    color: $dropdown-link-disabled-color;
+  }
+}
+// Nuke hover/focus effects
+.dropdown-menu > .disabled > a {
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    background-color: transparent;
+    background-image: none; // Remove CSS gradient
+    //@include reset-filter();
+    cursor: not-allowed;
+  }
+}
+
+// Open state for the dropdown
+.active {
+  // Show the menu
+  > .dropdown-menu {
+    display: block;
+  }
+
+  // Remove the outline when :focus is triggered
+  > a {
+    outline: 0;
+  }
+}
+
+// Menu positioning
+//
+// Add extra class to `.dropdown-menu` to flip the alignment of the dropdown
+// menu with the parent.
+.dropdown-menu-right {
+  left: auto; // Reset the default from `.dropdown-menu`
+  right: 0;
+}
+// With v3, we enabled auto-flipping if you have a dropdown within a right
+// aligned nav component. To enable the undoing of that, we provide an override
+// to restore the default dropdown menu alignment.
+//
+// This is only for left-aligning a dropdown menu within a `.navbar-right` or
+// `.pull-right` nav component.
+.dropdown-menu-left {
+  left: 0;
+  right: auto;
+}
+
+// Dropdown section headers
+.dropdown-header {
+  display: block;
+  padding: 3px 20px;
+  font-size: $font-size-small;
+  line-height: $line-height-base;
+  color: $dropdown-header-color;
+}
+
+// Backdrop to catch body clicks on mobile, etc.
+.dropdown-backdrop {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: ($zindex-dropdown - 10);
+}
+
+// Right aligned dropdowns
+.right.menu > .item > .dropdown > .dropdown-menu,
+.pull-right > .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+.bottom.dropdown {
+  bottom: -1.5em;
+}
+
+// Allow for dropdowns to go bottom up (aka, dropup-menu)
+//
+// Just add .dropup after the standard .dropdown class and you're set, bro.
+// TODO: abstract this so that the navbar fixed styles are not placed here?
+
+/*.dropup,
+.navbar-fixed-bottom .dropdown {
+  // Reverse the caret
+  .caret {
+    border-top: 0;
+    border-bottom: $caret-width-base solid;
+    content: "";
+  }
+  // Different positioning for bottom up menu
+  .dropdown-menu {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 1px;
+  }
+}
+
+
+// Component alignment
+//
+// Reiterate per navbar.less and the modified component alignment there@mixin 
+
+@media (min-width: $grid-float-breakpoint) {
+  .navbar-right {
+    .dropdown-menu {
+      @include dropdown-menu-right();
+    }
+    // Necessary for overrides of the default right aligned menu.
+    // Will remove come v4 in all likelihood.
+    .dropdown-menu-left {
+      @include dropdown-menu-left();
+    }
+  }
+}*/
+
+// custom
+.dropdown > div {
+  cursor: pointer;
+}
+
+.dropdown-menu.compact-date {
+  min-width: 4.6em;
+}
+
+.dropdown-menu > li.padded {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.dropdown-menu.fluid {
+  width: 100%;
+  background-color: #F7F7F7;
+}
+
+.dropdown-menu.mfluid {
+  min-width: 21.6em;
+}
+
+.dropdown-menu.mhalf {
+  min-width: 10.8em;
+}
+
+// ==================================================
+// custom
+
+// single
+.dropdown > ul.lap > li > form,
+.dropdown > ul.lap > li > div.ui {
+  min-width: 10em;
+}
+
+.dropdown > ul > li > .ui.form {
+  margin-right: 1em;
+}
+
+// TODO
+/*.dropdown > ul > li > .ui.menu {
+  background-color: transparent;
+}*/
+
+.dropdown > ul.balanced > li,
+.dropdown > ul > li.balanced {
+  padding: 0;
+}
+
+.dropdown > ul > li.right {
+  float: right;
+}
+
+.dropdown > ul.balanced > li > a,
+.dropdown > ul > li.balanced > a {
+  margin-right: 1em;
+  padding: 0.2em 0.4em;
+}
+
+.dropdown > ul > li.stretch {
+  min-width: 24.5em;
+}
+
+.dropdown-menu.beside {
+  margin-top: -1.2em !important;
+  margin-left: 2em !important;
+}
+
+ul.dropdown-menu > li {
+    margin: 0;
+    > .mdl {
+        padding: 0.15em 0.5em;
+    }
+}
+
+ul.dropdown-menu > li.tags {
+  cursor: default;
+  > .ui.label {
+    margin: 0.2em 0.4em;
+  }
+  i {
+    cursor: pointer;
+  }
+}
+
+ul.dropdown-menu > div.content {
+  > i {
+    cursor: pointer;
+  }
+}
+
+.dropdown-menu > .ui.form {
+  padding: 0.2em 0.4em 0.1em 0.4em;
+}
+
+.dropdown-menu > .ui.message {
+  min-width: 9.4em;
+  margin: 0.5em 0 0 0;
+  padding: 0.7em 0.4em 0.4em;
+  cursor: default;
+  
+  > i.close.icon {
+    top: -0.7em;
+    right: -0.5em;
+  }
+}
+
+.dropdown-menu.vcompact {
+  padding: 0 0.4em;
+}
+
+.dropdown-menu > i.icon.close {
+  position: absolute;
+  right: 0;
+  top: 0.25em;
+  cursor: pointer;
+  z-index: 1;
+}
+
