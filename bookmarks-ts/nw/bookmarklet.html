@@ -11,15 +11,15 @@
         var a = document.getElementById('bookmarklet')
         var rpc_host = window.rpc_host;
         var colon = rpc_host.lastIndexOf(':');
-        var port = parseInt(rpc_host.substring(colon + 1), 10) + 1
-        var host = rpc_host.substring(0, colon + 1) + port
+        var port = parseInt(rpc_host.substring(colon + 1), 10) + 1;
+        var host = rpc_host.substring(0, colon + 1) + port;
         var name = 'bk' + port;
         
         a.setAttribute("href", "javascript:popw='';Q='';x=document;y=window;if(x.selection) {Q=x.selection.createRange().text;} else if (y.getSelection) {Q=y.getSelection();} else if (x.getSelection) {Q=x.getSelection();}popw = y.open('" + host + "/bookmarklet/#t=' + escape(Q) + '&u=' + escape(location.href) + '&n=' + escape(document.title),'" + name + "','scrollbars=no,width=475,height=540,top=175,left=75,status=yes,resizable=yes');if (!document.all) T = setTimeout('popw.focus()',50);void(0);");
         
-        a.innerText = name
+        a.innerText = name;
         
-        document.getElementById('url').innerText = host
+        document.getElementById('url').innerText = host;
       }
     </script>
   </head>
