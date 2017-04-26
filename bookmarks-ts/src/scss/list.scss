@@ -298,6 +298,11 @@ $selectionListActiveColor: $selectedTextColor;
   font-size: 0.84em;
 
   i.icon.action {
-    cursor: pointer;  
+    cursor: pointer;
+    margin-right: 0;
   }
+}
+
+.ui.small.selection.list .item {
+  padding: 0.5em 0.35em;
 }
