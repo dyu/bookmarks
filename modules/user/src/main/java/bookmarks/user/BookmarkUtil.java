@@ -24,6 +24,12 @@ public final class BookmarkUtil
 {
     private BookmarkUtil() {}
     
+    public static void normalize(BookmarkTag p)
+    {
+        if (!p.color.isEmpty())
+            p.color = normalizeColor(p.color);
+    }
+    
     static String normalizeColor(String color)
     {
         return color.toLowerCase();

@@ -106,6 +106,7 @@
 
   <modules>
     <module>modules/user</module>
+    <module>bookmarks-importer</module>
     <module>bookmarks-cli</module>
     <module>bookmarks-all</module>
   </modules>
