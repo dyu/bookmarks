@@ -181,15 +181,10 @@ export class BookmarkEntryView {
     }
 
     static fetch$$S(this: BookmarkEntryView, data: any): boolean {
-        if (this.initialized) {
-            this.pstore.cbFetchSuccess(data['1'])
-        } else {
+        if (!this.initialized)
             this.initialized = true
-            this.pager.msg = ''
-            this.pager.state ^= PagerState.LOADING
-            this.pstore.addNewer(data['1'])
-        }
-
+        
+        this.pstore.cbFetchSuccess(data['1'])
         return true
     }
 
