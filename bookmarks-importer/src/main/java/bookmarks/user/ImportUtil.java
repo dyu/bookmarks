@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import com.dyuproject.protostuff.LongHashSet;
+import com.dyuproject.protostuffdb.TsKeyUtil;
 import com.dyuproject.protostuffdb.DSRuntimeExceptions;
 import com.dyuproject.protostuffdb.Datastore;
 import com.dyuproject.protostuffdb.EntityMetadata;
@@ -79,10 +80,12 @@ public final class ImportUtil
         
         for (BookmarkTag bt : sorted)
         {
+            byte[] key = bt.key;
             BookmarkUtil.normalize(bt);
-            store.insertWithKey(bt.key, 
-                    bt.provide(System.currentTimeMillis(), bt.id), bt.em(), 
-                    null, context);
+            bt.provide(bt.ts, bt.id);
+            // set to zero
+            bt.ts = 0;
+            store.insertWithKey(key, bt, bt.em(), null, context);
         }
         
         endNs = System.nanoTime();
@@ -138,7 +141,7 @@ public final class ImportUtil
                 bt = new BookmarkTag(tag);
                 bt.key = sorted ? newKey(ts, context.exclusiveLast, keySuffixSet, 
                         bt, BookmarkTag.EM, bt.name, concurrentStart++) : 
-                            context.newEntityKey(BookmarkTag.EM);
+                            TsKeyUtil.newKey(BookmarkTag.EM, context);
                 bt.id = ++tagCurrentId;
                 tagMap.put(bt.name, bt);
             }
@@ -257,7 +260,12 @@ public final class ImportUtil
             
             final BookmarkEntry entity = BookmarkEntryOps.validateAndProvide(
                     param.p.ts, // timestamp override
-                    param, now, key, chain);
+                    param,
+                    now,
+                    key, chain);
+            
+            // set to zero
+            entity.ts = 0;
             
             return chain.insertWithKey(key, entity, BookmarkEntry.EM, 
                     null, null, null);
