@@ -50,7 +50,7 @@ export default component({
   <div class="col-pl-100 col-tp-50 col-tl-33">
     <bookmark-tag-v ref="bookmark_tag_v" />
   </div>
-  <div style="position:fixed; top:0; right:0" v-show="backup_enabled">
+  <div v-if="backup_enabled" style="position:fixed; top:0; right:0">
     <i style="margin-right:-5px" class="icon ellipsis-vert" v-toggle="'.1'"></i>
     <div class="dropdown pull-right">
       <ul class="dropdown-menu mhalf">
