@@ -158,7 +158,13 @@ export class BookmarkTagView {
             this.initialized = true
             this.pager.msg = ''
             this.pager.state ^= PagerState.LOADING
-            this.pstore.addAll(data['1'], false, false)
+            let array: any[] = data['1']
+            if (!array || !array.length) {
+                this.fetched_all = true
+            } else {
+                this.fetched_all = array.length < FETCH_INITIAL
+                this.pstore.reset(array.reverse())
+            }
         } else if (this.fetched_all) {
             this.pstore.cbFetchSuccess(data['1'])
         } else {
