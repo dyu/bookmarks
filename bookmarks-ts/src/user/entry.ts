@@ -53,6 +53,7 @@ export function newStore(self: View, fetch: FetchFn): PojoStore<user.BookmarkEnt
         desc: true,
         pageSize: PAGE_SIZE,
         descriptor: $.$descriptor,
+        multiplier: MULTIPLIER,
         createObservable(so: ItemSO, idx: number) {
             let p = $.$createObservable()
             p['tags'] = []

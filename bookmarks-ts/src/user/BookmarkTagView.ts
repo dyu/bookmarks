@@ -30,7 +30,8 @@ const $ = user.BookmarkTag,
     $0 = $.$descriptor.$
 
 const FETCH_INITIAL = 900,
-    PAGE_SIZE = 10
+    PAGE_SIZE = 10,
+    MULTIPLIER = 50
 
 export class BookmarkTagView {
 
@@ -60,6 +61,7 @@ export class BookmarkTagView {
         self.pager = defp(self, 'pstore', stores.tag = new PojoStore([], {
             desc: true,
             pageSize: PAGE_SIZE,
+            multiplier: MULTIPLIER,
             descriptor: $.$descriptor,
             createObservable(so: ItemSO, idx: number) {
                 return $.$createObservable()
@@ -99,9 +101,6 @@ export class BookmarkTagView {
                 return 0
             },
             fetch(req: ds.ParamRangeKey, pager: Pager) {
-                if (req.limit && !(pager.state & PagerState.RELOAD))
-                    req.limit = 500
-                
                 self.qform.send(req)
             }
         })).pager
