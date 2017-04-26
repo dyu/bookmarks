@@ -7,4 +7,5 @@ bookmarks-ts/index.html
 bookmarks-ts/dist
 bookmarks-ts/nw
 bookmarks-ts/g/user/UserServices.json
+bookmarks-ts/bookmarklet/index.html
 target/data/main/README.txt
