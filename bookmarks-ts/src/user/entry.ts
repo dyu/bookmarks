@@ -292,10 +292,12 @@ ${list.main({ pager: 'pager' }, `
       title_expr: `pojo.${$$.active} ? 'Discard?' : 'Restore?'`
     })}
   </div>
-  <div class="content main" v-sclass:line-through="!pojo.${$$.active}">
-    <a :href="pojo.${$$.url} | href" target="_blank" rel="noreferrer"><span v-show="pojo.${$$.www}">www.</span>{{ pojo.${$$.normalized} }}</a>&nbsp;&nbsp;
+  <div class="content" v-sclass:line-through="!pojo.${$$.active}" >
+    <a :href="pojo.${$$.url} | href" target="_blank" rel="noreferrer">
+      <span v-show="pojo.${$$.www}">www.</span>{{ pojo.${$$.normalized} }}
+    </a>
+    <div v-text="pojo.${$$.title}"></div>
   </div>
-  <div class="content">{{ pojo.${$$.title} }}</div>
   <div class="tags inline" v-sclass:noop="!(pojo._.state & ${PojoState.UPDATE})">
     <span v-for="tag in pojo.tags" class="ui label" :style="tag.styles">
       {{ tag.${$.Tag.$.name} }}
