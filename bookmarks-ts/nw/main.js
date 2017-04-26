@@ -108,7 +108,7 @@ function onOpen(w) {
     if (bookmarkletOnly) {
         w.resizeTo(340, 70)
     } else {
-        w.resizeTo(992, 715)
+        w.resizeTo(992, 710)
     }
     
     w.moveTo(360, 0)
