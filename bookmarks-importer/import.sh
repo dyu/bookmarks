@@ -2,6 +2,13 @@
 
 [ $# -lt 1 ] && echo '1st arg (in file) and 2nd arg (out dir) is required.' && exit 0
 
+JAR=target/bookmarks-importer-jarjar.jar
+
+jarjar() {
+  rm -f target/*.jar
+  mvn -o -Pjwd -Djwd=compile -Dmaven.javadoc.skip=true compile
+}
+
 CURRENT_DIR=$PWD
 # locate
 if [ ! -n "$BASH_SOURCE" ]; then
@@ -24,5 +31,7 @@ shift
 mkdir -p $OUT_DIR
 STATUS_FILE=$OUT_DIR/status.txt
 
-java -jar target/bookmarks-importer-jarjar.jar $IN_FILE $OUT_DIR $@ 2> $STATUS_FILE && echo "Successful. [$STATUS_FILE]"
+[ -e $JAR ] || jarjar
+
+java -jar $JAR $IN_FILE $OUT_DIR $@ 2> $STATUS_FILE && echo "Successful. [$STATUS_FILE]"
 
