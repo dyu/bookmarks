@@ -312,12 +312,12 @@ export default component({
       </li>
       <li>
         <div class="mdl input">
-          <input placeholder="Title" v-model.lazy.trim="pnew_title"/>
+          <input type="text" placeholder="Title" v-model.lazy.trim="pnew_title"/>
         </div>
       </li>
       <li>
         <div class="mdl input">
-          <input placeholder="Notes" v-model.lazy.trim="pnew_notes"/>
+          <input type="text" placeholder="Notes" v-model.lazy.trim="pnew_notes"/>
         </div>
       </li>
       <li>
