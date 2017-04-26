@@ -50,7 +50,7 @@ var loaders = [
 
 module.exports = {
   entry: srcDir + '/main.ts',
-  target: destFile === 'nw.js' ? 'node' : 'web',
+  target: destFile.endsWith('nw.js') ? 'node' : 'web',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',

@@ -13,7 +13,11 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --inline --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "bk-dev": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js webpack-dev-server --inline --hot",
+    "bk-build": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "bk-nw-build": "SRC_DIR=./bookmarklet-nw DEST_FILE=bookmarklet-nw.js cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "build-all": "yarn run build && yarn run bk-build && yarn run bk-nw-build"
   },
   "dependencies": {
     "pavilion": "^2.0.3",
@@ -36,6 +40,7 @@
     "less": "^2.7.2",
     "less-loader": "^2.2.3",
     "node-sass": "^4.5.0",
+    "node-static": "^0.7.9",
     "noop2": "^2.0.0",
     "postcss-loader": "^1.3.3",
     "postcss-unique-selectors": "^2.0.2",
