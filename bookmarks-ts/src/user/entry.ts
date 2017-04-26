@@ -290,7 +290,7 @@ ${list.main({ pager: 'pager' }, `
     })}
   </div>
   <div class="content" v-sclass:line-through="!pojo.${$$.active}" >
-    <a :href="pojo.${$$.url} | href" target="_blank" rel="noreferrer">
+    <a :style="pojo.${$$.normalized} | word_wrap" :href="pojo.${$$.url} | href" target="_blank" rel="noreferrer">
       <span v-show="pojo.${$$.www}">www.</span>{{ pojo.${$$.normalized} }}
     </a>
     <div v-text="pojo.${$$.title}"></div>
