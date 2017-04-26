@@ -2,6 +2,8 @@ var fs = require('fs'),
     path = require('path'),
     os = require('os'),
     win32 = os.platform() === 'win32',
+    argv = nw.App.argv,
+    bookmarkletOnly = argv.length > 0 && argv[0] === 'b',
     start_str = 'jni rpc: ',
     pdb_started = false,
     hide_backup = false,
@@ -103,7 +105,12 @@ function onClose() {
 
 function onOpen(w) {
     wnd = w
-    w.resizeTo(767, 715)
+    if (bookmarkletOnly) {
+        w.resizeTo(340, 60)
+    } else {
+        w.resizeTo(767, 715)
+    }
+    
     w.moveTo(430, 0)
     if (pdb)
         w.on('close', onClose)
@@ -113,7 +120,7 @@ function onOpen(w) {
 function openWindow() {
     global.rpc_host = rpc_host
     global.hide_backup = hide_backup
-    nw.Window.open('index.html', { show: false }, onOpen)
+    nw.Window.open(bookmarkletOnly ? 'nw/bookmarklet.html' : 'index.html', { show: false }, onOpen)
 
     require('./dist/bookmarklet-nw')
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bookmarklet</title>
+    <script>
+      function start() {
+        var a = document.getElementById('bookmarklet')
+        var rpc_host = window.rpc_host;
+        var colon = rpc_host.lastIndexOf(':');
+        var port = parseInt(rpc_host.substring(colon + 1), 10) + 1
+        var host = rpc_host.substring(0, colon + 1) + port
+        var name = 'bk' + port;
+        
+        a.setAttribute("href", "javascript:popw='';Q='';x=document;y=window;if(x.selection) {Q=x.selection.createRange().text;} else if (y.getSelection) {Q=y.getSelection();} else if (x.getSelection) {Q=x.getSelection();}popw = y.open('" + host + "/bookmarklet/#t=' + escape(Q) + '&u=' + escape(location.href) + '&n=' + escape(document.title),'" + name + "','scrollbars=no,width=475,height=540,top=175,left=75,status=yes,resizable=yes');if (!document.all) T = setTimeout('popw.focus()',50);void(0);");
+        
+        a.innerText = name
+        
+        document.getElementById('url').innerText = host
+      }
+    </script>
+  </head>
+  <body onload="start();">
+    <div>The app is available at <span style="color:#0080ff" id="url"></span></div>
+    <div>Drag <a style="color:#0080ff" id="bookmarklet"></a> to your browser's bookmarks bar.</div>
+  </body>
+</html>
