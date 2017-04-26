@@ -139,10 +139,7 @@ message BookmarkTag {
   
   optional uint32 id = 5 [provided = true, readonly = true, immutable = true, default = 0];
   
-  message PList {
-    
-    repeated BookmarkTag p = 1;
-  }
+  message PList { repeated BookmarkTag p = 1; }
 }
 
 message UpdateTag {
@@ -280,16 +277,10 @@ message BookmarkEntry {
     required bytes page_key = 32;
     repeated string tags = 33;
     
-    message PList {
-    
-      repeated M p = 1;
-    }
+    message PList { repeated M p = 1; }
   }
   
-  message PList {
-    
-    repeated BookmarkEntry p = 1;
-  }
+  message PList { repeated BookmarkEntry p = 1; }
   
   message PNew {
     
@@ -352,10 +343,7 @@ message TagIndex1 {
   
   required uint32 tag1_id = 4 [readonly = true];
   
-  message PList {
-    
-    repeated TagIndex1 p = 1;
-  }
+  message PList { repeated TagIndex1 p = 1; }
 }
 
 @Entity(kind = 22)
@@ -387,10 +375,7 @@ message TagIndex2 {
   
   required uint32 tag2_id = 5 [readonly = true];
   
-  message PList {
-    
-    repeated TagIndex2 p = 1;
-  }
+  message PList { repeated TagIndex2 p = 1; }
 }
 
 @Entity(kind = 23)
@@ -424,10 +409,7 @@ message TagIndex3 {
   
   required uint32 tag3_id = 6 [readonly = true];
   
-  message PList {
-    
-    repeated TagIndex3 p = 1;
-  }
+  message PList { repeated TagIndex3 p = 1; }
 }
 
 @Entity(kind = 24)
@@ -463,9 +445,6 @@ message TagIndex4 {
   
   required uint32 tag4_id = 7 [readonly = true];
   
-  message PList {
-    
-    repeated TagIndex4 p = 1;
-  }
+  message PList { repeated TagIndex4 p = 1; }
 }
 
