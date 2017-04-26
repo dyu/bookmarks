@@ -43,5 +43,5 @@ java -jar $JAR $IN_FILE $OUT_DIR $@ 2> $STATUS_FILE && \
     $CLI_EXEC index -i $OUT_DIR/load -o $OUT_DIR/index user && \
     $CLI_EXEC pipe -i $OUT_DIR/index -o $OUT_DIR/pipe user && \
     rm -r $OUT_DIR/load && rm -r $OUT_DIR/index && \
-    echo "Successful. [$STATUS_FILE]"
+    echo "Successful.  Your data is in $OUT_DIR/pipe/user.  [$STATUS_FILE]"
 
