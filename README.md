@@ -42,8 +42,8 @@ yarn run dev
 If ```run.sh``` is still running, stop that process (ctrl+c)
 ```sh
 cd bookmarks-ts
-# produces a single js and other assets in bookmarks-ts/dist/
-yarn run build
+# produces js/assets in bookmarks-ts/dist/
+./build.sh
 # finally, run your production app
 nw .
 ```
