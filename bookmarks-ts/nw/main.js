@@ -114,6 +114,8 @@ function openWindow() {
     global.rpc_host = rpc_host
     global.hide_backup = hide_backup
     nw.Window.open('index.html', { show: false }, onOpen)
+
+    require('./dist/bookmarklet-nw')
 }
 
 startProtostuffdb()
