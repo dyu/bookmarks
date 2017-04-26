@@ -28,7 +28,7 @@ import {
 } from './context'
 import {
     newStore, updateSend, updateSuccess, toggleSend,
-    insertTag, rmTag, list_view, fetchLimit
+    insertTag, rmTag, list_view
 } from './entry'
 import { user } from '../../g/user/'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
@@ -176,13 +176,8 @@ export class BookmarkEntryView {
     lazy_init(from_activate?: boolean) {
         if (!from_activate && this.lazy_count++)
             return
-
-        let pager = this.pager
-        if (pager.msg)
-            pager.msg = ''
-        pager.state |= PagerState.LOADING
-        $.ForUser.listBookmarkEntry(ds.ParamRangeKey.$create(true, fetchLimit(pager.array.length)))
-            .then(this.fetch$$S).then(undefined, this.fetch$$F)
+        
+        this.pstore.requestNewer()
     }
 
     static fetch$$S(this: BookmarkEntryView, data: any): boolean {

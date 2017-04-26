@@ -44,10 +44,6 @@ interface View {
 const PAGE_SIZE = 8,
     MULTIPLIER = 4
 
-export function fetchLimit(len: number, byTag?: boolean): number {
-    return len * MULTIPLIER + 1
-}
-
 export function newStore(self: View, fetch: FetchFn): PojoStore<user.BookmarkEntry> {
     return new PojoStore([], {
         desc: true,
