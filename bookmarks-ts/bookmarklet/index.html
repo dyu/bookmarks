@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookmarks</title>
+    <style>
+    .pending {
+      display: none;
+    }
+    #bookmarklet {
+      position: fixed;
+      right: 0.3em;
+      top: 0.15em;
+    }
+    </style>
+    <script>
+      function showBookmarklet(a) {
+        var host = window.location.host;
+        var port = host.substring(host.lastIndexOf(':') + 1);
+        var name = 'bk' + port;
+        
+        a.setAttribute("href", "javascript:popw='';Q='';x=document;y=window;if(x.selection) {Q=x.selection.createRange().text;} else if (y.getSelection) {Q=y.getSelection();} else if (x.getSelection) {Q=x.getSelection();}popw = y.open('http://" + host + "/bookmarklet/#t=' + escape(Q) + '&u=' + escape(location.href) + '&n=' + escape(document.title),'" + name + "','scrollbars=no,width=475,height=540,top=175,left=75,status=yes,resizable=yes');if (!document.all) T = setTimeout('popw.focus()',50);void(0);");
+        
+        a.innerText = name
+        a.setAttribute('class', '');
+      }
+      function start() {
+        var hash = window.location.hash
+        if (!hash) {
+          showBookmarklet(document.getElementById('bookmarklet'))
+          return
+        }
+        // exclude hash
+        var pairs = hash.substring(1).split('&'),
+          notes = pairs[0],
+          url = pairs[1],
+          title = pairs[2],
+          unescape = window.unescape || window.decodeURI
+        
+        if (url.length === 2) return
+
+        url = unescape(url.substring(2))
+
+        notes = notes.length === 2 ? '' : unescape(notes.substring(2))
+
+        title = title.length === 2 ? '' : unescape(title.substring(2))
+
+        window.run({ url: url, title: title, notes: notes })
+      }
+    </script>
+  </head>
+  <body onload="start();" unselectable="on">
+    <div id="app"></div>
+    <script src="../dist/bookmarklet.js"></script>
+    <a id="bookmarklet" class="pending"></a>
+  </body>
+</html>
