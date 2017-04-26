@@ -24,7 +24,7 @@ $tablet-landscape-size: 992px;        /* Minimum screenwidth for tablet landscap
 $desktop-size: 1200px;                /* Minimum screenwidth for desktop. */
 
 $breakmargin: 20px;                   /* Margin added to each breakpoints minimum width. */
-$size-switch: $phone-landscape-size + ($tablet-portrait-size - $phone-landscape-size) / 2;  /* Minimum screenwidth at which the EM & REM sizes switch from small to normal. */
+$size-switch: $tablet-portrait-size + 70px;  /* Minimum screenwidth at which the EM & REM sizes switch from small to normal. */
 
 /**
   * Border width and radius for buttons and inputs.

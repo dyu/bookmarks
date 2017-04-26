@@ -291,6 +291,13 @@ $selectionListActiveColor: $selectedTextColor;
   margin: $rightFloatMargin;
 }
 
-.content.right.floated i.icon.action {
-  cursor: pointer;
+// ==================================================
+// custom
+
+.content.right.floated {
+  font-size: 0.84em;
+
+  i.icon.action {
+    cursor: pointer;  
+  }
 }
