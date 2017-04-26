@@ -306,9 +306,12 @@ $selectionListActiveColor: $selectedTextColor;
 .ui.small.selection.list .item {
   padding: 0.5em 0.35em;
 
-  .content > i.icon.action.angle-right:first-child,
-  .content > i.icon.action.angle-down:first-child {
-    margin-left: -0.35em;
-    margin-right: 0;
+  .content {
+    //word-wrap: break-word;
+    > i.icon.action.angle-right:first-child,
+    > i.icon.action.angle-down:first-child {
+      margin-left: -0.35em;
+      margin-right: 0;
+    }
   }
 }
