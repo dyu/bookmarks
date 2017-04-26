@@ -714,9 +714,9 @@
   position: relative;
   > input {
     letter-spacing: -0.5px;
-    max-width: 12em;
-    padding: 0.6em 0.2em 0.4em 0.2em;
-    margin-left: 1em;
+    max-width: 10.3em;
+    padding: 0.6em 0 0.4em 0;
+    margin-left: 1.2em;
   }
   > i.icon {
     position: absolute;
@@ -726,7 +726,7 @@
 }
 
 .ui.tiny.icon.buttons > button.button {
-  padding: 0.15em 0.2em 0.1em 0.4em;
+  padding: 0.15em 0.15em 0.1em 0.3em;
   margin: 0;
 }
 
