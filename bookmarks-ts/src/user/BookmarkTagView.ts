@@ -254,7 +254,7 @@ export default component({
     </div>
     ${pager_controls.main({ pager: 'pager', top: true })}
     ${list.main({ pager: 'pager' }, `
-      <div class="content right floated">
+      <div class="content right floated alt">
         ${icons.timeago({ pojo: 'pojo' })}
       </div>
       <div class="content main">

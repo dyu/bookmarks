@@ -283,7 +283,7 @@ ${pager_controls.main({ pager: 'pager', top: true })}
 ${list.main({ pager: 'pager' }, `
   <div class="content right floated">
     <span class="alt">${icons.timeago({ pojo: 'pojo' })}</span>
-    <span class="hide-pp hide-tp"><i class="icon calendar"></i>{{ pojo.${$$.date} | ymd }}</span>
+    <span class="alt hide-pp hide-tp"><i class="icon calendar"></i>{{ pojo.${$$.date} | ymd }}</span>
     ${icons.toggle({
       pojo: 'pojo',
       field: $$.active,
