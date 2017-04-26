@@ -127,7 +127,6 @@ small.description {
   color: $alt-color !important;
 }
 
-// app specific
-div.content.completed {
+.line-through, .line-through > a:hover {
   text-decoration: line-through;
 }
