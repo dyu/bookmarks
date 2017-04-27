@@ -106,7 +106,7 @@ function onClose() {
 function onOpen(w) {
     wnd = w
     if (bookmarkletOnly) {
-        w.resizeTo(340, 70)
+        w.resizeTo(340, 100)
     } else {
         w.resizeTo(992, 710)
     }
