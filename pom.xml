@@ -7,7 +7,9 @@
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>bookmarks</name>
-
+  <description>a simple self-hosted bookmarking app that can import bookmarks from delicious or chrome</description>
+  <url>http://github.com/dyu/bookmarks/</url>
+  
   <build>
     <plugins>
       <plugin>

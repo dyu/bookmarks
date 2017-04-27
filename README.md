@@ -1,5 +1,9 @@
 # bookmarks app
 
+a simple self-hosted bookmarking app that can import bookmarks from delicious or chrome
+
+![screenshot](https://github.com/dyu/bookmarks/raw/master/screenshot-browser.png)
+
 ## Server runtime dependencies
 - jdk7
 
