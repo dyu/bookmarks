@@ -53,7 +53,10 @@ public final class ImportUtil
     private static final String DEFAULT_TAG = "~pending";
     private static final String[] DEFAULT_TAGS = new String[] { DEFAULT_TAG };
     
-    public static final Pattern COMMA = Pattern.compile(",");
+    static final String TAG_REGEX = System.getProperty("tag_regex", "");
+    
+    public static final Pattern COMMA = Pattern.compile(","),
+            TAG_PATTERN = TAG_REGEX.isEmpty() ? null : Pattern.compile(TAG_REGEX);
     
     // temporary workaround
     static final Pattern UNICODE = Pattern.compile("[^\\x00-\\x7F]", 
@@ -140,6 +143,10 @@ public final class ImportUtil
         {
             // normalize
             tag = tag.toLowerCase();
+            
+            if (TAG_PATTERN != null && !TAG_PATTERN.matcher(tag).matches())
+                return tagCurrentId;
+            
             bt = tagMap.get(tag);
             if (bt == null)
             {

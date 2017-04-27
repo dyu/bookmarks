@@ -34,10 +34,13 @@ shift
 mkdir -p $OUT_DIR
 STATUS_FILE=$OUT_DIR/status.txt
 
+JAVA=java
+[ -n "$TAG_REGEX" ] && JAVA="java -Dtag_regex=$TAG_REGEX"
+
 [ -e $JAR ] || jarjar
 [ -e $CLI_DIR/$CLI_JAR ] || { cd $CLI_DIR; jarjar; cd - > /dev/null; }
 
-java -jar $JAR $IN_FILE $OUT_DIR $@ 2> $STATUS_FILE && \
+$JAVA -jar $JAR $IN_FILE $OUT_DIR $@ 2> $STATUS_FILE && \
     $CLI_EXEC pipe -i $OUT_DIR -o $OUT_DIR/pipe user && \
     #$CLI_EXEC dump -i $OUT_DIR/pipe -o $OUT_DIR/dump user && \
     echo "Successful.  Your data is in $OUT_DIR/pipe/user.  [$STATUS_FILE]"
