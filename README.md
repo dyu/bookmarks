@@ -4,6 +4,10 @@ a simple self-hosted bookmarking app that can import bookmarks from delicious or
 
 ![screenshot](https://github.com/dyu/bookmarks/raw/master/screenshot-browser.png)
 
+Here's the [demo](https://dyuproject.com/bookmarks/) with a matching [bookmarklet](https://dyuproject.com/bookmarklet/)
+
+To import from delicious or chrome, see [bookmarks-importer/README.md](bookmarks-importer/README.md)
+
 ## Server runtime dependencies
 - jdk7
 
