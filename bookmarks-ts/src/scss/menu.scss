@@ -728,7 +728,9 @@
 .right.menu > .item > .ui.small.left.icon.input {
   margin-bottom: 0;
   > input {
-    max-width: 7.9em;
+    max-width: 7.1em;
+    // desktop
+    //max-width: 7.9em;
   }
 }
 
