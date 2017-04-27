@@ -41,8 +41,9 @@ interface View {
     toggle$$F: any
 }
 
-const PAGE_SIZE = 8,
-    MULTIPLIER = 4
+export const PAGE_SIZE = 8,
+    MULTIPLIER = 4,
+    INITIAL_FETCH_LIMIT = (PAGE_SIZE * MULTIPLIER) + 1;
 
 export function newStore(self: View, fetch: FetchFn): PojoStore<user.BookmarkEntry> {
     return new PojoStore([], {

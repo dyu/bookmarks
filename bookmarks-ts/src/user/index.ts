@@ -6,6 +6,7 @@ import { user } from '../../g/user/'
 
 import { BookmarkTagView, default as BookmarkTagV } from './BookmarkTagView'
 import { default as BookmarkEntryV } from './BookmarkEntryView'
+import { default as BookmarkEntryTagV } from './BookmarkEntryTagView'
 
 export class HomePage {
     bookmark_tag_v: BookmarkTagView
@@ -40,12 +41,14 @@ export default component({
     mounted(this: HomePage) { HomePage.activate(this) },
     components: {
         BookmarkTagV,
-        BookmarkEntryV
+        BookmarkEntryV,
+        BookmarkEntryTagV
     },
     template: /**/`
 <div class="row">
   <div class="col-pl-100 col-tp-50 col-tl-66">
     <bookmark-entry-v />
+    <bookmark-entry-tag-v />
   </div>
   <div class="col-pl-100 col-tp-50 col-tl-33">
     <bookmark-tag-v ref="bookmark_tag_v" />

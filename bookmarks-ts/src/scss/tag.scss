@@ -37,12 +37,15 @@ div.tags > .ui.label {
 }
 
 ul.dropdown-menu > li.tags {
+  margin-top: 0.5em;
+  margin-bottom: 0.7em;
   cursor: default;
   > .ui.label {
     margin: 0.2em 0.4em;
   }
-  i {
+  i.close.icon {
     cursor: pointer;
+    margin-right: 0;
   }
 }
 
