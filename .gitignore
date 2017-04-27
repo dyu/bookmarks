@@ -9,3 +9,4 @@ target
 .packages
 .pub
 .generated
+/ansible/hosts.ini

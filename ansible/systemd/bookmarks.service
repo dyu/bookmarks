@@ -1,0 +1,16 @@
+[Unit]
+Description=bookmarks daemon
+After=local-fs.target
+
+[Service]
+User={{target_user}}
+Group=webstack
+UMask=0002
+WorkingDirectory=/home/deploy/projects/bookmarks/current
+Restart=on-failure
+#RestartSec=3
+ExecStart=/opt/protostuffdb/bin/protostuffdb 5010 bookmarks-ts/g/user/UserServices.json -Xms128m -Xmx128m -XX:NewRatio=1 -Djava.class.path=bookmarks-all/target/bookmarks-all-jarjar.jar bookmarks.all.Main
+
+[Install]
+WantedBy=multi-user.target
+

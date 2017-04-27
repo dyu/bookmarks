@@ -1,0 +1,171 @@
+
+---
+# deploy
+
+- name: deploy
+  hosts: deploy
+  gather_facts: no
+  tasks:
+    - name: default user
+      user: name=bookmarks
+            system=yes
+            createhome=no
+            groups=webstack
+      sudo: true
+      when: target_user == 'bookmarks'
+    
+    - name: custom user
+      user: name={{target_user}}
+      sudo: true
+      when: target_user != 'bookmarks'
+    
+    - name: project dirs
+      file: path={{item}} owner={{target_user}} group=webstack state=directory mode=0775
+      with_items:
+        - /data/deploy/bookmarks/main
+        - /data/deploy/bookmarks/prev
+        - /data/deploy/bookmarks/next
+        - /home/deploy/backups/bookmarks
+        - /home/deploy/projects/bookmarks
+        - /home/deploy/projects/bookmarks/target
+        - /home/deploy/projects/bookmarks/target/data
+        - /home/deploy/projects/bookmarks/{{deploy_rev_prefix}}
+      sudo: true
+    
+    - name: link data main
+      file: src=/data/deploy/bookmarks/main
+            dest=/home/deploy/projects/bookmarks/target/data/main
+            owner={{target_user}}
+            group=webstack
+            state=link
+            mode=0775
+      sudo: true
+    
+    - name: sync files to host
+      sudo: false
+      local_action: >
+        command /usr/bin/rsync -az
+          --rsync-path="sudo -n rsync"
+          -e "ssh -p {{ ansible_port | default(ansible_ssh_port) }}"
+          --include='/run.properties'
+          --include='/ngx-upstream/bookmarks/upstream.conf'
+          --include='/bookmarks-all/target/*jarjar.jar'
+          --include='/bookmarks-ts/g/user/UserServices.json'
+          --include='/bookmarks-ts/dist/**'
+          --include='/bookmarks-ts/*.html'
+          --include='/bookmarks-ts/favicon.ico'
+          {% if nw %}
+          --include='/bookmarks-ts/package.json'
+          --include='/bookmarks-ts/nw/*.js'
+          --include='/bookmarks-ts/nw/*.png'
+          --include='/bookmarks-ts/nw/*.desktop'
+          {% endif %}
+          --filter='-! */'
+          --prune-empty-dirs
+          --chown={{target_user}}:webstack
+          --chmod=u=rwX,g=rwX,o=rX
+          {{project_dir}}/
+          deploy@{{inventory_hostname}}:/home/deploy/projects/bookmarks/{{deploy_rev}}
+      register: rsync
+      changed_when: "'Number of files transferred: 0' not in rsync.stdout"
+    
+    - name: nginx domain
+      lineinfile: dest=/home/deploy/projects/bookmarks/{{deploy_rev}}/ngx-upstream/bookmarks/upstream.conf
+                  regexp="^  server_name bookmarks.local;$"
+                  line="  server_name {{ngx_domain}};{% if ngx_certs_dir %} listen 443 ssl http2; ssl_certificate {{ngx_certs_dir}}/cert_chain.crt; ssl_certificate_key {{ngx_certs_dir}}/private.key;{% endif %}"
+      sudo: true
+    
+    - name: link nginx www dir
+      file: src=/home/deploy/projects/bookmarks/{{deploy_rev}}/bookmarks-ts
+            dest=/home/deploy/projects/bookmarks/{{deploy_rev}}/ngx-upstream/bookmarks/www
+            owner={{target_user}}
+            group=webstack
+            state=link
+            mode=0775
+      sudo: true
+    
+    - name: link target dir
+      file: src=/home/deploy/projects/bookmarks/target
+            dest=/home/deploy/projects/bookmarks/{{deploy_rev}}/target 
+            owner={{target_user}}
+            group=webstack 
+            state=link 
+            mode=0775
+      sudo: true
+    
+    - name: link current rev
+      file: src=/home/deploy/projects/bookmarks/{{deploy_rev}}
+            dest=/home/deploy/projects/bookmarks/current
+            owner={{target_user}}
+            group=webstack
+            state=link
+            mode=0775
+      sudo: true
+    
+    - name: link upstream dir
+      file: src=/home/deploy/projects/bookmarks/current/ngx-upstream/bookmarks
+            dest=/home/deploy/nginx/ngx-upstream/bookmarks
+            owner={{target_user}}
+            group=webstack
+            state=link
+            mode=0775
+      sudo: true
+    
+    - name: link /opt/bookmarks
+      file: src=/home/deploy/projects/bookmarks/current
+            dest=/opt/bookmarks
+            owner={{target_user}}
+            group=webstack
+            state=link
+            mode=0775
+      sudo: true
+      when: nw and target_user != 'bookmarks' and (nw_autostart or nw_desktop)
+    
+    - name: link desktop autostart
+      file: src=/opt/bookmarks/bookmarks-ts/nw/bookmarks-as.desktop
+            dest={{item}}/bookmarks-as.desktop
+            owner={{target_user}}
+            group=webstack
+            state=link
+            mode=0775
+      with_items:
+        - /home/{{target_user}}/.config/autostart
+        - /home/{{target_user}}/.local/share/applications
+        - /home/{{target_user}}/Desktop
+      sudo: true
+      when: nw and target_user != 'bookmarks' and nw_desktop and nw_autostart
+    
+    - name: link desktop regular
+      file: src=/opt/bookmarks/bookmarks-ts/nw/{{item}}.desktop
+            dest=/home/{{target_user}}/Desktop/{{item}}.desktop
+            owner={{target_user}}
+            group=webstack
+            state=link
+            mode=0775
+      with_items:
+        - bookmarks
+      sudo: true
+      when: nw and target_user != 'bookmarks' and nw_desktop and not nw_autostart
+    
+    - name: systemd template
+      template: src=systemd/bookmarks.service dest=/etc/systemd/system/bookmarks.service owner=deploy group=deploy
+      sudo: true
+    
+    - name: stop nginx
+      command: systemctl stop nginx
+      ignore_errors: true
+      sudo: true
+      when: deploy_type != '0'
+    
+    - name: restart bookmarks
+      command: systemctl restart bookmarks
+      ignore_errors: true
+      sudo: true
+      when: deploy_type != '0'
+    
+    - name: start nginx
+      command: systemctl start nginx
+      ignore_errors: true
+      sudo: true
+      when: deploy_type != '0'
+
