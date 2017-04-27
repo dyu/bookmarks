@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ $# -lt 2 ] && echo '1st arg (in file) and 2nd arg (out dir) is required.' && exit 1
+[ $# -lt 2 ] && echo '1st arg (in file) and 2nd arg (out dir) are required.' && exit 1
 
 JAR=target/bookmarks-importer-jarjar.jar
 CLI_DIR=../bookmarks-cli
