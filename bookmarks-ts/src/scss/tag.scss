@@ -2,7 +2,12 @@ div.tags.inline {
   margin-top: 0.3em;
 }
 
-div.tags.noop i {
+div.tags i.icon.action {
+  cursor: pointer;
+  margin-right: 0;
+}
+
+div.tags.noop i.icon.action {
   display: none;
 }
 
@@ -34,6 +39,7 @@ div.dcontainer .ui.label.tag {
 div.tags > .ui.label {
   border: 1px solid $primary-color;
   text-transform: none;
+  font-size: 0.85em;
 }
 
 ul.dropdown-menu > li.tags {
