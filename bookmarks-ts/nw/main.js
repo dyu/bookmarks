@@ -108,10 +108,10 @@ function onOpen(w) {
     if (bookmarkletOnly) {
         w.resizeTo(340, 100)
     } else {
-        w.resizeTo(992, 710)
+        w.resizeTo(1005, 710)
     }
     
-    w.moveTo(360, 0)
+    w.moveTo(273, 0)
     if (pdb)
         w.on('close', onClose)
     w.show()
