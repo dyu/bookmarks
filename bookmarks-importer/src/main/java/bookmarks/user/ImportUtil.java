@@ -19,18 +19,26 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
+import com.dyuproject.protostuff.ByteString;
+import com.dyuproject.protostuff.IntSerializer;
 import com.dyuproject.protostuff.LongHashSet;
-import com.dyuproject.protostuffdb.TsKeyUtil;
 import com.dyuproject.protostuffdb.DSRuntimeExceptions;
 import com.dyuproject.protostuffdb.Datastore;
+import com.dyuproject.protostuffdb.DateTimeUtil;
 import com.dyuproject.protostuffdb.EntityMetadata;
 import com.dyuproject.protostuffdb.HasKeyAndTs;
 import com.dyuproject.protostuffdb.KeyUtil;
 import com.dyuproject.protostuffdb.Op;
 import com.dyuproject.protostuffdb.OpChain;
+import com.dyuproject.protostuffdb.SerializedValueUtil;
+import com.dyuproject.protostuffdb.TsKeyUtil;
+import com.dyuproject.protostuffdb.ValueUtil;
+import com.dyuproject.protostuffdb.Visitor;
 import com.dyuproject.protostuffdb.WriteContext;
+import com.dyuproject.protostuffdb.tag.TagUtil;
 
 /**
  * TODO
@@ -80,12 +88,9 @@ public final class ImportUtil
         
         for (BookmarkTag bt : sorted)
         {
-            byte[] key = bt.key;
-            BookmarkUtil.normalize(bt);
-            bt.provide(bt.ts, bt.id);
-            // set to zero
-            bt.ts = 0;
-            store.insertWithKey(key, bt, bt.em(), null, context);
+            // insert with the actual key (sequence)
+            store.insertWithKey(context.newEntityKey(BookmarkTag.EM), 
+                    bt.provide(bt.ts, bt.id), bt.em(), null, context);
         }
         
         endNs = System.nanoTime();
@@ -141,7 +146,7 @@ public final class ImportUtil
                 bt = new BookmarkTag(tag);
                 bt.key = sorted ? newKey(ts, context.exclusiveLast, keySuffixSet, 
                         bt, BookmarkTag.EM, bt.name, concurrentStart++) : 
-                            TsKeyUtil.newKey(BookmarkTag.EM, context);
+                            TsKeyUtil.newKey(BookmarkTag.EM, context, bt);
                 bt.id = ++tagCurrentId;
                 tagMap.put(bt.name, bt);
             }
@@ -196,16 +201,9 @@ public final class ImportUtil
         // supply the ts and key
         final byte[] key = newKey(ts, context.exclusiveLast, keySuffixSet, 
                 entry, BookmarkEntry.EM, entry.url, concurrentStart);
-        try
+        
+        if (!insert(key, pnew, store, context))
         {
-            if (!store.chain(null, OP_ENTRY_NEW, pnew, 0, context, key))
-                throw new RuntimeException("Failed to insert entry: " + url);
-        }
-        catch (DSRuntimeExceptions.Operation e)
-        {
-            if (!e.getMessage().startsWith("That url already exists"))
-                throw e;
-            
             System.err.println("Duplicate: " + pnew.tags.size() + " | " + 
                     tagCSV + " | " + url);
         }
@@ -249,26 +247,106 @@ public final class ImportUtil
         throw new RuntimeException("Could not add " + entryName + " due to timestamp.");
     }
     
-    static final Op<BookmarkEntry.PNew> OP_ENTRY_NEW = new Op<BookmarkEntry.PNew>()
+    static boolean insert(final byte[] key, final BookmarkEntry.PNew param, 
+            Datastore store, WriteContext context)
+    {
+        if (store.exists(true, context, 
+                BookmarkEntry.$$URL(context.kb(), param.p.url).$push()))
+        {
+            return false;
+        }
+        
+        byte[] ser_tags = listToBytes(param.tags);
+        long ts = param.p.ts;
+        final BookmarkEntry entity = param.p.provide(
+                ts,
+                param.p.normalized,
+                param.p.identifier,
+                ser_tags,
+                ser_tags.length/4,
+                param.p.www,
+                DateTimeUtil.startOfDayMS(ts),
+                ts);
+        
+        store.insertWithKey(key, entity, entity.em(), null, context);
+        return true;
+    }
+    
+    private static byte[] listToBytes(List<Integer> tags)
+    {
+        if (tags == null || tags.isEmpty())
+            return ByteString.EMPTY_BYTE_ARRAY;
+        
+        byte[] ser_tags = new byte[4 * tags.size()];
+        int i = 0;
+        for (int tag : tags)
+        {
+            IntSerializer.writeInt32LE(tag, ser_tags, i * 4);
+            i++;
+        }
+        
+        return ser_tags;
+    }
+    
+    private static ArrayList<Integer> bytesToList(byte[] v, int voffset, int vlen)
+    {
+        final int len = vlen / 4;
+        final ArrayList<Integer> list = new ArrayList<Integer>(len);
+        
+        for (int i = 0; i < len; i++, voffset += 4)
+            list.add(ValueUtil.toInt32LE(v, voffset));
+        
+        return list;
+    }
+    
+    public static void addEntries(final Datastore store, final WriteContext context, 
+            Datastore tmp, WriteContext tmpContext)
+    {
+        tmp.visitKind(BookmarkEntry.EM, -1, false, null, null, tmpContext, new Visitor<Void>()
+        {
+            @Override
+            public boolean visit(byte[] key, byte[] v, int voffset, int vlen, 
+                    Void param, int index)
+            {
+                // fill with the actual key (sequence)
+                context.fillEntityKey(key, BookmarkEntry.EM, 0);
+                
+                int tagCount = SerializedValueUtil.asInt32(BookmarkEntry.VO_TAG_COUNT, 
+                        v, voffset, vlen);
+                if (tagCount != 0)
+                {
+                    int offset = SerializedValueUtil.readByteArrayOffsetWithTypeAsSize(
+                            BookmarkEntry.FN_SER_TAGS, v, voffset, vlen, context),
+                            len = context.type;
+                    
+                    if (tagCount != (len / 4))
+                        throw new RuntimeException("Corrupt data.");
+                    
+                    if (!store.chain(null, OP_TAG_INDEX, bytesToList(v, offset, len), 0, context, key))
+                        throw new RuntimeException("Failed to insert tag indexes");
+                }
+                
+                BookmarkEntry entity = context.parseFrom(v, voffset, vlen, 
+                        BookmarkEntry.EM);
+                
+                store.insertWithKey(key, entity, entity.em(), null, context);
+                
+                // return false to continue visit
+                return false;
+            }
+        }, null);
+    }
+    
+    static final Op<List<Integer>> OP_TAG_INDEX = new Op<List<Integer>>()
     {
         @Override
-        public boolean handle(final OpChain chain, final byte[] key, 
+        public boolean handle(OpChain chain, byte[] key, 
                 byte[] value, int offset, int len,
-                final BookmarkEntry.PNew param)
+                List<Integer> tags)
         {
-            final long now = chain.context.ts(BookmarkEntry.EM);
-            
-            final BookmarkEntry entity = BookmarkEntryOps.validateAndProvide(
-                    param.p.ts, // timestamp override
-                    param,
-                    now,
-                    key, chain);
-            
-            // set to zero
-            entity.ts = 0;
-            
-            return chain.insertWithKey(key, entity, BookmarkEntry.EM, 
-                    null, null, null);
+            long now = chain.context.ts(BookmarkEntry.EM);
+            return null != TagUtil.insert(tags, BookmarkTagIndexFactory.INSTANCE, 
+                    chain, now, key);
         }
     };
 }

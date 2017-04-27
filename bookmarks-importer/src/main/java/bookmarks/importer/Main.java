@@ -88,6 +88,32 @@ public final class Main
                 new Date(System.currentTimeMillis()));
     }
     
+    static void persistTo(Datastore store, WriteContext context, 
+            Datastore tmp, WriteContext tmpContext, 
+            HashMap<String,BookmarkTag> tagMap)
+    {
+        ImportUtil.addEntries(store, context, tmp, tmpContext);
+        ImportUtil.addTags(store, context, tagMap.values());
+    }
+    
+    static File verifyDirs(String outDir)
+    {
+        final File dir = new File(outDir);
+        File f;
+        if (!dir.exists())
+        {
+            dir.mkdirs();
+        }
+        else if ((f=new File(dir, "tmp")).exists()
+                || (f=new File(dir, "user")).exists())
+        {
+            System.err.println(f + " already exists.");
+            System.exit(1);
+        }
+        
+        return dir;
+    }
+    
     static void run(InputStream in, String outDir, String typeOrUri) throws Exception
     {
         final boolean slashStart = typeOrUri.charAt(0) == '/';
@@ -95,30 +121,24 @@ public final class Main
                 Importer.BUILTIN.valueOf(typeOrUri);
         
         final Document doc = Jsoup.parse(in, null, slashStart ? typeOrUri : "/");
-        final File dir = new File(outDir);
-        File f;
-        if (!dir.exists())
-            dir.mkdirs();
-        else if ((f=new File(dir, "user")).exists())
-        {
-            System.err.println(f + " already exists.");
-            System.exit(1);
-            return;
-        }
+        final File dir = verifyDirs(outDir);
         
         // load jni
         final WriteContext context = DSTool.CONTEXT;
         final LsmdbDatastoreManager manager = new LsmdbDatastoreManager(
                 Jni.BUFFERS[1], dir);
+        final WriteContext tmpContext = new WriteContext(
+                Jni.BUFFERS[2], 0, Jni.PARTITION_SIZE);
         final HashMap<String,BookmarkTag> tagMap = new HashMap<String,BookmarkTag>();
         Datastore store;
         try
         {
-            store = manager.getStore("user", LsmdbDatastoreManager.CREATE_IF_MISSING);
+            store = manager.getStore("tmp", LsmdbDatastoreManager.CREATE_IF_MISSING);
             
             importer.run(doc, tagMap, 0, store, context);
             
-            ImportUtil.addTags(store, context, tagMap.values());
+            persistTo(manager.getStore("user", LsmdbDatastoreManager.CREATE_IF_MISSING),
+                    context, store, tmpContext, tagMap);
             
             System.err.println("Successfully imported to " + outDir);
         }
@@ -139,22 +159,15 @@ public final class Main
             return;
         }
         
-        String outDir = args[offset++];
-        final File dir = new File(outDir);
-        File f;
-        if (!dir.exists())
-            dir.mkdirs();
-        else if ((f=new File(dir, "user")).exists())
-        {
-            System.err.println(f + " already exists.");
-            System.exit(1);
-            return;
-        }
+        final String outDir = args[offset++];
+        final File dir = verifyDirs(outDir);
         
         // load jni
         final WriteContext context = DSTool.CONTEXT;
         final LsmdbDatastoreManager manager = new LsmdbDatastoreManager(
                 Jni.BUFFERS[1], dir);
+        final WriteContext tmpContext = new WriteContext(
+                Jni.BUFFERS[2], 0, Jni.PARTITION_SIZE);
         final HashMap<String,BookmarkTag> tagMap = new HashMap<String,BookmarkTag>();
         int tagCurrentId = 0;
         final Datastore store;
@@ -163,7 +176,7 @@ public final class Main
         Document doc;
         try
         {
-            store = manager.getStore("user", LsmdbDatastoreManager.CREATE_IF_MISSING);
+            store = manager.getStore("tmp", LsmdbDatastoreManager.CREATE_IF_MISSING);
             for (int i = 0, len = types.length; i < len; i++)
             {
                 importer = Importer.BUILTIN.valueOf(types[i]);
@@ -180,7 +193,8 @@ public final class Main
                 }
             }
             
-            ImportUtil.addTags(store, context, tagMap.values());
+            persistTo(manager.getStore("user", LsmdbDatastoreManager.CREATE_IF_MISSING),
+                    context, store, tmpContext, tagMap);
             
             System.err.println("Successfully imported to " + outDir);
         }

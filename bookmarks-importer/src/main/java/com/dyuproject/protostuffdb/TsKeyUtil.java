@@ -24,10 +24,12 @@ public final class TsKeyUtil
 {
     private TsKeyUtil() {}
     
-    public static byte[] newKey(final EntityMetadata<?> em, WriteContext context)
+    public static <T extends Entity<T>> byte[] newKey(final EntityMetadata<T> em, 
+            WriteContext context,
+            T entity)
     {
         byte[] key = new byte[9];
-        context.fillEntityKey(key, em.kind, context.ts(em), -1);
+        entity.setTs(context.fillEntityKey(key, em.kind, context.ts(em), -1));
         return key;
     }
 }
