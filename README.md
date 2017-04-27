@@ -52,6 +52,11 @@ cd bookmarks-ts
 nw .
 ```
 
+### To setup the bookmarklet
+```sh
+nw . b
+```
+
 ## Packaging for desktop (nwjs)
 Exec
 ```sh
