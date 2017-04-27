@@ -142,7 +142,7 @@ export class BookmarkTagView {
     }
 
     lazy_init(from_activate?: boolean) {
-        if (!from_activate && this.lazy_count++)
+        if (!from_activate && this.lazy_count++ && !this.pstore.isEmpty())
             return
 
         let pager = this.pager

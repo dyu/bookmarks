@@ -174,7 +174,7 @@ export class BookmarkEntryView {
     }
 
     lazy_init(from_activate?: boolean) {
-        if (!from_activate && this.lazy_count++)
+        if (!from_activate && this.lazy_count++ && !this.pstore.isEmpty())
             return
         
         this.pstore.requestNewer()
