@@ -1,10 +1,15 @@
 declare function require(path: string): any;
 
-let host = window.location.host,
-    colon = host.lastIndexOf(':'),
-    rpc_port = parseInt(host.substring(colon + 1), 10) - 1
+function resolveRpcHost(host: string) {
+    let colon = host.lastIndexOf(':'),
+        rpc_port = parseInt(host.substring(colon + 1), 10) - 1
+    
+    return 'http://' + host.substring(0, colon + 1) + rpc_port
+}
 
-window['rpc_host'] = 'http://' + host.substring(0, colon + 1) + rpc_port
+let rpc_host = window['rpc_host']
+if (!rpc_host)
+    window['rpc_host'] = resolveRpcHost(window.location.host)
 
 import * as Vue from 'vue'
 
