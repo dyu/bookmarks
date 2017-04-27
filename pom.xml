@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>bookmarks</groupId>
   <artifactId>bookmarks</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>bookmarks</name>
   <description>a simple self-hosted bookmarking app that can import bookmarks from delicious or chrome</description>
