@@ -725,6 +725,13 @@
   }
 }
 
+.right.menu > .item > .ui.small.left.icon.input {
+  margin-bottom: 0;
+  > input {
+    max-width: 8.5em;
+  }
+}
+
 .ui.tiny.icon.buttons > button.button {
   padding: 0.15em 0.15em 0.1em 0.3em;
   margin: 0;
