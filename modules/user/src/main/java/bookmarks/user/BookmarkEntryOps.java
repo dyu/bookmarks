@@ -83,15 +83,6 @@ public final class BookmarkEntryOps
     static BookmarkEntry validateAndProvide(BookmarkEntry.PNew param, 
             final long now, final byte[] key, OpChain chain)
     {
-        return validateAndProvide(now, param, now, key, chain);
-    }
-
-    /**
-     * Timestamp override called by import util.
-     */
-    static BookmarkEntry validateAndProvide(final long ts, BookmarkEntry.PNew param, 
-            final long now, final byte[] key, OpChain chain)
-    {
         if (chain.vs().exists(true, 
                 BookmarkEntry.$$URL(chain.context.kb(), param.p.url).$push()))
         {
@@ -111,8 +102,8 @@ public final class BookmarkEntryOps
                 serTags,
                 tagCount,
                 param.p.www,
-                DateTimeUtil.startOfDayMS(ts),
-                ts);
+                DateTimeUtil.startOfDayMS(now),
+                now);
     }
     
     static boolean updateTag(UpdateTag req, 
