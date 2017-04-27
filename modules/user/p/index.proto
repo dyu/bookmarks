@@ -316,7 +316,7 @@ message BookmarkEntry {
   }
 }
 
-@Entity(kind = 21)
+@Entity(kind = 21, seq = true)
 message TagIndex1 {
   
   service ForUser {
@@ -346,7 +346,7 @@ message TagIndex1 {
   message PList { repeated TagIndex1 p = 1; }
 }
 
-@Entity(kind = 22)
+@Entity(kind = 22, seq = true)
 message TagIndex2 {
   
   service ForUser {
@@ -378,7 +378,7 @@ message TagIndex2 {
   message PList { repeated TagIndex2 p = 1; }
 }
 
-@Entity(kind = 23)
+@Entity(kind = 23, seq = true)
 message TagIndex3 {
   
   service ForUser {
@@ -412,7 +412,7 @@ message TagIndex3 {
   message PList { repeated TagIndex3 p = 1; }
 }
 
-@Entity(kind = 24)
+@Entity(kind = 24, seq = true)
 message TagIndex4 {
   
   service ForUser {
