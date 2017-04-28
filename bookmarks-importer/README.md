@@ -1,3 +1,8 @@
+## Dependency
+
+The shared lib /opt/protostuffdb/lib/libprotostuffjni.so should exist.
+Download it from [here](https://1drv.ms/f/s!Ah8UGrNGpqlzeAVPYtkNffvNZBo)
+
 ## Usage
 
 ```sh
