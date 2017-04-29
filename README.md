@@ -58,6 +58,7 @@ nw .
 
 ### To setup the bookmarklet
 ```sh
+# close the nw window if you ran 'nw .' prior to this
 nw . b
 ```
 
