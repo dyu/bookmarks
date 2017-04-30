@@ -56,9 +56,8 @@
           --include='/bookmarks-ts/favicon.ico'
           {% if nw %}
           --include='/bookmarks-ts/package.json'
-          --include='/bookmarks-ts/nw/*.js'
-          --include='/bookmarks-ts/nw/*.png'
-          --include='/bookmarks-ts/nw/*.desktop'
+          --include='/bookmarks-ts/nw/**'
+          --include='/bookmarks-ts/bookmarklet/index.html'
           {% endif %}
           --filter='-! */'
           --prune-empty-dirs
