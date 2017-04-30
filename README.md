@@ -55,6 +55,8 @@ cd bookmarks-ts
 ./build.sh
 # finally, run your production app
 nw .
+# or
+node chrome-app.js
 ```
 
 ### To setup the bookmarklet
