@@ -26,7 +26,6 @@ var fs = require('fs'),
     ],
     lookup_bins = win32 ? win_bins : linux_bins,
     pdb
-    //wnd,
 
 function println(str) {
     process.stdout.write(str + '\n')
