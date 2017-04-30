@@ -14,6 +14,7 @@ To import from delicious or chrome, see [bookmarks-importer/README.md](bookmarks
 ## Desktop runtime dependencies
 - jdk7
 - [nwjs](https://nwjs.io/) [0.19.5](https://dl.nwjs.io/v0.19.5/) or higher
+  > (optional, you can launch the app via ```node bookmarks-ts/chrome-app.js```)
 
 ## Dev requirements
 - [protostuffdb](https://gitlab.com/dyu/protostuffdb)
