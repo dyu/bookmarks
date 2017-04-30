@@ -4,6 +4,16 @@ declare var global
 let rpc_host: string = global['rpc_host'],
     port = rpc_host.substring(rpc_host.lastIndexOf(':') + 1),
     ns = require('node-static'),
-    fileServer = new ns.Server('.')
+    www_redirect = global['www_redirect'],
+    fileServer = new ns.Server(global['www_dir'])
 
-require('http').createServer((req, res) => fileServer.serve(req, res)).listen(parseInt(port, 10) + 1)
+function handleRedirect(req, res) {
+    if (req.url === '/') {
+        res.writeHead(302, { 'Location': www_redirect })
+        res.end()
+    } else {
+        fileServer.serve(req, res)
+    }
+}
+
+require('http').createServer(www_redirect ? handleRedirect : fileServer.serve.bind(fileServer)).listen(parseInt(port, 10) + 1)

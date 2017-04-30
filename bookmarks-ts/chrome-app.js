@@ -3,22 +3,30 @@ var fs = require('fs'),
     spawn = require('child_process').spawn,
     os = require('os'),
     win32 = os.platform() === 'win32',
-    //argv = argv = process.argv.slice(2),
-    //bookmarkletOnly = argv.length > 0 && argv[0] === 'b',
+    child_cwd = path.join(__dirname, '..'),
+    str_port = fs.readFileSync(path.join(child_cwd, 'PORT.txt'), 'utf8').trim(),
+    argv = argv = process.argv.slice(2),
+    arg0 = argv.length > 0 && argv[0],
+    arg1 = argv.length > 1 && argv[1],
+    bookmarkletOnly = arg0 && arg0 === 'b',
+    provided_bin = !bookmarkletOnly && !arg1 ? arg0 : arg1,
+    chromium_bin = provided_bin,
     start_str = 'jni rpc: ',
     pdb_started = false,
     hide_backup = false,
+    win_bins = [
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+    ],
     linux_bins = [
         '/opt/chromium/chrome',
         '/usr/bin/chromium-browser',
         '/usr/bin/chromium',
         '/usr/bin/google-chrome'
     ],
-    chromium_bin,
-    pdb,
+    lookup_bins = win32 ? win_bins : linux_bins,
+    pdb
     //wnd,
-    rpc_port,
-    rpc_host
 
 function println(str) {
     process.stdout.write(str + '\n')
@@ -46,12 +54,10 @@ function findSubDir(baseDir, subDirPrefix) {
 }
 
 function startProtostuffdb() {
-    var child_cwd = path.join(__dirname, '..'),
-        bin = path.join(child_cwd, 'target/protostuffdb'),
-        port = fs.readFileSync(path.join(child_cwd, 'PORT.txt'), 'utf8').trim(),
+    var bin = path.join(child_cwd, 'target/protostuffdb'),
         raw_args = fs.readFileSync(path.join(child_cwd, 'ARGS.txt'), 'utf8').trim(),
         extra_args = raw_args.split(' '),
-        child_args = getChildArgs([port, path.join(__dirname, 'g/user/UserServices.json')], extra_args, child_cwd),
+        child_args = getChildArgs([str_port, path.join(__dirname, 'g/user/UserServices.json')], extra_args, child_cwd),
         target_cwd,
         p
 
@@ -81,8 +87,6 @@ function startProtostuffdb() {
     pdb = spawn(bin, child_args, { cwd: target_cwd })
     pdb.stdout.on('data', onChildOut)
     pdb.on('close', onChildClose)
-    rpc_port = parseInt(port, 10)
-    rpc_host = 'http://127.0.0.1:' + port
 }
 
 function isStart(data) {
@@ -116,20 +120,30 @@ function resolveBin(p, c) {
 }
 
 function openWindow() {
-    global.rpc_host = rpc_host
+    global.rpc_host = 'http://127.0.0.1:' + str_port
     global.hide_backup = hide_backup
-
+    global.www_dir = __dirname
+    if (bookmarkletOnly)
+        global.www_redirect = '/bookmarklet/'
+    
     require('./dist/bookmarklet-nw')
     
-    spawn(chromium_bin, ['--app=http://127.0.0.1:' + (rpc_port + 1), '--disk-cache-size 0', '--no-proxy-server'])
+    var args = ['--app=http://127.0.0.1:' + (parseInt(str_port, 10) + 1), '--disk-cache-size 0', '--no-proxy-server'],
+        home
+    
+    if (!provided_bin && (home = process.env.HOME))
+        args.push('--user-data-dir=' + path.join(home, bookmarkletOnly ? '.bookmarklet' : '.bookmarks'))
+    
+    spawn(chromium_bin, args)
         .on('exit', onChromiumExit)
         .stderr.pipe(process.stderr)
 }
 
-if (win32) {
-    chromium_bin = 'google-chrome'
-} else if (!(chromium_bin = linux_bins.reduce(resolveBin, null))) {
-    println('chromium bin not found.')
+// check if provided and exists
+if ((chromium_bin && !fs.existsSync(chromium_bin)) || 
+        // check if resolved
+        (!chromium_bin && !(chromium_bin = lookup_bins.reduce(resolveBin, null)))) {
+    println('chrome/chromium executable not found.')
     return
 }
 
