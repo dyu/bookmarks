@@ -63,6 +63,8 @@ node chrome-app.js
 ```sh
 # close the nw window if you ran 'nw .' prior to this
 nw . b
+# or
+node chrome-app.js b
 ```
 
 ## Packaging for desktop (nwjs)
