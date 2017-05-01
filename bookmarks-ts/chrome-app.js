@@ -15,6 +15,7 @@ var fs = require('fs'),
     pdb_started = false,
     hide_backup = false,
     win_bins = [
+        'C:\\opt\\chromium\\chrome.exe',
         'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
         'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
     ],
