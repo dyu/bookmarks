@@ -4,6 +4,7 @@ run.properties
 bookmarks-all/target/bookmarks-all-jarjar.jar
 bookmarks-ts/package.json
 bookmarks-ts/index.html
+bookmarks-ts/favicon.ico
 bookmarks-ts/chrome-app.js
 bookmarks-ts/dist
 bookmarks-ts/nw

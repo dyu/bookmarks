@@ -1,3 +1,7 @@
+## 0.3.0
+
+* include favicon in dist archive
+
 ## 0.2.0
 
 * selective import via -Dtag_regex system property
