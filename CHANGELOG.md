@@ -1,6 +1,7 @@
 ## 0.3.0
 
 * include favicon in dist archive
+* add windows vbscript nodejs launcher
 
 ## 0.2.0 (2017-04-30)
 
