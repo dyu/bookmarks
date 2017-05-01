@@ -11,4 +11,4 @@ tar -cvzf $TAR_FILE target/protostuffdb -T scripts/files.txt
 
 echo "\n========== zip"
 rm -f $ZIP_FILE
-zip -r $ZIP_FILE target/protostuffdb.exe -@ < scripts/files.txt
+zip -r $ZIP_FILE target/protostuffdb.exe bookmarks-ts/node-chrome-app.vbs -@ < scripts/files.txt
