@@ -11,5 +11,6 @@ offsite_backup_base=
 ngx_domain=bookmarks.intra
 ngx_certs_dir=
 target_user=bookmarks
+assets_only=0
 ```
 

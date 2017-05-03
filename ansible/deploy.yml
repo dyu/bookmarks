@@ -19,12 +19,18 @@
       sudo: true
       when: target_user != 'bookmarks'
     
-    - name: project dirs
+    - name: data dirs
       file: path={{item}} owner={{target_user}} group=webstack state=directory mode=0775
       with_items:
         - /data/deploy/bookmarks/main
         - /data/deploy/bookmarks/prev
         - /data/deploy/bookmarks/next
+      sudo: true
+      when: not assets_only
+    
+    - name: project dirs
+      file: path={{item}} owner={{target_user}} group=webstack state=directory mode=0775
+      with_items:
         - /home/deploy/backups/bookmarks
         - /home/deploy/projects/bookmarks
         - /home/deploy/projects/bookmarks/target
@@ -40,6 +46,7 @@
             state=link
             mode=0775
       sudo: true
+      when: not assets_only
     
     - name: sync files to host
       sudo: false
@@ -47,10 +54,12 @@
         command /usr/bin/rsync -az
           --rsync-path="sudo -n rsync"
           -e "ssh -p {{ ansible_port | default(ansible_ssh_port) }}"
+          {% if not assets_only %}
           --include='/run.properties'
           --include='/ngx-upstream/bookmarks/upstream.conf'
           --include='/bookmarks-all/target/*jarjar.jar'
           --include='/bookmarks-ts/g/user/UserServices.json'
+          {% endif %}
           --include='/bookmarks-ts/dist/**'
           --include='/bookmarks-ts/*.html'
           --include='/bookmarks-ts/favicon.ico'
@@ -73,6 +82,7 @@
                   regexp="^  server_name bookmarks.local;$"
                   line="  server_name {{ngx_domain}};{% if ngx_certs_dir %} listen 443 ssl http2; ssl_certificate {{ngx_certs_dir}}/cert_chain.crt; ssl_certificate_key {{ngx_certs_dir}}/private.key;{% endif %}"
       sudo: true
+      when: not assets_only
     
     - name: link nginx www dir
       file: src=/home/deploy/projects/bookmarks/{{deploy_rev}}/bookmarks-ts
@@ -82,6 +92,7 @@
             state=link
             mode=0775
       sudo: true
+      when: not assets_only
     
     - name: link target dir
       file: src=/home/deploy/projects/bookmarks/target
@@ -100,6 +111,7 @@
             state=link
             mode=0775
       sudo: true
+      when: not assets_only
     
     - name: link upstream dir
       file: src=/home/deploy/projects/bookmarks/current/ngx-upstream/bookmarks
@@ -109,6 +121,7 @@
             state=link
             mode=0775
       sudo: true
+      when: not assets_only
     
     - name: link /opt/bookmarks
       file: src=/home/deploy/projects/bookmarks/current
@@ -160,7 +173,7 @@
       command: systemctl restart bookmarks
       ignore_errors: true
       sudo: true
-      when: deploy_type != '0'
+      when: not assets_only and deploy_type != '0'
     
     - name: start nginx
       command: systemctl start nginx
