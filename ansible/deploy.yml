@@ -102,6 +102,7 @@
             state=link 
             mode=0775
       sudo: true
+      when: not assets_only
     
     - name: link current rev
       file: src=/home/deploy/projects/bookmarks/{{deploy_rev}}
@@ -111,7 +112,6 @@
             state=link
             mode=0775
       sudo: true
-      when: not assets_only
     
     - name: link upstream dir
       file: src=/home/deploy/projects/bookmarks/current/ngx-upstream/bookmarks
