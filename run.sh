@@ -9,8 +9,7 @@ elif [ -e /opt/protostuffdb/bin/protostuffdb ]; then
 elif [ -e target/protostuffdb ]; then
     BIN=./target/protostuffdb
 else
-    echo 'The target/protostuffdb binary must exist.  Download that file from https://1drv.ms/f/s!Ah8UGrNGpqlzeAVPYtkNffvNZBo'
-    exit 1
+    echo 'The target/protostuffdb binary must exist' && exit 1
 fi
 
 DATA_DIR=target/data/main
