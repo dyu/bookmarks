@@ -1,7 +1,8 @@
-## Dependency
+## Setup
 
-The shared lib /opt/protostuffdb/lib/libprotostuffjni.so should exist.
-Download it from [here](https://1drv.ms/f/s!Ah8UGrNGpqlzeAVPYtkNffvNZBo)
+```sh
+sudo mkdir -p /opt/protostuffdb/lib && sudo cp ../target/libprotostuffjni.so /opt/protostuffdb/lib/
+```
 
 ## Usage
 
