@@ -113,7 +113,7 @@ export function newStore(self: View, fetch: FetchFn): PojoStore<user.BookmarkEnt
         onUpdate(message: user.BookmarkEntry, main: boolean, update: user.BookmarkEntry): boolean {
             let serTags = update[$0.serTags]
             if (serTags !== message[$0.serTags])
-                message['tags'] = toTagArray(serTags, message[M0.tags])
+                message['tags'] = toTagArray(serTags, update[M0.tags])
             else
                 updateTagStyle(message['tags'])
 

@@ -1,7 +1,8 @@
-## 0.3.0
+## 0.3.0 (2017-05-03)
 
 * include favicon in dist archive
 * add windows vbscript nodejs launcher
+* fix error on refresh after a tag is added
 
 ## 0.2.0 (2017-04-30)
 
