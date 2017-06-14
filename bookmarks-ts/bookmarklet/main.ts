@@ -15,7 +15,11 @@ import * as Vue from 'vue'
 
 let app = require('./App.vue')
 
-window['run'] = function(config) {
+let run
+window['run'] = run = function(config) {
     app.config(config)
     new Vue(app).$mount('#app')
 }
+
+let config = window['run_config']
+config && run(config)
