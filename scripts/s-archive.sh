@@ -2,7 +2,11 @@
 
 [ -e scripts ] || { echo 'Execute this script from root dir.'; exit 1; }
 
-TAR_FILE=target/bookmarks-linux-standalone-x64.tar.gz
+OUT_DIR=target/standalone
+
+[ -e $OUT_DIR ] || mkdir -p $OUT_DIR
+
+TAR_FILE=$OUT_DIR/bookmarks-linux-standalone-x64.tar.gz
 
 echo "========== tar.gz"
 rm -f $TAR_FILE

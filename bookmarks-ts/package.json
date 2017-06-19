@@ -1,8 +1,13 @@
 {
-  "name": "bookmarks-ts",
-  "description": "app using ts 2.0 and vue 2.0",
+  "name": "dyu-bookmarks",
+  "description": "standalone binaries for a bookmarking app (visit the project repo for docs on importing from delicious and chrome)",
   "author": "dyu",
-  "private": true,
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dyu/bookmarks.git"
+  },
   "main": "nw/main.js",
   "inject_js_start": "nw/start.js",
   "webkit": {
