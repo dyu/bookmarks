@@ -3,7 +3,7 @@
 a simple self-hosted bookmarking app that can import bookmarks from delicious and chrome
 
 ### Quickstart
-```
+```sh
 mkdir -p target/standalone && cd target/standalone
 wget https://unpkg.com/dyu-bookmarks@0.4.0/bin/bookmarks-linux-standalone-x64.tar.gz
 tar -xzf bookmarks-linux-standalone-x64.tar.gz
