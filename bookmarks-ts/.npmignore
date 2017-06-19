@@ -17,5 +17,4 @@ tsconfig.json
 tslint.json
 webpack.config.js
 yarn.lock
-dist/*.js
-dist/*.ttf
+dist
