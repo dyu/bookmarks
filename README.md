@@ -29,9 +29,9 @@ mkdir -p target/data/main
 echo "Your data lives in user/ dir.  Feel free to back it up." > target/data/main/README.txt
 
 # download protostuffdb
-yarn add protostuffdb@0.10.2 && mv node_modules/protostuffdb/dist/* target/ && rm -f package.json yarn.lock && rm -r node_modules
+yarn add protostuffdb@0.12.0 && mv node_modules/protostuffdb/dist/* target/ && rm -f package.json yarn.lock && rm -r node_modules
 
-wget -O target/fbsgen-ds.jar https://repo1.maven.org/maven2/com/dyuproject/fbsgen/ds/fbsgen-ds-fatjar/1.0.5/fbsgen-ds-fatjar-1.0.5.jar
+wget -O target/fbsgen-ds.jar https://repo1.maven.org/maven2/com/dyuproject/fbsgen/ds/fbsgen-ds-fatjar/1.0.7/fbsgen-ds-fatjar-1.0.7.jar
 ./modules/codegen.sh
 mvn install
 

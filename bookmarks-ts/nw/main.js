@@ -43,7 +43,7 @@ function startProtostuffdb() {
         port = fs.readFileSync(path.join(child_cwd, 'PORT.txt'), 'utf8').trim(),
         raw_args = fs.readFileSync(path.join(child_cwd, 'ARGS.txt'), 'utf8').trim(),
         extra_args = raw_args.split(' '),
-        child_args = getChildArgs([port, path.join(__dirname, 'g/user/UserServices.json')], extra_args, child_cwd),
+        child_args = getChildArgs(['127.0.0.1:' + port, path.join(__dirname, 'g/user/UserServices.json')], extra_args, child_cwd),
         target_cwd,
         p
 
