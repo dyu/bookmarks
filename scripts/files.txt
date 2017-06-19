@@ -1,13 +1,13 @@
 ARGS.txt
 PORT.txt
 run.properties
+target/data/main/README.txt
 bookmarks-all/target/bookmarks-all-jarjar.jar
 bookmarks-ts/package.json
 bookmarks-ts/index.html
 bookmarks-ts/favicon.ico
-bookmarks-ts/chrome-app.js
 bookmarks-ts/dist
-bookmarks-ts/nw
 bookmarks-ts/g/user/UserServices.json
 bookmarks-ts/bookmarklet/index.html
-target/data/main/README.txt
+bookmarks-ts/nw
+bookmarks-ts/chrome-app.js
