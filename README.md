@@ -1,6 +1,6 @@
 # bookmarks app
 
-a simple self-hosted bookmarking app that can import bookmarks from delicious or chrome
+a simple self-hosted bookmarking app that can import bookmarks from delicious and chrome
 
 ### Quickstart
 ```
@@ -14,7 +14,7 @@ tar -xzf bookmarks-linux-standalone-x64.tar.gz
 
 Here's the [demo](https://dyuproject.com/bookmarks/) with a matching [bookmarklet](https://dyuproject.com/bookmarklet/)
 
-To import from delicious or chrome, see [bookmarks-importer/README.md](bookmarks-importer/README.md)
+To import from delicious and/or chrome, see [bookmarks-importer/README.md](bookmarks-importer/README.md)
 
 ## Server runtime dependencies
 - jdk7
