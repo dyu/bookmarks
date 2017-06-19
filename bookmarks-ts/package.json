@@ -2,12 +2,13 @@
   "name": "dyu-bookmarks",
   "description": "standalone binaries for a bookmarking app (visit the project repo for docs on importing from delicious and chrome)",
   "author": "dyu",
-  "version": "0.0.1",
+  "version": "0.4.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/dyu/bookmarks.git"
   },
+  "files": ["bin"],
   "main": "nw/main.js",
   "inject_js_start": "nw/start.js",
   "webkit": {
