@@ -5,7 +5,7 @@
 BIN=target/hprotostuffdb-rjre
 DATA_DIR=target/data/main
 JAR=bookmarks-all/target/bookmarks-all-jarjar.jar
-ASSETS=-Dprotostuffdb.assets_dir=bookmarks-ts
+ASSETS=-Dprotostuffdb.assets_dir=bookmarks-ts/
 ARGS=$(cat ARGS.txt)
 PORT=$(cat PORT.txt)
 
