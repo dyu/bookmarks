@@ -3,11 +3,11 @@ PORT.txt
 run.properties
 target/data/main/README.txt
 bookmarks-all/target/bookmarks-all-jarjar.jar
-bookmarks-ts/package.json
+bookmarks-ts/bookmarklet/index.html
 bookmarks-ts/index.html
 bookmarks-ts/favicon.ico
 bookmarks-ts/dist
 bookmarks-ts/g/user/UserServices.json
-bookmarks-ts/bookmarklet/index.html
+bookmarks-ts/package.json
 bookmarks-ts/nw
 bookmarks-ts/chrome-app.js
