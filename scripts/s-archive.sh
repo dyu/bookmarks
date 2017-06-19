@@ -2,7 +2,7 @@
 
 [ -e scripts ] || { echo 'Execute this script from root dir.'; exit 1; }
 
-OUT_DIR=target/standalone
+OUT_DIR=target/bin
 
 [ -e $OUT_DIR ] || mkdir -p $OUT_DIR
 

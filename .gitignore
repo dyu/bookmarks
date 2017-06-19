@@ -10,4 +10,4 @@ target
 .pub
 .generated
 /ansible/hosts.ini
-/bookmarks-ts/bookmarks-linux-standalone-x64.tar.gz
+/bookmarks-ts/bin/*.tar.gz
