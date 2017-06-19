@@ -8,8 +8,10 @@ OUT_DIR=target/standalone
 
 TAR_FILE=$OUT_DIR/bookmarks-linux-standalone-x64.tar.gz
 
+DIST="bookmarks-ts/dist/build.js bookmarks-ts/dist/bookmarklet.js bookmarks-ts/dist/*.ttf"
+
 echo "========== tar.gz"
 rm -f $TAR_FILE
 echo '#!/bin/sh' > start.sh && tail --lines=+4 scripts/s-start.sh >> start.sh && chmod +x start.sh && \
-tar -cvzf $TAR_FILE start.sh target/hprotostuffdb-rjre target/jre/*/ -T scripts/files.txt
+    head --lines=-4 scripts/files.txt | tar -cvzf $TAR_FILE start.sh target/hprotostuffdb-rjre target/jre/*/ $DIST -T -
 rm start.sh
