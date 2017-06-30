@@ -26,7 +26,6 @@ import { qd, QForm } from '../../g/user/BookmarkTagQForm'
 import * as qform from 'vueds-ui/lib/tpl/legacy/qform'
 
 const $ = user.BookmarkTag,
-    $$ = $.$,
     $0 = $.$descriptor.$
 
 const FETCH_INITIAL = 900,
@@ -263,7 +262,7 @@ export default component({
         ${icons.timeago({ pojo: 'pojo' })}
       </div>
       <div class="content main">
-        <span :style="{ color: '#' + (pojo.${$$.color} || '555555') }">{{ pojo.${$$.name} }}</span>
+        <span :style="{ color: '#' + (pojo.${$.$.color} || '555555') }">{{ pojo.${$.$.name} }}</span>
       </div>
       <div v-show="pojo._.state & ${PojoState.UPDATE}" v-append:bookmark-tag-detail="pojo._.state & ${PojoState.UPDATE}"></div>
     `

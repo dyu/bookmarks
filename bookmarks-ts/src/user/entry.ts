@@ -19,11 +19,10 @@ import * as pager_controls from 'vueds-ui/lib/tpl/legacy/pager_controls'
 import * as icons from 'vueds-ui/lib/tpl/legacy/icons'
 
 const $ = user.BookmarkEntry,
-    $$ = $.$,
     $0 = $.$descriptor.$,
     M0 = $.M.$descriptor.$,
-    Item$ = $.Item.$,
-    Item0 = $.Item.$descriptor.$
+    Item = $.Item,
+    Item0 = Item.$descriptor.$
 
 interface View {
     pager: Pager
@@ -281,20 +280,20 @@ ${pager_controls.main({ pager: 'pager', top: true })}
 ${list.main({ pager: 'pager' }, `
   <div class="content right floated">
     <span class="alt">${icons.timeago({ pojo: 'pojo' })}</span>
-    <span class="alt hide-pp hide-tp"><i class="icon calendar"></i>{{ pojo.${$$.date} | ymd }}</span>
+    <span class="alt hide-pp hide-tp"><i class="icon calendar"></i>{{ pojo.${$.$.date} | ymd }}</span>
     ${icons.toggle({
       pojo: 'pojo',
-      field: $$.active,
+      field: $.$.active,
       bit: UpdateState.DISCARD,
       fn: 'toggle$$',
-      title_expr: `pojo.${$$.active} ? 'Discard?' : 'Restore?'`
+      title_expr: `pojo.${$.$.active} ? 'Discard?' : 'Restore?'`
     })}
   </div>
-  <div class="content" v-sclass:line-through="!pojo.${$$.active}" >
-    <a :style="pojo.${$$.normalized} | word_wrap" :href="pojo.${$$.url} | href" target="_blank" rel="noreferrer">
-      <span v-show="pojo.${$$.www}">www.</span>{{ pojo.${$$.normalized} }}
+  <div class="content" v-sclass:line-through="!pojo.${$.$.active}" >
+    <a :style="pojo.${$.$.normalized} | word_wrap" :href="pojo.${$.$.url} | href" target="_blank" rel="noreferrer">
+      <span v-show="pojo.${$.$.www}">www.</span>{{ pojo.${$.$.normalized} }}
     </a>
-    <div v-text="pojo.${$$.title}"></div>
+    <div v-text="pojo.${$.$.title}"></div>
   </div>
   <div class="tags inline" v-sclass:noop="!(pojo._.state & ${PojoState.UPDATE})">
     <span v-for="tag in pojo.tags" class="ui label" :style="tag.styles">
@@ -311,11 +310,11 @@ ${list.main({ pager: 'pager' }, `
   <div id="${detail_id}">
     <div class="detail">
       <hr />
-      <div v-text="pupdate.${$$.notes}"></div>
+      <div v-text="pupdate.${$.$.notes}"></div>
       <div class="mdl input" v-show="pupdate_item.size < ${MAX_TAGS}">
         <input id="${tag_input_id}" placeholder="Tag(s)"
             v-disable="(pager.state & ${PagerState.LOADING})"
-            v-suggest="{ pojo: pupdate_item, field: '${Item$.tagId}', fetch: '${user.BookmarkTag.$$NAME}', onSelect: insertTag }" />
+            v-suggest="{ pojo: pupdate_item, field: '${Item.$.tagId}', fetch: '${user.BookmarkTag.$$NAME}', onSelect: insertTag }" />
       </div>
       ${icons.drawer({ pojo: 'pupdate', bit: UpdateState.FORM }, '<i class="icon pencil dd"></i>')}
       <div v-show="(pupdate._.state & ${UpdateState.FORM})">

@@ -36,8 +36,8 @@ import * as qform from 'vueds-ui/lib/tpl/legacy/qform'
 
 const $ = user.BookmarkEntry,
     $0 = $.$descriptor.$,
-    Item$ = $.Item.$,
-    Item0 = $.Item.$descriptor.$
+    Item = $.Item,
+    Item0 = Item.$descriptor.$
 
 interface Mutable {
     lastSeenKey: string|undefined
@@ -301,7 +301,7 @@ export default component({
       <li>
         <div class="mdl input">
           <input id="bookmark-entry-pnew-ff" type="text" placeholder="Url"
-              v-sval:${FieldType.STRING}="pnew.${Item$.url}"
+              v-sval:${FieldType.STRING}="pnew.${Item.$.url}"
               @change="pnew.$d.$change($event, pnew, ${Item0.url}, false, null)" />
         </div>
       </li>
@@ -319,7 +319,7 @@ export default component({
         <div class="mdl input">
           ${input.suggest({
             pojo: 'pnew',
-            field: Item$.tagId,
+            field: Item.$.tagId,
             handler: 'addTag',
             fetch: user.BookmarkTag.$$NAME,
             id: 'bookmark-entry-pnew-tag',
@@ -341,7 +341,7 @@ export default component({
       </li>
       <li class="padded right">
         <button class="ui icon button"
-            v-disable="((pnew._.state & ${PojoState.LOADING}) || !pnew.${Item$.url})"
+            v-disable="((pnew._.state & ${PojoState.LOADING}) || !pnew.${Item.$.url})"
             @click="pnew$$"><i class="icon large plus"></i></button>
       </li>
     </ul>

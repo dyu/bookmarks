@@ -26,10 +26,10 @@ import { user } from '../../g/user/'
 
 const $ = user.BookmarkEntry,
     $0 = $.$descriptor.$,
-    Item$ = $.Item.$,
-    Item0 = $.Item.$descriptor.$,
-    M$ = $.M.$,
-    M0 = $.M.$descriptor.$
+    Item = $.Item,
+    Item0 = Item.$descriptor.$,
+    M = $.M,
+    M0 = M.$descriptor.$
 
 const enum PTagState {
     HIDE = 32
@@ -90,7 +90,7 @@ export class BookmarkEntryTagView {
                 req.parentKey = req.startKey
                 startObj = self.pstore.startObj
                 // the real startKey
-                req.startKey = startObj.$d ? startObj[M$.pageKey] : startObj[M0.pageKey]
+                req.startKey = startObj.$d ? startObj[M.$.pageKey] : startObj[M0.pageKey]
             }
             self.fetch(req, self.pnew_tags.map(mapId))
         })).pager
@@ -226,7 +226,7 @@ export default component({
       <div class="ui small left icon input">
         ${input.suggest({
           pojo: 'pnew',
-          field: Item$.tagId,
+          field: Item.$.tagId,
           handler: 'addTag',
           fetch: user.BookmarkTag.$$NAME,
           id: 'bookmark-entry-tag-pnew-tag',
