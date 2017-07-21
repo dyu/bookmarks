@@ -38,8 +38,8 @@ public final class BookmarkTagViews
                 RpcResponse res, int index)
         {
             RpcResponse.PIPED_VISITOR.visit(key, v, voffset, vlen, res, index);
-            // hack
-            return ++index == res.context.type;
+            // track limit
+            return ++index == res.context.$count;
         }
     };
 
@@ -50,8 +50,8 @@ public final class BookmarkTagViews
         if (limit < 0 || limit > 1000)
             limit = 1000;
         
-        // hack
-        res.context.type = limit;
+        // track limit
+        res.context.$count = limit;
         
         Pipe.Schema<BookmarkTag> pipeSchema = BookmarkTag.getPipeSchema();
         final ProtostuffPipe pipe = res.context.pipe.init(

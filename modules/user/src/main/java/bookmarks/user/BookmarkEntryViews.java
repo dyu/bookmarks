@@ -14,7 +14,7 @@
 
 package bookmarks.user;
 
-import static com.dyuproject.protostuffdb.SerializedValueUtil.readByteArrayOffsetWithTypeAsSize;
+import static com.dyuproject.protostuffdb.SerializedValueUtil.readBAO$len;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,8 +51,7 @@ public final class BookmarkEntryViews
         byte[] tag = EntityRegistry.BOOKMARK_TAG_CACHE.get(tagId).value;
         
         output.writeByteRange(true, field, tag, 
-                readByteArrayOffsetWithTypeAsSize(BookmarkTag.FN_NAME, tag, context), 
-                context.type, repeated);
+                readBAO$len(BookmarkTag.FN_NAME, tag, context), context.$len, repeated);
     }
     
     private static void transferField(int number, Pipe pipe, Input input, Output output,
