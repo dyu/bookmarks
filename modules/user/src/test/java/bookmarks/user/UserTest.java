@@ -214,7 +214,7 @@ public class UserTest extends AbstractStoreTest
         BookmarkEntry.PTags req = new BookmarkEntry.PTags(new ParamRangeKey(true));
         req.addTagId(t1.id);
         assertInitialized(req);
-        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, res, 
+        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         assertEquals(1, res.rawNestedCount);
@@ -259,7 +259,7 @@ public class UserTest extends AbstractStoreTest
         req.addTagId(t1.id);
         req.addTagId(t2.id);
         assertInitialized(req);
-        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, res, 
+        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         assertEquals(1, res.rawNestedCount);
