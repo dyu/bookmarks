@@ -120,7 +120,7 @@ function onOpen(w) {
 function openWindow() {
     global.rpc_host = rpc_host
     global.hide_backup = hide_backup
-    nw.Window.open(bookmarkletOnly ? 'nw/bookmarklet.html' : 'index.html', { show: false }, onOpen)
+    nw.Window.open(bookmarkletOnly ? 'nw/bookmarklet.html' : 'index.html', { show: false, show_in_taskbar: !win32 }, onOpen)
 
     require('./dist/bookmarklet-nw')
 }
