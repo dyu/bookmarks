@@ -72,6 +72,7 @@ service ForUser {
   rpc backup(void) returns (ParamString);
 }
 
+@Observable
 @Entity(kind = 10, seq = true,
   cache = true, serial = true,
   tx_create = true,
