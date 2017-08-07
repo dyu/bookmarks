@@ -54,6 +54,9 @@
   </head>
   <body onload="start();" unselectable="on">
     <div id="app"></div>
+    <script>
+    window.fetch || document.write('<script src="/assets/js/fetch.min.js"><\/script>')
+    </script>
     <script src="../dist/bookmarklet.js"></script>
     <link rel="stylesheet" href="../dist/bookmarklet.css" />
     <a id="bookmarklet" class="pending"></a>
