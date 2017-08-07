@@ -171,6 +171,7 @@ message ReplaceTag {
   ";
 }
 
+@Observable
 @Entity(kind = 11, seq = true, custom_ps = BookmarkEntry.M,
   update_ts = true, rev = true,
   tx_create = true, tx_validate_with_key = true,
