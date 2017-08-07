@@ -15,7 +15,7 @@ var webpackPlugins = [
   })
 ]
 var extensions = ['.js', '.ts', '.vue', '.json']
-var alias = { 'vue$': 'vue/dist/vue.common.js' }
+var alias = { 'vue$': 'v_/dist/vue.common.js' }
 var loaders = [
   {
     test: /\.vue$/,
