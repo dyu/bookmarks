@@ -610,6 +610,21 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
+coreds-ui@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/coreds-ui/-/coreds-ui-0.8.2.tgz#ee64b7580ecf06e8fe5ac5c00191d1cb9a7a6775"
+  dependencies:
+    "@types/hammerjs" "^2.0.32"
+    hammerjs "^2.0.8"
+    vuets "^0.10.0"
+
+coreds@^0.9.3:
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/coreds/-/coreds-0.9.3.tgz#ca11c16cd53039e83891ad4bd345695250bf70d7"
+  dependencies:
+    "@types/numeral" "0.0.16"
+    numeral "^1.5.6"
+
 cosmiconfig@^2.1.0, cosmiconfig@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-2.1.1.tgz#817f2c2039347a1e9bf7d090c0923e53f749ca82"
@@ -2333,7 +2348,7 @@ number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
 
-numeral@^1.5.3:
+numeral@^1.5.6:
   version "1.5.6"
   resolved "https://registry.yarnpkg.com/numeral/-/numeral-1.5.6.tgz#3831db968451b9cf6aff9bf95925f1ef8e37b33f"
 
@@ -3679,6 +3694,10 @@ uuid@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
 
+v_@2.1.10:
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/v_/-/v_-2.1.10.tgz#22bf18af3d130dffe861c169fcb0802eaf64a89a"
+
 vali-date@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/vali-date/-/vali-date-1.0.0.tgz#1b904a59609fb328ef078138420934f6b86709a6"
@@ -3800,22 +3819,6 @@ vue-template-es2015-compiler@^1.2.2:
 vue@2.1.10:
   version "2.1.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.1.10.tgz#c9235ca48c7925137be5807832ac4e3ac180427b"
-
-vueds-ui@^0.7.2:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/vueds-ui/-/vueds-ui-0.7.2.tgz#1eddca1b254ceb11e2af2ec214848e3f54ada498"
-  dependencies:
-    "@types/hammerjs" "^2.0.32"
-    hammerjs "^2.0.8"
-    vuets "^0.10.0"
-
-vueds@^0.8.3:
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/vueds/-/vueds-0.8.3.tgz#f68b011f95df926d9df345da1e8394651a80d9a8"
-  dependencies:
-    "@types/numeral" "0.0.16"
-    numeral "^1.5.3"
-    whatwg-fetch "^1.0.0"
 
 vuets@^0.10.0:
   version "0.10.0"
