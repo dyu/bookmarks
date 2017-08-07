@@ -1,0 +1,21 @@
+// tab
+
+.ui.tab {
+  display:none;
+  position: relative;
+  > i.close {
+    position: absolute;
+    margin: 0;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+  }
+}
+.ui.tab.active, .ui.tab.open {
+  display:block;
+}
+
+.ui.tab.box > * {
+  background-color: $subtle-transparent-black;
+  padding: 0.5em;
+}

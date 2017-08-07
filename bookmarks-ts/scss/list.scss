@@ -1,0 +1,282 @@
+/* List */
+$listStyleType: none;
+$listStylePosition: outside;
+$margin: 0em 0em;
+$verticalPadding: 0em;
+$horizontalPadding: 0em;
+
+/* List Item */
+$itemVerticalPadding: 0.18em;
+$itemHorizontalPadding: 0em;
+$itemPadding: $itemVerticalPadding $itemHorizontalPadding;
+$itemLineHeight: 1.1em;
+
+/* Sub List */
+$childListPadding: 0.75em 0em 0.25em 0.5em;
+$childListIndent: 1em;
+
+/* Sub List Item */
+$childItemVerticalPadding: 0.14em;
+$childItemHorizontalPadding: 0em;
+$childItemPadding: $childItemVerticalPadding $childItemHorizontalPadding;
+$childItemLineHeight: inherit;
+
+/* Float */
+$floatDistance: 1em;
+$leftFloatMargin: 0em $floatDistance 0em 0em;
+$rightFloatMargin: 0em 0em 0em $floatDistance;
+
+.ui.list {
+  list-style-type: $listStyleType;
+  margin: $margin;
+  padding: $verticalPadding $horizontalPadding;
+}
+
+.ui.list:first-child {
+  margin-top: 0em;
+  padding-top: 0em;
+}
+
+.ui.list:last-child {
+  margin-bottom: 0em;
+  padding-bottom: 0em;
+}
+
+/* List Item */
+.ui.list > .item,
+.ui.list .list > .item {
+  display: list-item;
+  table-layout: fixed;
+  list-style-type: $listStyleType;
+  list-style-position: $listStylePosition;
+
+  padding: $itemPadding;
+  line-height: $itemLineHeight;
+}
+
+.ui.list > .list > .item,
+.ui.list > .item:after {
+  content: '';
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.ui.list .list > .item:first-child,
+.ui.list > .item:first-child {
+  padding-top: 0em;
+}
+.ui.list .list > .item:last-child,
+.ui.list > .item:last-child {
+  padding-bottom: 0em;
+}
+
+/* Child List */
+.ui.list .list {
+  clear: both;
+  margin: 0em;
+  padding: $childListPadding;
+}
+
+/* Child Item */
+.ui.list .list > .item {
+  padding: $childItemPadding;
+  line-height: $childItemLineHeight;
+}
+
+/*-------------------
+      Horizontal
+--------------------*/
+
+/* Horizontal */
+$horizontalSpacing: 0.55em;
+$horizontalIconDistance: 0.2em;
+$horizontalVerticalAlign: middle;
+
+.ui.horizontal.list {
+  display: inline-block;
+  font-size: 0em;
+}
+.ui.horizontal.list > .item {
+  display: inline-block;
+  margin-left: $horizontalSpacing;
+  font-size: 1rem;
+}
+.ui.horizontal.list:not(.celled) > .item:first-child {
+  margin-left: 0em !important;
+  padding-left: 0em !important;
+}
+.ui.horizontal.list .list {
+  padding-left: 0em;
+  padding-bottom: 0em;
+}
+
+.ui.horizontal.list > .item > .image,
+.ui.horizontal.list .list > .item > .image,
+.ui.horizontal.list > .item > .icon,
+.ui.horizontal.list .list > .item > .icon,
+.ui.horizontal.list > .item > .content,
+.ui.horizontal.list .list > .item > .content {
+  vertical-align: $horizontalVerticalAlign;
+}
+
+/* Padding on all elements */
+.ui.horizontal.list > .item:first-child,
+.ui.horizontal.list > .item:last-child {
+  padding-top: $itemVerticalPadding;
+  padding-bottom: $itemVerticalPadding;
+}
+
+/* Horizontal List */
+.ui.horizontal.list > .item > i.icon {
+  margin: 0em;
+  padding: 0em $horizontalIconDistance 0em 0em;
+}
+.ui.horizontal.list > .item > .icon,
+.ui.horizontal.list > .item > .icon + .content {
+  //float: none;
+  display: inline-block;
+}
+
+
+/*-------------------
+       Divided
+--------------------*/
+
+/* Divided */
+$dividedBorderWidth: 1px;
+$dividedBorder: $dividedBorderWidth solid $border-color;
+$dividedChildListBorder: none;
+$dividedChildItemBorder: none;
+
+/* Divided Horizontal */
+$horizontalDividedSpacing: ($horizontalSpacing / 2);
+$horizontalDividedLineHeight: 0.6;
+
+/* Divided */
+$celledBorderWidth: 1px;
+$celledBorder: $celledBorderWidth solid $border-color;
+$celledHorizontalPadding: 0.5em;
+$celledChildListBorder: none;
+$celledChildItemBorder: none;
+
+.ui.divided.list > .item {
+  border-top: $dividedBorder;
+}
+.ui.divided.list .list > .item {
+  border-top: $dividedChildListBorder;
+}
+.ui.divided.list .item .list > .item {
+  border-top: $dividedChildItemBorder;
+}
+.ui.divided.list .list > .item:first-child,
+.ui.divided.list > .item:first-child {
+  border-top: none;
+}
+
+/* Sub Menu */
+.ui.divided.list:not(.horizontal) .list > .item:first-child {
+  border-top-width: $dividedBorderWidth;
+}
+
+/*-------------------
+      Selection
+--------------------*/
+
+$headerFont: $base-font-family;
+$textColor: $body-copy-color;
+$linkColor: $primary-color; 
+//$linkHoverColor      : darken(saturate($linkColor, 20), 15);
+$linkHoverColor: darken($linkColor, 10%);
+
+$defaultDuration : 0.1s;
+$defaultEasing   : ease;
+
+$lightTextColor: lighten($textColor, 10%);
+$disabledTextColor: lighten($textColor, 20%);
+$unselectedTextColor: $lightTextColor;
+// TODO
+$hoveredTextColor: $textColor;
+$pressedTextColor: darken($textColor, 10%);
+$selectedTextColor: $textColor;
+
+/* Selection List */
+$selectionListItemMargin: 0em;
+$selectionListItemBorderRadius: 0.5em;
+$selectionListItemVerticalPadding: 0.5em;
+$selectionListItemHorizontalPadding: 0.5em;
+$selectionListTransition:
+  $defaultDuration color $defaultEasing,
+  $defaultDuration padding-left $defaultEasing,
+  $defaultDuration background-color $defaultEasing
+;
+
+/* Selection List States */
+$selectionListBackground: transparent;
+$selectionListColor: $unselectedTextColor;
+$selectionListHoverBackground: $subtle-transparent-black;
+$selectionListHoverColor: $hoveredTextColor;
+$selectionListDownBackground: $transparent-black;
+$selectionListDownColor: $pressedTextColor;
+$selectionListActiveBackground: $transparent-black;
+$selectionListActiveColor: $selectedTextColor;
+
+.ui.selection.list .list > .item,
+.ui.selection.list > .item {
+  cursor: default;
+  background: $selectionListBackground;
+  padding: $selectionListItemVerticalPadding $selectionListItemHorizontalPadding;
+  margin: $selectionListItemMargin;
+  color: $selectionListColor;
+  border-radius: $selectionListItemBorderRadius;
+  transition: $selectionListTransition;
+}
+.ui.selection.list .list > .item:last-child,
+.ui.selection.list > .item:last-child {
+  margin-bottom: 0em;
+}
+/* no hover style
+.ui.selection.list.list >  .item:hover,
+.ui.selection.list > .item:hover {
+  background: $selectionListHoverBackground;
+  color: $selectionListHoverColor;
+}
+.ui.selection.list .list > .item:active,
+.ui.selection.list > .item:active {
+  background: $selectionListDownBackground;
+  color: $selectionListDownColor;
+}
+*/
+.ui.selection.list .list > .item.active,
+.ui.selection.list > .item.active {
+  background: $selectionListActiveBackground;
+  color: $selectionListActiveColor;
+}
+
+/* Celled / Divided Selection List */
+.ui.celled.selection.list .list > .item,
+.ui.divided.selection.list .list > .item,
+.ui.celled.selection.list > .item,
+.ui.divided.selection.list > .item {
+  border-radius: 0em;
+}
+
+/* Floated Content */
+.ui[class*="left floated"].list {
+  float: left;
+}
+.ui[class*="right floated"].list {
+  float: right;
+}
+
+.ui.list .list > .item [class*="left floated"],
+.ui.list > .item [class*="left floated"] {
+  float: left;
+  margin: $leftFloatMargin;
+}
+.ui.list .list > .item [class*="right floated"],
+.ui.list > .item [class*="right floated"] {
+  float: right;
+  margin: $rightFloatMargin;
+}

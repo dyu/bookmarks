@@ -1,0 +1,11 @@
+.field {
+  border: 0;
+  padding: 0;
+  margin: 0 0 0.8rem;
+}
+
+.ui.button {
+  &:hover, &:focus {
+    color: $primary-color;
+  }
+}

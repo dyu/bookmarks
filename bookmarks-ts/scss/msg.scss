@@ -1,0 +1,34 @@
+.ui.msg {
+  position: relative;
+  padding: 1em 0.5em 0.5em 0.5em;
+  margin-bottom: 0.5em;
+  cursor: default;
+  > .close {
+    position: absolute;
+    padding: 0.2em 0.3em;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+}
+
+.ui.msg.success,
+.ui.msg.status-1 {
+  background-color: $success-bg-color;
+  color: $success-color;
+  border-left: 4px solid $success-color;
+}
+
+.ui.msg.error,
+.ui.msg.status-2 {
+  background-color: $error-bg-color;
+  color: $error-color;
+  border-left: 4px solid $error-color;
+}
+.ui.msg.warning,
+.ui.msg.status-4 {
+  background-color: $warning-bg-color;
+  color: $warning-color;
+  border-left: 4px solid $warning-color;
+}
