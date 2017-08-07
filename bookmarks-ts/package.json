@@ -8,7 +8,9 @@
     "type": "git",
     "url": "https://github.com/dyu/bookmarks.git"
   },
-  "files": ["bin"],
+  "files": [
+    "bin"
+  ],
   "main": "nw/main.js",
   "inject_js_start": "nw/start.js",
   "webkit": {
@@ -22,15 +24,19 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "bk-dev": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js webpack-dev-server --inline --hot --devtool source-map",
     "bk-build": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "bk-nw-build": "SRC_DIR=./bookmarklet-nw DEST_FILE=bookmarklet-nw.js cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "bk-nw-build": "SRC_DIR=./bookmarklet-nw DEST_FILE=bookmarklet-nw.js cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "ns.d": "node-sass app.scss dist/app.css -w",
+    "ns.b": "node-sass app.scss dist/app.css && yarn run cleancss",
+    "cleancss": "cleancss --skip-rebase -O2 removeDuplicateRules:on dist/app.css > dist/app.min.css && mv dist/app.min.css dist/app.css"
   },
   "dependencies": {
+    "coreds": "^0.9.3",
+    "coreds-ui": "^0.8.2",
     "pavilion": "^2.0.3",
     "toprogress": "^0.1.3",
+    "v_": "2.1.10",
     "vue": "2.1.10",
     "vue-router": "2.1.3",
-    "vueds": "^0.8.3",
-    "vueds-ui": "^0.7.2",
     "vuets": "^0.10.0",
     "whatwg-fetch": "^1.0.0"
   },
