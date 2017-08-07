@@ -22,9 +22,10 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --hot --devtool source-map",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "bk-dev": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js webpack-dev-server --inline --hot --devtool source-map",
-    "bk-build": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "bk-nw-build": "SRC_DIR=./bookmarklet-nw DEST_FILE=bookmarklet-nw.js cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "bk.d": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js webpack-dev-server --inline --hot --devtool source-map",
+    "bk.b": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "bk.nw": "SRC_DIR=./bookmarklet-nw DEST_FILE=bookmarklet-nw.js cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "bk.css": "node-sass bookmarklet.scss dist/bookmarklet.css && cleancss --skip-rebase -O2 removeDuplicateRules:on dist/bookmarklet.css > dist/bookmarklet.min.css && mv dist/bookmarklet.min.css dist/bookmarklet.css",
     "ns.d": "node-sass app.scss dist/app.css -w",
     "ns.b": "node-sass app.scss dist/app.css && yarn run cleancss",
     "cleancss": "cleancss --skip-rebase -O2 removeDuplicateRules:on dist/app.css > dist/app.min.css && mv dist/app.min.css dist/app.css"
