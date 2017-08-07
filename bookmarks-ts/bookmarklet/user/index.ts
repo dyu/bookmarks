@@ -1,10 +1,12 @@
 import { component } from 'vuets'
-import { defp, extractMsg, $escape, bit_clear_and_set, base64ToBytes, to_int32LE } from 'vueds/lib/util'
-import { PojoState, HasState } from 'vueds/lib/types'
-import { diffVmFieldTo } from 'vueds/lib/diff'
-import { post } from 'vueds/lib/rpc/'
-import { bindFocus, debounce, Keys } from 'vueds-ui/lib/dom_util'
+import { defp, extractMsg, bit_clear_and_set, base64ToBytes, to_int32LE } from 'coreds/lib/util'
+import { PojoState, HasState } from 'coreds/lib/types'
+import { diffFieldTo } from 'coreds/lib/diff'
+import { bindFocus, debounce, Keys } from 'coreds-ui/lib/dom_util'
 import * as Vue from 'vue'
+import { user } from '../../g/user/'
+const $ = user.BookmarkEntry,
+    M = user.BookmarkEntry.M
 const nextTick = Vue.nextTick
 
 interface Config {
@@ -13,74 +15,6 @@ interface Config {
     notes: string
 }
 
-namespace $ {
-    /** optional: 1 */
-    //export const key = "key"
-    /** optional: 2 */
-    //export const ts = "ts"
-    /** required: 3 */
-    export const url = "url"
-    /** optional: 4 */
-    //export const normalized = "normalized"
-    /** optional: 5 */
-    //export const identifier = "identifier"
-    /** optional: 6 */
-    export const title = "title"
-    /** optional: 7 */
-    export const notes = "notes"
-    /** optional: 8 */
-    export const serTags = "serTags"
-    /** optional: 9 */
-    //export const tagCount = "tagCount"
-    /** optional: 10 */
-    //export const www = "www"
-    /** optional: 11 */
-    //export const date = "date"
-    /** optional: 12 */
-    //export const rev = "rev"
-    /** optional: 13 */
-    //export const updateTs = "updateTs"
-    /** optional: 14 */
-    //export const active = "active"
-}
-
-const $descriptor = {
-    //$kind: 11,
-    //$rfbs: 4, $rfdf: ['3'],
-    //$fdf: ['3','6','7','14'],
-    //'1': {_: 1, t: 2, m: 1, a: 6, $: 'key', $n: 'Key'},
-    //'2': {_: 2, t: 11, m: 1, a: 6, $: 'ts', $n: 'Ts', o: 4},
-    //'3': {_: 3, t: 3, m: 2, a: 4, $: 'url', $n: 'Url', vfn: $validateUrl},
-    //'4': {_: 4, t: 3, m: 1, a: 7, $: 'normalized', $n: 'Url'},
-    //'5': {_: 5, t: 3, m: 1, a: 7, $: 'identifier', $n: 'Identifier'},
-    '6': {_: 6, t: 3, m: 1, a: 0, $: 'title', $n: 'Title'/*, vfn: $validateTitle*/},
-    '7': {_: 7, t: 3, m: 1, a: 0, $: 'notes', $n: 'Notes'/*, vfn: $validateNotes*/},
-    //'8': {_: 8, t: 2, m: 1, a: 3, $: 'serTags', $n: 'Ser Tags'},
-    //'9': {_: 9, t: 10, m: 1, a: 3, $: 'tagCount', $n: 'Tag Count'},
-    //'10': {_: 10, t: 1, m: 1, a: 7, $: 'www', $n: 'Www'},
-    //'11': {_: 11, t: 11, m: 1, a: 7, $: 'date', $n: 'Date', o: 2},
-    //'12': {_: 12, t: 10, m: 1, a: 3, $: 'rev', $n: 'Rev'},
-    //'13': {_: 13, t: 11, m: 1, a: 3, $: 'updateTs', $n: 'Update Ts', o: 4},
-    //'14': {_: 14, t: 1, m: 1, a: 2, $: 'active', $n: 'Active'},
-    $: {
-        //key: '1',
-        //ts: '2',
-        url: '3',
-        //normalized: '4',
-        //identifier: '5',
-        title: '6',
-        notes: '7',
-        serTags: '8',
-        //tagCount: '9',
-        //www: '10',
-        //date: '11',
-        //rev: '12',
-        //updateTs: '13',
-        //active: '14'
-        tags: '33'
-    }//, $new: $createObservable, $change
-}
-const $0 = $descriptor.$
 
 /*function $validateUrl() {}
 function $validateTitle() {}
@@ -293,8 +227,7 @@ export class Home {
 
     checkUnique$$() {
         // PS
-        let param = `{"1": "${$escape(this.url)}", "4": {"1": false, "2": 1} }`
-        post('/bookmarks/user/qBookmarkEntry0Url', param).then((data) => {
+        $.$URL({"1": this.url, "4": {"1": false, "2": 1}}).then((data) => {
             this.initialized = true
             
             let array: Entry[] = data['1']
@@ -312,12 +245,12 @@ export class Home {
 
             let original = array[0],
                 pupdate = this.pupdate,
-                tags = toTagArray(original[$0.serTags], original[$0.tags]),
+                tags = toTagArray(original[$.$.serTags], original[M.$.tags]),
                 tagCount = tags.length
             
             this.m.original = original
-            pupdate.title = original[$0.title]
-            pupdate.notes = original[$0.notes]
+            pupdate.title = original[$.$.title]
+            pupdate.notes = original[$.$.notes]
             pupdate.tags = tags
             Home.watch(this, true)
             if (tagCount < MAX_TAGS)
@@ -334,24 +267,25 @@ export class Home {
             pnew.notes = config.notes
         })
     }
-    pupdate$$str(e, field: string) {
+    pupdate$$str(e, field: number) {
         let pupdate = this.pupdate,
             original = this.m.original,
             mc = {},
             req
         
-        if (!diffVmFieldTo(mc, $descriptor, original, pupdate, field))
+        if (!diffFieldTo(mc, $.$d, original, pupdate, field))
             return
         
         req = { '1': original['1'], '2': mc }
 
         this.prepare(pupdate)
-
-        post('/bookmarks/user/BookmarkEntry/update', JSON.stringify(req)).then(() => {
+        
+        $.ForUser.updateBookmarkEntry(req).then(() => {
             let pupdate = this.pupdate,
-                original = this.m.original
+                original = this.m.original,
+                fk = String(field)
             
-            original[$0[field]] = pupdate[field]
+            original[fk] = pupdate[fk]
 
             this.success(pupdate, 'Updated')
         }).then(undefined, this.pupdate$$F)
@@ -367,9 +301,8 @@ export class Home {
             return
         
         this.prepare(pojo)
-
-        let param = `{"1": "${$escape(val)}", "4": {"1": false, "2": ${SUGGEST_TAGS_LIMIT}}}`
-        post('/bookmarks/user/fBookmarkTag0Name', param).then((data) => {
+        
+        user.BookmarkTag.$NAME({"1": val, "4": {"1": false, "2": SUGGEST_TAGS_LIMIT}}).then((data) => {
             let array = data['1'] as any[]
             pojo.suggest_tags = array && array.length ? array.map(mapTag) : []
             pojo.tag_idx = -1
@@ -380,20 +313,19 @@ export class Home {
     }
     pnew$$() {
         let pnew = this.pnew,
-            p = {},
-            req = { '1': p, '2': pnew.tags.map(mapId) },
+            p = {} as user.BookmarkEntry,
             title = pnew.title,
             notes = pnew.notes
         
-        p[$0.url] = this.url
+        p[$.$.url] = this.url
         if (title)
-            p[$0.title] = title
+            p[$.$.title] = title
         if (notes)
-            p[$0.notes] = notes
+            p[$.$.notes] = notes
         
         this.prepare(pnew)
         
-        post('/bookmarks/user/BookmarkEntry/create', JSON.stringify(req)).then((data) => {
+        $.ForUser.create($.PNew.$new(p, pnew.tags.map(mapId))).then((data) => {
             window.close()
         }).then(undefined, this.pnew$$F)
     }
@@ -447,8 +379,7 @@ export class Home {
         
         this.prepare(pojo)
         
-        let param = `{"1": "${this.m.original['1']}", "2": ${id}, "3": true}`
-        post('/bookmarks/user/BookmarkEntry/updateTag', param).then((data) => {
+        $.ForUser.updateTag(user.UpdateTag.$new(this.m.original['1'] as string, id, true)).then((data) => {
             tags.splice(i, 1)
             
             this.success(this.pupdate, 'Updated')
@@ -476,9 +407,8 @@ export class Home {
         }
 
         this.prepare(pupdate)
-
-        let param = `{"1": "${this.m.original['1']}", "2": ${id}, "3": false}`
-        post('/bookmarks/user/BookmarkEntry/updateTag', param).then((data) => {
+        
+        $.ForUser.updateTag(user.UpdateTag.$new(this.m.original['1'] as string, id, false)).then((data) => {
             tags.splice(data['1'], 0, tag)
             
             this.success(this.pupdate, 'Updated')
@@ -501,8 +431,7 @@ export class Home {
         
         this.prepare(pnew_tag)
         
-        let param = `{"3": "${name}"}`
-        post('/bookmarks/user/BookmarkTag/create', param).then((data) => {
+        $.ForUser.create($.PNew.$new({"3": name})).then((data) => {
             this.success(pnew_tag, `${pnew_tag.name} added.`)
             // clear
             pnew_tag.name = ''
@@ -554,11 +483,11 @@ export default component({
   </div>
   <div v-if="!unique">
     <div class="mdl input">
-      <input v-model.lazy.trim="pupdate.title" @change="pupdate$$str($event, '${$.title}')"
+      <input v-model.lazy.trim="pupdate.title" @change="pupdate$$str($event, ${$.$.title})"
           :disabled="!!(pupdate.state & ${PojoState.LOADING})" placeholder="Title" />
     </div>
     <div class="mdl input">
-      <input v-model.lazy.trim="pupdate.notes" @change="pupdate$$str($event, '${$.notes}')"
+      <input v-model.lazy.trim="pupdate.notes" @change="pupdate$$str($event, ${$.$.notes})"
           :disabled="!!(pupdate.state & ${PojoState.LOADING})" placeholder="Notes" />
     </div>
     <div class="msg" :class="{ error: ${PojoState.ERROR} === (pupdate.state & ${PojoState.MASK_STATUS}) }"
