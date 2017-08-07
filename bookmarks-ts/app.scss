@@ -26,56 +26,10 @@ i.icon.desc-no { @extend i.icon.up-big; }
 i.icon.close { @extend i.icon.cancel; }
 
 @import "./scss/form.scss";
-
-select {
-  -webkit-appearance: none;
-}
+@import "./scss/form-misc.scss";
 
 @import "./scss/list.scss";
-
-li.item {
-  > a {
-    cursor: pointer;
-    text-decoration: none;
-  }
-  > button.stripped, > a {
-    font-size: 1.05em;
-  }
-  > div.ui.msg {
-    margin: 0.5em 0 0 0;
-  }
-}
-
-.page-info {
-  font-size: 0.85em;
-}
-
-// item detail
-
-div.detail > hr {
-  margin: 0.5em 0;
-}
-
-div.detail > form,
-div.dropdown-menu > form {
-  margin-bottom: 0;
-}
-
-div.content.floated {
-  > i.icon.action,
-  > i.icon.ok-circled,
-  > i.icon.cancel-circled {
-    cursor: pointer;
-  }
-}
-
-div.content.dd {
-  margin-left: 1.25em;
-}
-
-small.description {
-  color: $alt-color !important;
-}
+@import "./scss/list-misc.scss";
 
 // ================================================== 
 // misc
@@ -99,6 +53,3 @@ div.ib {
 // ================================================== 
 // app specific
 
-div.completed {
-  text-decoration: line-through;
-}

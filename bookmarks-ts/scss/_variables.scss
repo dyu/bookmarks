@@ -24,7 +24,7 @@ $tablet-landscape-size: 992px;        /* Minimum screenwidth for tablet landscap
 $desktop-size: 1200px;                /* Minimum screenwidth for desktop. */
 
 $breakmargin: 20px;                   /* Margin added to each breakpoints minimum width. */
-$size-switch: $phone-landscape-size + ($tablet-portrait-size - $phone-landscape-size) / 2;  /* Minimum screenwidth at which the EM & REM sizes switch from small to normal. */
+$size-switch: 1302px;                 /* Minimum screenwidth at which the EM & REM sizes switch from small to normal. */
 
 /**
   * Border width and radius for buttons and inputs.
@@ -107,6 +107,8 @@ $error-bg-color: #F1D7D7;
 $warning-color: #96904D;
 $warning-bg-color: #F6F3D5;
 
+$placeholder-color: #A9A9AB;
+
 $circular-radius             : 500rem;
 
 $border-color                : rgba(34, 36, 38, 0.15);
@@ -118,4 +120,3 @@ $disabled-border-color       : rgba(34, 36, 38, 0.5);
 
 $subtle-transparent-black    : rgba(0, 0, 0, 0.03);
 $transparent-black           : rgba(0, 0, 0, 0.05);
-

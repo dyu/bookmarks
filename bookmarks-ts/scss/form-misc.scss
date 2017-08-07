@@ -1,0 +1,87 @@
+.field {
+  border: 0;
+  padding: 0;
+  margin: 0 0 0.75em;
+}
+.field.bottom,
+.field.bottom + div.msg {
+  margin: 0.5em 0 0 0;
+}
+
+.field.suggest {
+  position: relative;
+  > i.icon {
+    position: absolute;
+    left: 0.4rem;
+    top: 0.93rem;
+    font-size: 1.1rem;
+    color: $medium-gray;
+    
+    + input {
+      padding-left: 1.8rem;
+    }
+  }
+}
+
+.field.suggested > input,
+.ui.input.suggested > input {
+  font-weight: bold;
+}
+
+div.help-text {
+  padding-top: 0.25em;
+  color: lighten($alt-color, 25%);
+}
+
+div.ui.box.compact {
+  > form.placeholder {
+    background-color:transparent;
+  }
+}
+
+form.placeholder {
+  select.resettable {
+    > option:first-child {
+      color: $placeholder-color;
+    }
+  }
+  select.empty {
+    color: $placeholder-color;
+    > option {
+      color: $body-copy-color;
+    }
+    > option:first-child {
+      color: $placeholder-color;
+    }
+  }
+}
+
+div.compact > form.placeholder > div.field {
+  margin-bottom: 0.5em;
+  input, select {
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    border-bottom: 1px solid $soft-gray;
+    
+    &:focus {
+      border-color: $primary-color;
+    }
+  }
+  input {
+    padding: 0.15em 0 0.45em;
+  }
+  select, div.picker {
+    padding: 0;
+    margin-top: -0.4em;
+  }
+  label {
+    color: $placeholder-color;
+  }
+  option:first-child {
+    color: $soft-gray;
+  }
+  option {
+    color: $alt-color;
+  }
+}

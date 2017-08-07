@@ -1,0 +1,104 @@
+li.item > a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+li.item > .ui.msg {
+  margin: 0.5em 0 0 0;
+}
+
+li.item.buttons {
+  > button {
+    padding: 0.15em 0.15em 0.1em 0.3em;
+    margin: 0;
+  }
+}
+
+div.list-header {
+  margin-top: 0.2em;
+  font-size: 1.2em;
+  position: relative;
+  border-bottom: 3px solid $soft-gray;
+  
+  > div.right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    
+    > a {
+      cursor: pointer;
+      float: right;
+    }
+
+    :last-child {
+      margin-right: 0;
+    }
+  }
+
+  > i.icon {
+    position: absolute;
+    left: 0;
+    top: 0.2em;
+    color: $medium-gray;
+
+    + input {
+      padding-left: 1.3em;
+    }
+  }
+
+  > input {
+    border: none;
+    padding: 0;
+    background: transparent;
+    &.disabled, &[disabled] {
+      opacity: 1;
+    }
+  }
+  > b {
+    letter-spacing: 0.1em;
+    padding-left: 0.1em;
+  }
+  > span {
+    color: $placeholder-color;
+    cursor: default;
+  }
+  + div.bordered {
+    border-top: none;
+  }
+}
+
+div.content.right.floated {
+  /*span {
+    white-space: nowrap;
+  }*/
+  > i.action {
+    margin-right: 0;
+  }
+  > i.ok-circled,
+  > i.cancel-circled {
+    cursor: pointer;
+    margin-right: 0;
+    margin-left: 0.75em;
+  }
+  small {
+    font-size: 0.9em;
+  }
+  //+ div.content.right.floated {
+  //  margin-right: -0.5em;
+  //}
+}
+
+.page-info {
+  margin-left: 0.35em;
+  white-space: nowrap;
+}
+
+// detail
+
+div.detail > hr {
+  margin: 0.5em 0;
+}
+
+.content.dd {
+  margin-left: 1.25em;
+}
