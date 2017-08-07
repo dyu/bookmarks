@@ -73,7 +73,7 @@ public final class BookmarkEntryOps
             if (size != 1)
                 tagId = req.tags.get(size - 1);
             
-            if (tagId > EntityRegistry.BOOKMARK_TAG_CACHE.list.size())
+            if (tagId > EntityRegistry.BOOKMARK_TAG_CACHE.size())
                 return res.fail("Unknown tag.");
         }
         
@@ -110,7 +110,7 @@ public final class BookmarkEntryOps
             Datastore store, RpcResponse res,
             Pipe.Schema<ParamInt> resPipeSchema, RpcHeader header) throws IOException
     {
-        if (null == EntityRegistry.BOOKMARK_TAG_CACHE.get(req.tagId))
+        if (!EntityRegistry.BOOKMARK_TAG_CACHE.exists(req.tagId))
             return res.fail("Unknown tag.");
         
         final long lv = XBookmarkEntryOps.LOCK.acquire(req.key);
@@ -164,10 +164,10 @@ public final class BookmarkEntryOps
     static boolean replaceTag(ReplaceTag req, Datastore store, RpcResponse res,
             Pipe.Schema<ParamInt> resPipeSchema, RpcHeader header) throws IOException
     {
-        if (null == EntityRegistry.BOOKMARK_TAG_CACHE.get(req.tagId))
+        if (!EntityRegistry.BOOKMARK_TAG_CACHE.exists(req.tagId))
             return res.fail("Unknown tag.");
         
-        if (null == EntityRegistry.BOOKMARK_TAG_CACHE.get(req.replacementTagId))
+        if (!EntityRegistry.BOOKMARK_TAG_CACHE.exists(req.replacementTagId))
             return res.fail("Unknown replacement tag.");
         
         final long lv = XBookmarkEntryOps.LOCK.acquire(req.key);

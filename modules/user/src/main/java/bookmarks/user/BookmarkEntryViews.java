@@ -48,10 +48,11 @@ public final class BookmarkEntryViews
     private static void writeTagNameTo(Output output, int field, 
             int tagId, boolean repeated, WriteContext context) throws IOException
     {
-        byte[] tag = EntityRegistry.BOOKMARK_TAG_CACHE.get(tagId).value;
+        byte[] tag = EntityRegistry.BOOKMARK_TAG_CACHE.$v(tagId, context);
         
-        output.writeByteRange(true, field, tag, 
-                readBAO$len(BookmarkTag.FN_NAME, tag, context), context.$len, repeated);
+        output.writeByteRange(true, field, tag, readBAO$len(BookmarkTag.FN_NAME, 
+                tag, context.$offset, context.$len, context), 
+                context.$len, repeated);
     }
     
     private static void transferField(int number, Pipe pipe, Input input, Output output,

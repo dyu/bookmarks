@@ -135,7 +135,7 @@ message BookmarkTag {
   
   @Display(hint = "6 characters alphanumeric: a-f, A-F, 0-9")
   @Pattern(regex = "^[a-fA-F0-9]{6}$", msg = "Invalid color (must be 6 characters alphanumeric: a-f, A-F, 0-9)")
-  optional string color = 4 [default = "", dvoor = true];
+  optional string color = 4 [default = "555555", fixed = true, dvoor = true];
   
   optional uint32 id = 5 [provided = true, readonly = true, immutable = true, default = 0];
   
