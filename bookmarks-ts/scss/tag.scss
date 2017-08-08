@@ -54,3 +54,13 @@ ul.dropdown-menu > li.tags {
     margin-right: 0;
   }
 }
+
+.fluid.tag {
+  padding-left: 0.5em;
+  position: relative;
+  width: 100%;
+  > i.icon {
+    position: absolute;
+    right: 0;
+  }
+}
