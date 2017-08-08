@@ -24,7 +24,7 @@ export class BookmarkEntryPage {
     pupdate = form.initObservable($.$new0(), $.$d)
     
     tags = [] as IdAndName[]
-    add_tag = setp(setp(msg.$new(), 'f', null), 'f$', null)
+    tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     constructor() {
         nullp(this, 'pager')
     }
@@ -162,8 +162,8 @@ export class BookmarkEntryPage {
             .then(this.toggle$$S).then(undefined, this.toggle$$F)
     }
     
-    add_tag$$(fk: string, id: number, name: string) {
-        this['$refs'].add_tag.value = ''
+    tag_new$$(fk: string, id: number, name: string) {
+        this['$refs'].tag_new.value = ''
         
         let tags = this.tags
         if (tags.length === MAX_TAGS)
@@ -225,11 +225,11 @@ export default component({
               <i class="icon action close" @click="rm_tag(idx)"></i>
             </span>
           </div>
-          <div class="field suggest" v-clear="add_tag">
+          <div class="field suggest" v-clear="tag_new">
             <i class="icon plus"></i>
-            <input placeholder="Tag" type="text" ref="add_tag"
-                :disabled="tags.length === ${MAX_TAGS} || 0 !== (add_tag.state & ${PojoState.LOADING})"
-                v-suggest="{ pojo: add_tag, field: 'f', fetch: suggest, onSelect: add_tag$$ }" />
+            <input placeholder="Tag" type="text" ref="tag_new"
+                :disabled="tags.length === ${MAX_TAGS} || 0 !== (tag_new.state & ${PojoState.LOADING})"
+                v-suggest="{ pojo: tag_new, field: 'f', fetch: suggest, onSelect: tag_new$$ }" />
           </div>
           `/**/, 1, 3)}
         </div>
