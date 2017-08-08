@@ -19,6 +19,7 @@
 @import "./scss/spectre.scss";
 @import "./scss/tab.scss";
 @import "./scss/suggest.scss";
+@import "./scss/tag.scss";
 
 @import "./scss/fa.scss";
 
@@ -35,6 +36,9 @@ i.icon.close { @extend i.icon.cancel; }
 @import "./scss/misc.scss";
 
 div.dropdown-menu {
+  div.tags.inline {
+    margin-bottom: 0.5em;
+  }
   div.field.suggest > i.icon {
     top: 0.8rem;
   }
