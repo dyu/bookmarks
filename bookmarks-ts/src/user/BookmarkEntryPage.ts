@@ -19,12 +19,11 @@ export class BookmarkEntryPage {
     pager: Pager
     pstore: PojoStore<user.BookmarkEntry>
     qform = new QForm()
-
-    pnew = form.initObservable($.$new0(), $.$d)
-    pupdate = form.initObservable($.$new0(), $.$d)
     
     tags = [] as IdAndName[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
+    pnew = form.initObservable($.$new0(), $.$d)
+    pupdate = form.initObservable($.$new0(), $.$d)
     constructor() {
         nullp(this, 'pager')
     }
