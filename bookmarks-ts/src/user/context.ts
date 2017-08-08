@@ -1,13 +1,7 @@
-import { HasToken } from 'vueds/lib/rpc/'
-import { PojoStore } from 'vueds/lib/store/'
+import { PojoStore } from 'coreds/lib/pstore/'
+import { base64ToBytes, to_int32LE } from 'coreds/lib/util'
 import { user } from '../../g/user/'
-import { base64ToBytes, to_int32LE } from 'vueds/lib/util'
-
-const Tag0 = user.BookmarkTag.$descriptor.$
-
-export const HT: HasToken = {
-    token: ''
-}
+const Tag$ = user.BookmarkTag
 
 export interface Stores {
     tag: PojoStore<user.BookmarkTag>
@@ -19,6 +13,9 @@ const DOMAIN_REGEX = /\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[
 const WORD_WRAP_LIMIT = 40
 
 export const filters = {
+    color(color: string) {
+        return '#' + (color || '555555')
+    },
     href(url: string) {
         if (url.indexOf('http') === 0)
             return url
@@ -51,7 +48,7 @@ export interface Tag extends user.BookmarkEntry.Tag {
 const DEFAULT_TAG_COLOR = '#777777'
 
 function updateTag(tag: user.BookmarkTag, styles: any, target?: Tag) {
-    let color = tag[Tag0.color]
+    let color = tag[Tag$.$.color]
     if (!color) {
         if (styles.color !== DEFAULT_TAG_COLOR)
             styles.color = DEFAULT_TAG_COLOR
@@ -59,8 +56,8 @@ function updateTag(tag: user.BookmarkTag, styles: any, target?: Tag) {
         styles.color = '#' + color
     }
 
-    if (target && target.name.charAt(0) === '?') {
-        target.name = tag[Tag0.name]
+    if (target && target[Tag$.$.name].charAt(0) === '?') {
+        target[Tag$.$.name] = tag[Tag$.$.name]
     }
 
     return styles
@@ -79,8 +76,8 @@ export function updateTagStyle(list: Tag[]) {
         tagCount = tags.length
     
     for (let t of list) {
-        if (t.id <= tagCount)
-            updateTag(tags[tagCount - t.id], t.styles, t)
+        if (t[Tag$.$.id] <= tagCount)
+            updateTag(tags[tagCount - t[Tag$.$.id]], t.styles, t)
     }
 }
 
@@ -96,9 +93,12 @@ export function toTagArray(serTags: string, names: string[]): Tag[] {
             tag = idx < 0 ? null : tags[idx],
             //name = tag && tag[Tag0.name] || ('? ' + id),
             name = names[j],
-            color = tag && tag[Tag0.color] ? ('#' + tag[Tag0.color]) : DEFAULT_TAG_COLOR
+            color = tag && tag[Tag$.$.color] ? ('#' + tag[Tag$.$.color]) : DEFAULT_TAG_COLOR,
+            entry = Tag$.$new(name, undefined, undefined, color, id) as any
         
-        list.push({id, name, styles: { color }, state: 0 } as Tag)
+        entry['styles'] = { color }
+        entry['state'] = 0
+        list.push(entry as Tag)
     }
 
     return list
