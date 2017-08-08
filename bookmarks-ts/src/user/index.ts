@@ -44,7 +44,7 @@ export default component({
 <div class="row">
   <div class="col-pl-100 col-tp-50 col-tl-66">
     <BookmarkEntryPageV />
-    <BookmarkEntryListV :opts="{ title: 'BookmarksByTag' }" />
+    <BookmarkEntryListV />
   </div>
   <div class="col-pl-100 col-tp-50 col-tl-33">
     <BookmarkTagPageV ref="tag_v" />
