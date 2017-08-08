@@ -46,7 +46,7 @@ div.list-header {
     }
   }
 
-  > input {
+  input {
     border: none;
     padding: 0;
     background: transparent;
@@ -54,6 +54,17 @@ div.list-header {
       opacity: 1;
     }
   }
+  div.icon.input {
+    display: inline-block;
+    > i.icon {
+      margin-right: -0.15em;
+    }
+    > input {
+      display: inline-block;
+      max-width: 7.5em;
+    }
+  }
+  
   > b {
     letter-spacing: 0.1em;
     padding-left: 0.1em;
