@@ -3,6 +3,15 @@ import { base64ToBytes, to_int32LE } from 'coreds/lib/util'
 import { user } from '../../g/user/'
 const Tag$ = user.BookmarkTag
 
+export interface IdAndName {
+    id: number
+    name: string
+}
+
+export function mapId(item: IdAndName) {
+    return item.id
+}
+
 export interface Stores {
     tag: PojoStore<user.BookmarkTag>
 }
