@@ -1,9 +1,11 @@
 import { component } from 'vuets'
-import { defg, defp, nullp } from 'coreds/lib/util'
-import { Pager, ItemSO, SelectionFlags } from 'coreds/lib/types'
+import { defg, defp, nullp, setp } from 'coreds/lib/util'
+import { Pager, ItemSO, SelectionFlags, PojoState } from 'coreds/lib/types'
 import { PojoStore } from 'coreds/lib/pstore/'
 import { ParamRangeKey } from 'coreds/lib/prk'
 import * as ui from '../ui/'
+import * as msg from 'coreds-ui/lib/msg'
+import { BookmarkEntryItem, IdAndName, mapId, MAX_TAGS } from './context'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 
@@ -13,6 +15,9 @@ const PAGE_SIZE = 10,
 export class BookmarkEntryList {
     pager: Pager
     pstore: PojoStore<user.BookmarkEntry>
+    
+    tags = [] as IdAndName[]
+    tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
 
     m = defg(this, 'm', {
         tags: [] as number[]
@@ -41,39 +46,74 @@ export class BookmarkEntryList {
         self.pager = pstore.pager
     }
     
-    update(tags: number[]) {
-        this.m.tags = tags
-        let pstore = this.pstore
-        pstore.replace([])
-        pstore.requestNewer()
-    }
-
     fetch$$S(data) {
         this.pstore.cbFetchSuccess(data['1'])
     }
     fetch$$F(err) {
         this.pstore.cbFetchFailed(err)
     }
+    
+    tag_new$$(fk: string, id: number, name: string) {
+        this['$refs'].tag_new.value = ''
+        
+        let tags = this.tags
+        if (tags.length === MAX_TAGS)
+            return false
+        
+        for (let tag of tags) {
+            if (id === tag.id) return false
+        }
+        
+        tags.push({ id, name })
+        this.m.tags.push(id)
+        
+        let pstore = this.pstore
+        pstore.replace([])
+        pstore.requestNewer()
+        return false
+    }
+    rm_tag(idx: number) {
+        let tags = this.tags,
+            fetch = tags.length > 1
+        
+        tags.splice(idx, 1)
+        this.m.tags.splice(idx, 1)
+        
+        let pstore = this.pstore
+        pstore.replace([])
+        fetch && pstore.requestNewer()
+    }
+    suggest(ps: any, opts: any) {
+        return user.BookmarkTag.$NAME(ps, true)
+    }
 }
 export default component({
     created(this: BookmarkEntryList) { BookmarkEntryList.created(this) },
-    props: { opts: { type: Object, required: true } },
     components: {
-        item: {
-            name: 'Item', props: { pojo: { type: Object, required: true } }, data() { return {} },
-            template: /**/`
-<li ${ui.pi_attrs}>
-  TODO
-</li>
-            `/**/
-        }
+        item: BookmarkEntryItem
     },
     template: /**/`
 <div v-pager="pager">
 <div class="list-header">
-  <input type="text" :placeholder="opts.title || 'BookmarkEntry'" ${ui.lsearch_attrs($.$.title)} />
+  <div class="right">
+    <div class="icon input">
+      <i class="icon tags hide-pp"></i>
+      <input placeholder="Tag(s)" type="text" ref="tag_new"
+          :disabled="tags.length === ${MAX_TAGS} || 0 !== (tag_new.state & ${PojoState.LOADING})"
+          v-suggest="{ pojo: tag_new, field: 'f', fetch: suggest, onSelect: tag_new$$ }" />
+      <div :class="'dropdown' + (!tags.length ? '' : ' active')">
+        <ul class="dropdown-menu mhalf pull-right">
+          <li v-for="(tag, idx) of tags" class="fluid tag">
+            {{ tag.name }}
+            <i class="icon action close" @click="rm_tag(idx)"></i>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <input type="text" placeholder="BookmarksByTag" ${ui.lsearch_attrs($.$.title)} />
 </div>
-${ui.pager_controls}
+<div v-show="pager.size">${ui.pager_controls}</div>
 ${ui.pager_msg}
 <ul class="ui small divided selection list">
   <item v-for="pojo of pager.array" :pojo="pojo" />
