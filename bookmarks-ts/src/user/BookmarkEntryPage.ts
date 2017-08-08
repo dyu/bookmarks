@@ -6,6 +6,7 @@ import { mergeFrom } from 'coreds/lib/diff'
 import { ParamRangeKey } from 'coreds/lib/prk'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
+import { filters } from './context'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -158,14 +159,15 @@ export default component({
     components: {
         item: {
             name: 'Item', props: { pojo: { type: Object, required: true } }, data() { return {} },
+            filters,
             template: /**/`
 <li ${ui.pi_attrs}>
   <div class="content right floated">
     ${ui.icon_toggle($.$.active, 32, 'circle', $.$d[$.$.active].$n)}
   </div>
   <div class="content right floated timeago">${ui.icon_timeago}</div>
-  <div class="content right floated timeago hide-pp hide-tp"><i class="icon calendar"></i>{{ pojo['${$.$.date}'] | ymd }}</span>
-  <div class="content" v-sclass:line-through="!pojo['${$.$.active}']">
+  <div class="content right floated timeago hide-pp hide-tp"><i class="icon calendar"></i>{{ pojo['${$.$.date}'] | ymd }}</div>
+  <div :class="'content' + (pojo['${$.$.active}'] ? '' : ' line-through')">
     <a :style="pojo['${$.$.normalized}'] | word_wrap" :href="pojo['${$.$.url}'] | href" target="_blank" rel="noreferrer">
       <span v-show="pojo['${$.$.www}']">www.</span>{{ pojo['${$.$.normalized}'] }}
     </a>
@@ -191,7 +193,7 @@ export default component({
       </div>
     </a>
   </div>
-  <input type="text" placeholder="BookmarkEntry" ${ui.lsearch_attrs($.$.title)} />
+  <input type="text" placeholder="Bookmarks" ${ui.lsearch_attrs($.$.title)} />
 </div>
 <div class="ui tab">
   ${ui.qform(qd)}

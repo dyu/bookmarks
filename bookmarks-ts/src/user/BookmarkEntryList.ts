@@ -57,6 +57,7 @@ export class BookmarkEntryList {
 }
 export default component({
     created(this: BookmarkEntryList) { BookmarkEntryList.created(this) },
+    props: { opts: { type: Object, required: true } },
     components: {
         item: {
             name: 'Item', props: { pojo: { type: Object, required: true } }, data() { return {} },
@@ -70,7 +71,7 @@ export default component({
     template: /**/`
 <div v-pager="pager">
 <div class="list-header">
-  <input type="text" placeholder="BookmarkEntry" ${ui.lsearch_attrs($.$.title)} />
+  <input type="text" :placeholder="opts.title || 'BookmarkEntry'" ${ui.lsearch_attrs($.$.title)} />
 </div>
 ${ui.pager_controls}
 ${ui.pager_msg}

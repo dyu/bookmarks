@@ -5,8 +5,8 @@ import { extractMsg } from 'coreds/lib/util'
 import { user } from '../../g/user/'
 
 import { default as BookmarkTagPageV } from './BookmarkTagPage'
-//import { default as BookmarkEntryV } from './BookmarkEntryView'
-//import { default as BookmarkEntryTagV } from './BookmarkEntryTagView'
+import { default as BookmarkEntryPageV } from './BookmarkEntryPage'
+import { default as BookmarkEntryListV } from './BookmarkEntryList'
 
 export class HomePage {
     backup_enabled = true
@@ -35,17 +35,17 @@ export class HomePage {
 export default component({
     mounted(this: HomePage) { HomePage.mounted(this) },
     components: {
-        BookmarkTagPageV/*,
-        BookmarkEntryV,
-        BookmarkEntryTagV*/
+        BookmarkTagPageV,
+        BookmarkEntryPageV,
+        BookmarkEntryListV
     },
     template: /**/`
 <div class="container-full-width">
 <div class="row">
-  <!--<div class="col-pl-100 col-tp-50 col-tl-66">
-    <BookmarkEntryV />
-    <BookmarkEntryTagV />
-  </div>-->
+  <div class="col-pl-100 col-tp-50 col-tl-66">
+    <BookmarkEntryPageV />
+    <BookmarkEntryListV :opts="{ title: 'BookmarksByTag' }" />
+  </div>
   <div class="col-pl-100 col-tp-50 col-tl-33">
     <BookmarkTagPageV ref="tag_v" />
   </div>
