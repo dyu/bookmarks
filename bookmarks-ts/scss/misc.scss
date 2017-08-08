@@ -1,0 +1,39 @@
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  //text-indent: 1px;
+  //text-overflow: '';
+}
+
+i.icon.action {
+  cursor: pointer;
+}
+
+// no hover decoration for empty href links
+a:not([href]):hover {
+  text-decoration: none;
+}
+
+.alt, .timeago {
+  color: $alt-color;
+}
+.primary {
+  color: $primary-color;
+}
+
+.line-through, .line-through > a:hover {
+  text-decoration: line-through;
+}
+
+.nw {
+  white-space: nowrap;
+}
+
+div.ib {
+  display: inline-block;
+}
+
+div.bordered {
+  border: 1px solid $soft-gray; 
+}
+
