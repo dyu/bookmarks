@@ -203,7 +203,7 @@ $line-height-computed:    floor(($font-size-base * $line-height-base)); // ~20px
 }
 
 // Open state for the dropdown
-.active {
+.dropdown.active {
   // Show the menu
   > .dropdown-menu {
     display: block;
