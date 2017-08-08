@@ -7,7 +7,7 @@ import { ParamRangeKey } from 'coreds/lib/prk'
 import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
-import { filters, IdAndName, mapId, MAX_TAGS } from './context'
+import { BookmarkEntryItem, IdAndName, mapId, MAX_TAGS } from './context'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -187,27 +187,7 @@ export default component({
     created(this: BookmarkEntryPage) { BookmarkEntryPage.created(this) },
     mounted(this: BookmarkEntryPage) { BookmarkEntryPage.mounted(this) },
     components: {
-        item: {
-            name: 'Item', props: { pojo: { type: Object, required: true } }, data() { return {} },
-            filters,
-            template: /**/`
-<li ${ui.pi_attrs}>
-  <div class="content right floated">
-    ${ui.icon_toggle($.$.active, 32, 'circle', $.$d[$.$.active].$n)}
-  </div>
-  <div class="content right floated timeago">${ui.icon_timeago}</div>
-  <div class="content right floated timeago hide-pp hide-tp"><i class="icon calendar"></i>{{ pojo['${$.$.date}'] | ymd }}</div>
-  <div :class="'content' + (pojo['${$.$.active}'] ? '' : ' line-through')">
-    <a :style="pojo['${$.$.normalized}'] | word_wrap" :href="pojo['${$.$.url}'] | href" target="_blank" rel="noreferrer">
-      <span v-show="pojo['${$.$.www}']">www.</span>{{ pojo['${$.$.normalized}'] }}
-    </a>
-    <div v-text="pojo['${$.$.title}']"></div>
-  </div>
-  ${ui.pi_msg}
-  <div class="detail-p" v-show="pojo._.state & ${PojoState.UPDATE}" v-append:bookmark-entry-detail="pojo._.state & ${PojoState.UPDATE}"></div>
-</li>
-            `/**/
-        }
+        item: BookmarkEntryItem
     },
     template: /**/`
 <div v-pager="pager">
