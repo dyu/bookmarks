@@ -2,10 +2,10 @@ import { component } from 'vuets'
 import { defg, defp, nullp, setp } from 'coreds/lib/util'
 import { Pager, ItemSO, SelectionFlags, PojoState } from 'coreds/lib/types'
 import { PojoStore } from 'coreds/lib/pstore/'
-import { ParamRangeKey } from 'coreds/lib/prk'
+import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
-import { BookmarkEntryItem, IdAndName, mapId, MAX_TAGS } from './context'
+import { BookmarkEntryItem, IdAndName, MAX_TAGS } from './context'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 
@@ -38,8 +38,16 @@ export class BookmarkEntryList {
             onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
                 return 0
             },
-            fetch(prk: ParamRangeKey, pager: Pager) {
-                return $.ForUser.listBookmarkEntryByTag($.PTags.$new(prk, self.m.tags))
+            fetch(req: prk.ParamRangeKey, pager: Pager) {
+                var startObj
+                if (req[prk.$.startKey]) {
+                    // set as entryKey
+                    req[prk.$.parentKey] = req[prk.$.startKey]
+                    startObj = self.pstore.startObj
+                    // the real startKey
+                    req[prk.$.startKey] = startObj.$d ? startObj[$.M.$.pageKey] : startObj[$.M.$.pageKey]
+                }
+                return $.ForUser.listBookmarkEntryByTag($.PTags.$new(req, self.m.tags))
                         .then(self.fetch$$S).then(undefined, self.fetch$$F)
             }
         }))
