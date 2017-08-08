@@ -1,16 +1,14 @@
 import { component } from 'vuets'
 
-import { PojoState } from 'vueds/lib/types'
-import { extractMsg } from 'vueds/lib/util'
+import { PojoState } from 'coreds/lib/types'
+import { extractMsg } from 'coreds/lib/util'
 import { user } from '../../g/user/'
 
-import { BookmarkTagView, default as BookmarkTagV } from './BookmarkTagView'
-import { default as BookmarkEntryV } from './BookmarkEntryView'
-import { default as BookmarkEntryTagV } from './BookmarkEntryTagView'
+import { default as BookmarkTagV } from './BookmarkTagPage'
+//import { default as BookmarkEntryV } from './BookmarkEntryView'
+//import { default as BookmarkEntryTagV } from './BookmarkEntryTagView'
 
 export class HomePage {
-    bookmark_tag_v: BookmarkTagView
-
     backup_enabled = true
     backup_msg = ''
     backup_state = 0
@@ -30,36 +28,33 @@ export class HomePage {
         user.ForUser.backup().then(this.backup$$S).then(undefined, this.backup$$F)
     }
 
-    static activate(self: HomePage) {
+    static mounted(self: HomePage) {
         self.backup_enabled = !window['hide_backup']
-        
-        let bookmark_tag_v = self.bookmark_tag_v || (self.bookmark_tag_v = self['$refs']['bookmark_tag_v'])
-        BookmarkTagView.activate(bookmark_tag_v)
     }
 }
 export default component({
-    mounted(this: HomePage) { HomePage.activate(this) },
+    mounted(this: HomePage) { HomePage.mounted(this) },
     components: {
-        BookmarkTagV,
+        BookmarkTagV/*,
         BookmarkEntryV,
-        BookmarkEntryTagV
+        BookmarkEntryTagV*/
     },
     template: /**/`
+<div class="container-full-width">
 <div class="row">
-  <div class="col-pl-100 col-tp-50 col-tl-66">
-    <bookmark-entry-v />
-    <bookmark-entry-tag-v />
-  </div>
+  <!--<div class="col-pl-100 col-tp-50 col-tl-66">
+    <BookmarkEntryV />
+    <BookmarkEntryTagV />
+  </div>-->
   <div class="col-pl-100 col-tp-50 col-tl-33">
-    <bookmark-tag-v ref="bookmark_tag_v" />
+    <BookmarkTagV ref="bookmark_tag_v" />
   </div>
   <div v-if="backup_enabled" style="position:fixed; top:0; right:0">
     <i style="margin-right:-5px" class="icon ellipsis-vert" v-toggle="'.1'"></i>
     <div class="dropdown pull-right">
       <ul class="dropdown-menu mhalf">
-        <div class="ui message"
-            v-show="backup_msg"
-            v-pclass:status-="(backup_state & ${PojoState.MASK_STATUS})">
+        <div :class="'ui message status-' + (backup_state & ${PojoState.MASK_STATUS})" 
+            v-show="backup_msg">
           <i class="icon close" @click.prevent="backup_msg = null"></i>
           <span v-text="backup_msg"></span>
         </div>
@@ -69,5 +64,6 @@ export default component({
       </ul>
     </div>
   </div>
+</div>
 </div>`/**/
 }, HomePage)

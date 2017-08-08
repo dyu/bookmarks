@@ -6,7 +6,7 @@ import { mergeFrom } from 'coreds/lib/diff'
 import { ParamRangeKey } from 'coreds/lib/prk'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
-import { stores } from './context'
+import { stores, filters } from './context'
 import { qd, QForm } from '../../g/user/BookmarkTagQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkTag
@@ -133,7 +133,7 @@ export class BookmarkTagPage {
         if (!mc)
             return
 
-        $.ForUser.update(form.$update_req(original['1'] as string, mc))
+        $.ForUser.update(form.$update_req(original['1'] as string, mc, original[$.$.id]))
             .then(this.pupdate$$S).then(undefined, this.pupdate$$F)
     }
     change(e, field, pojo, update, root) {
@@ -157,6 +157,7 @@ export class BookmarkTagPage {
 export default component({
     created(this: BookmarkTagPage) { BookmarkTagPage.created(this) },
     mounted(this: BookmarkTagPage) { BookmarkTagPage.mounted(this) },
+    filters,
     components: {
         item: {
             name: 'Item', props: { pojo: { type: Object, required: true } }, data() { return {} },
@@ -164,7 +165,7 @@ export default component({
 <li ${ui.pi_attrs}>
   <div class="content right floated timeago">${ui.icon_timeago}</div>
   <div class="content main">
-    <span :style="{ color: '#' + (pojo.${$.$.color} || '555555') }">{{ pojo.${$.$.name} }}</span>
+    <span :style="{ color: '#' + (pojo['${$.$.color}'] || '555555') }">{{ pojo['${$.$.name}'] }}</span>
   </div>
   ${ui.pi_msg}
   <div class="detail-p" v-show="pojo._.state & ${PojoState.UPDATE}" v-append:bookmark-tag-detail="pojo._.state & ${PojoState.UPDATE}"></div>

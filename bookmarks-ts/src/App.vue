@@ -1,16 +1,16 @@
 <template>
-<div class="container-full-width">
+<div>
   <div id="popup" class="popup">&nbsp;</div>
   <div style="display:none">
-    <calendar></calendar>
-    <suggest></suggest>
+    <Calendar />
+    <Suggest />
   </div>
-  <home></home>
+  <Home />
 </div>
 </template>
 <script>
-import Suggest from 'vueds-ui/lib/c/suggest'
-import Calendar from 'vueds-ui/lib/c/calendar'
+import Suggest from 'coreds-ui/lib/c/suggest'
+import Calendar from 'coreds-ui/lib/c/calendar'
 import Home from './user/'
 export default {
   data() {
@@ -23,6 +23,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-@import './scss/app.scss';
-</style>
