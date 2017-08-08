@@ -1,12 +1,13 @@
 import { component } from 'vuets'
-import { defp, nullp } from 'coreds/lib/util'
+import { defp, nullp, setp } from 'coreds/lib/util'
 import { Pager, ItemSO, SelectionFlags, PojoSO, PojoState } from 'coreds/lib/types'
 import { PojoStore } from 'coreds/lib/pstore/'
 import { mergeFrom } from 'coreds/lib/diff'
 import { ParamRangeKey } from 'coreds/lib/prk'
+import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
-import { filters } from './context'
+import { filters, IdAndName, mapId } from './context'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -21,7 +22,9 @@ export class BookmarkEntryPage {
 
     pnew = form.initObservable($.$new0(), $.$d)
     pupdate = form.initObservable($.$new0(), $.$d)
-
+    
+    tags = [] as IdAndName[]
+    add_tag = setp(setp(msg.$new(), 'f', null), 'f$', null)
     constructor() {
         nullp(this, 'pager')
     }
@@ -104,13 +107,19 @@ export class BookmarkEntryPage {
     }
     pnew$$() {
         let pnew = this.pnew,
+            tags = this.tags,
+            newTags: number[]|undefined,
             lastSeen
         if (!form.$prepare(pnew))
             return
 
         pnew['1'] = (lastSeen = this.pstore.getLastSeenObj()) && lastSeen['1']
 
-        $.ForUser.create($.PNew.$new(pnew/*, TODO*/))
+        if (tags.length) {
+            newTags = tags.map(mapId)
+            tags.length = 0
+        }
+        $.ForUser.create($.PNew.$new(pnew, newTags))
             .then(this.pnew$$S).then(undefined, this.pnew$$F)
     }
 
@@ -152,6 +161,27 @@ export class BookmarkEntryPage {
         mc && $.ForUser.updateBookmarkEntry(form.$update_req(pojo['1'] as string, mc))
             .then(this.toggle$$S).then(undefined, this.toggle$$F)
     }
+    
+    add_tag$$(fk: string, id: number, name: string) {
+        this['$refs'].add_tag.value = ''
+        
+        let tags = this.tags
+        if (tags.length === 4)
+            return false
+        
+        for (let tag of tags) {
+            if (id === tag.id) return false
+        }
+        
+        tags.push({ id, name })
+        return false
+    }
+    rm_tag(idx: number) {
+        this.tags.splice(idx, 1)
+    }
+    suggest(ps: any, opts: any) {
+        return user.BookmarkTag.$NAME(ps, true)
+    }
 }
 export default component({
     created(this: BookmarkEntryPage) { BookmarkEntryPage.created(this) },
@@ -188,7 +218,20 @@ export default component({
       <i class="icon plus" title="add" v-toggle:click,1,bookmark_entry_ff="'.1'"></i>
       <div class="dropdown">
         <div class="dropdown-menu mfluid2 pull-right">
-          ${ui.form('pnew', $.$d, 'bookmark_entry_ff', undefined, undefined, 3)}
+          ${ui.form('pnew', $.$d, 'bookmark_entry_ff', /**/`
+          <div class="tags inline">
+            <span v-for="(tag, idx) of tags" class="ui label" :style="tag.styles">
+              {{ tag.name }}
+              <i class="icon action close" @click="rm_tag(idx)"></i>
+            </span>
+          </div>
+          <div class="field suggest" v-clear="add_tag">
+            <i class="icon plus"></i>
+            <input placeholder="Tag" type="text" ref="add_tag"
+                :disabled="tags.length === 4 || 0 !== (add_tag.state & ${PojoState.LOADING})"
+                v-suggest="{ pojo: add_tag, field: 'f', fetch: suggest, onSelect: add_tag$$ }" />
+          </div>
+          `/**/, 1, 3)}
         </div>
       </div>
     </a>
