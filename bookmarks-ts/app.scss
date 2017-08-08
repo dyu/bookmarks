@@ -34,24 +34,5 @@ i.icon.close { @extend i.icon.cancel; }
 @import "./scss/misc.scss";
 
 // ================================================== 
-// misc
-
-.float-right {
-  float: right;
-}
-
-div.ib {
-  display: inline-block;
-  > input {
-    display: inline-block;
-    width: auto;
-  }
-  > button.outlined {
-    padding: 0.5rem 0.5rem 0.5rem 0.9rem;
-    margin: 0;
-  }
-}
-
-// ================================================== 
 // app specific
 
