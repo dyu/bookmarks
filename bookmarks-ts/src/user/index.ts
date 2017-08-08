@@ -4,7 +4,7 @@ import { PojoState } from 'coreds/lib/types'
 import { extractMsg } from 'coreds/lib/util'
 import { user } from '../../g/user/'
 
-import { default as BookmarkTagV } from './BookmarkTagPage'
+import { default as BookmarkTagPageV } from './BookmarkTagPage'
 //import { default as BookmarkEntryV } from './BookmarkEntryView'
 //import { default as BookmarkEntryTagV } from './BookmarkEntryTagView'
 
@@ -35,7 +35,7 @@ export class HomePage {
 export default component({
     mounted(this: HomePage) { HomePage.mounted(this) },
     components: {
-        BookmarkTagV/*,
+        BookmarkTagPageV/*,
         BookmarkEntryV,
         BookmarkEntryTagV*/
     },
@@ -47,7 +47,7 @@ export default component({
     <BookmarkEntryTagV />
   </div>-->
   <div class="col-pl-100 col-tp-50 col-tl-33">
-    <BookmarkTagV ref="bookmark_tag_v" />
+    <BookmarkTagPageV ref="tag_v" />
   </div>
   <div v-if="backup_enabled" style="position:fixed; top:0; right:0">
     <i style="margin-right:-5px" class="icon ellipsis-vert" v-toggle="'.1'"></i>
