@@ -7,7 +7,7 @@ import { ParamRangeKey } from 'coreds/lib/prk'
 import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
-import { filters, IdAndName, mapId } from './context'
+import { filters, IdAndName, mapId, MAX_TAGS } from './context'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -166,7 +166,7 @@ export class BookmarkEntryPage {
         this['$refs'].add_tag.value = ''
         
         let tags = this.tags
-        if (tags.length === 4)
+        if (tags.length === MAX_TAGS)
             return false
         
         for (let tag of tags) {
@@ -228,7 +228,7 @@ export default component({
           <div class="field suggest" v-clear="add_tag">
             <i class="icon plus"></i>
             <input placeholder="Tag" type="text" ref="add_tag"
-                :disabled="tags.length === 4 || 0 !== (add_tag.state & ${PojoState.LOADING})"
+                :disabled="tags.length === ${MAX_TAGS} || 0 !== (add_tag.state & ${PojoState.LOADING})"
                 v-suggest="{ pojo: add_tag, field: 'f', fetch: suggest, onSelect: add_tag$$ }" />
           </div>
           `/**/, 1, 3)}
