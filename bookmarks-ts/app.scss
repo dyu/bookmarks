@@ -33,6 +33,12 @@ i.icon.close { @extend i.icon.cancel; }
 
 @import "./scss/misc.scss";
 
+div.dropdown-menu {
+  div.field.suggest > i.icon {
+    top: 0.8rem;
+  }
+}
+
 // ================================================== 
 // app specific
 
