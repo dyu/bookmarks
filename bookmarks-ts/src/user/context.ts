@@ -29,6 +29,8 @@ export const filters = {
         return space > WORD_WRAP_LIMIT || (space === -1 && url.length > WORD_WRAP_LIMIT) ? 'display:block;margin-top:1em;word-wrap:break-word' : ''
     },
     word_wrap(url: string) {
+        if (!url)
+            return ''
         let space = url.indexOf(' ')
         return space > WORD_WRAP_LIMIT || (space === -1 && url.length > WORD_WRAP_LIMIT) ? 'word-wrap:break-word' : ''
     }
