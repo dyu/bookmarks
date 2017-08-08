@@ -187,7 +187,7 @@ export default component({
       </div>
     </a>
   </div>
-  <input type="text" placeholder="BookmarkTag" ${ui.lsearch_attrs($.$.name)} />
+  <input type="text" placeholder="Tags" ${ui.lsearch_attrs($.$.name)} />
 </div>
 <div class="ui tab">
   ${ui.qform(qd)}
