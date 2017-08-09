@@ -64,7 +64,7 @@ public final class BookmarkEntryViews
         {
             context.$field = ValueUtil.toInt32LE(serTags, i);
             output.writeObject(BookmarkEntry.M.FN_TAGS, 
-                    context, BookmarkTagViews.M_SCHEMA, true);
+                    context, BookmarkTagViews.M_CONTEXT_SCHEMA, true);
         }
     }
     
