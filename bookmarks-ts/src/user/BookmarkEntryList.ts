@@ -6,14 +6,15 @@ import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
-import { BookmarkEntryItem, BookmarkEntryView, IdAndName, MAX_TAGS } from './context'
+import { IdAndName, MAX_TAGS } from './context'
+import { Item, View } from './BookmarkEntryBase'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 
 const PAGE_SIZE = 10,
     MULTIPLIER = 3
 
-export class BookmarkEntryList extends BookmarkEntryView {
+export class BookmarkEntryList extends View {
     tags = [] as IdAndName[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     
@@ -102,7 +103,7 @@ export class BookmarkEntryList extends BookmarkEntryView {
 export default component({
     created(this: BookmarkEntryList) { BookmarkEntryList.created(this) },
     components: {
-        item: BookmarkEntryItem
+        Item
     },
     template: /**/`
 <div v-pager="pager">

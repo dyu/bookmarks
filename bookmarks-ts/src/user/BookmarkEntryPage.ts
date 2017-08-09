@@ -7,7 +7,8 @@ import { ParamRangeKey } from 'coreds/lib/prk'
 import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
-import { BookmarkEntryItem, BookmarkEntryView, IdAndName, mapId, MAX_TAGS } from './context'
+import { IdAndName, MAX_TAGS, mapId } from './context'
+import { Item, View } from './BookmarkEntryBase'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -15,7 +16,7 @@ const $ = user.BookmarkEntry
 const PAGE_SIZE = 10,
     MULTIPLIER = 3
 
-export class BookmarkEntryPage extends BookmarkEntryView {
+export class BookmarkEntryPage extends View {
     qform = new QForm()
     
     tags = [] as IdAndName[]
@@ -121,7 +122,7 @@ export default component({
     created(this: BookmarkEntryPage) { BookmarkEntryPage.created(this) },
     mounted(this: BookmarkEntryPage) { BookmarkEntryPage.mounted(this) },
     components: {
-        item: BookmarkEntryItem
+        Item
     },
     template: /**/`
 <div v-pager="pager">
