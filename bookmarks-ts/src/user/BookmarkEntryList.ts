@@ -1,5 +1,5 @@
 import { component } from 'vuets'
-import { defg, defp, nullp, setp } from 'coreds/lib/util'
+import { copyp, defg, defp, nullp, setp } from 'coreds/lib/util'
 import { Pager, ItemSO, SelectionFlags, PojoState } from 'coreds/lib/types'
 import { PojoStore } from 'coreds/lib/pstore/'
 import * as prk from 'coreds/lib/prk'
@@ -39,6 +39,9 @@ export class BookmarkEntryList extends View {
             },
             onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
                 return self.onSelect(selected, flags)
+            },
+            onPopulate(message: user.BookmarkEntry, main: boolean, target: user.BookmarkEntry, index: number) {
+                copyp(target, $.M.$.tags, message)
             },
             fetch(req: prk.ParamRangeKey, pager: Pager) {
                 var startObj
