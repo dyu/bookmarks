@@ -146,6 +146,7 @@ message BookmarkTag {
   message M {
     //required bytes key = 1;
     required string name = 3;
+    required string color = 4;
     required uint32 id = 5;
     
     message PList { repeated M p = 1; }

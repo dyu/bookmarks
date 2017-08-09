@@ -94,14 +94,22 @@ public final class BookmarkTagViews
         public void writeTo(Output output, WriteContext context) throws IOException
         {
             final byte[] v = EntityRegistry.BOOKMARK_TAG_CACHE.$v(context.$field, context);
-            final int voffset = context.$offset, vlen = context.$len;
+            final int voffset = context.$offset, vlen = context.$len,
+                    nameOffset = readBAO$len(BookmarkTag.FN_NAME, v, voffset, vlen, context),
+                    nameLen = context.$len,
+                    // skip fields (optimization)
+                    colorSkipSize = nameOffset + nameLen - voffset,
+                    colorOffset = readBAO$len(BookmarkTag.FN_COLOR, v, voffset + colorSkipSize, vlen - colorSkipSize, context),
+                    colorLen = context.$len;
             
             output.writeFixed32(BookmarkTag.M.FN_ID, 
                     asInt32(BookmarkTag.VO_ID, v, voffset, vlen), false);
             
-            output.writeByteRange(true, BookmarkTag.M.FN_NAME, v, 
-                    readBAO$len(BookmarkTag.FN_NAME, v, voffset, vlen, context), 
-                    context.$len, false);
+            output.writeByteRange(true, BookmarkTag.M.FN_NAME, 
+                    v, nameOffset, nameLen, false);
+            
+            output.writeByteRange(true, BookmarkTag.M.FN_COLOR, 
+                    v, colorOffset, colorLen, false);
         }
     };
     
