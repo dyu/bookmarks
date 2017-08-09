@@ -95,7 +95,11 @@ export class BookmarkEntryPage {
     }
 
     pnew$$S(data) {
-        let pnew = this.pnew
+        let pnew = this.pnew,
+            tags = this.tags
+        
+        // reset
+        if (tags.length) tags.length = 0
 
         this.pstore.addAll(data['1'], true, true)
         form.$success(pnew)
@@ -107,17 +111,13 @@ export class BookmarkEntryPage {
     pnew$$() {
         let pnew = this.pnew,
             tags = this.tags,
-            newTags: number[]|undefined,
+            newTags = !tags.length ? undefined : tags.map(mapId),
             lastSeen
         if (!form.$prepare(pnew))
             return
 
         pnew['1'] = (lastSeen = this.pstore.getLastSeenObj()) && lastSeen['1']
-
-        if (tags.length) {
-            newTags = tags.map(mapId)
-            tags.length = 0
-        }
+        
         $.ForUser.create($.PNew.$new(pnew, newTags))
             .then(this.pnew$$S).then(undefined, this.pnew$$F)
     }
@@ -161,7 +161,7 @@ export class BookmarkEntryPage {
             .then(this.toggle$$S).then(undefined, this.toggle$$F)
     }
     
-    tag_new$$(fk: string, id: number, name: string) {
+    tag_new$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
         this['$refs'].tag_new.value = ''
         
         let tags = this.tags
@@ -208,7 +208,7 @@ export default component({
             <i class="icon plus"></i>
             <input placeholder="Tag" type="text" ref="tag_new"
                 :disabled="tags.length === ${MAX_TAGS} || 0 !== (tag_new.state & ${PojoState.LOADING})"
-                v-suggest="{ pojo: tag_new, field: 'f', fetch: suggest, onSelect: tag_new$$ }" />
+                v-suggest="{ pojo: tag_new, field: 'f', fetch: suggest, onSelect: tag_new$$, vk: '${user.BookmarkTag.$.id}' }" />
           </div>
           `/**/, 1, 3)}
         </div>
