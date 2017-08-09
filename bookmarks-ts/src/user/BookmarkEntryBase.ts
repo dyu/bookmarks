@@ -35,9 +35,7 @@ export const Item = {
   <div :class="'tags inline' + (!(pojo._.state & ${PojoState.UPDATE}) ? ' noop' : '')">
     <span v-for="(tag, idx) of pojo['${$.M.$.tags}']" class="ui label" :style="{ color: '#' + tag['${Tag.$.color}'] }">
       {{ tag['${Tag.$.name}'] }}
-      <i class="icon action cancel-circled" v-show="(tag.state & ${TagState.REMOVE})" @click="(tag.state ^= ${TagState.REMOVE})"></i>
-      <i class="icon action ok-circled" v-show="(tag.state & ${TagState.REMOVE})" @click="0 <= (pojo._.state ^= ${TagState.REMOVE}) && $emit('rm_tag', idx)"></i>
-      <i class="icon action trash" @click="(tag.state ^= ${TagState.REMOVE})"></i>
+      <i class="icon action close" @click="$emit('rm_tag', idx)"></i>
     </span>
   </div>
   ${ui.pi_msg}
