@@ -15,19 +15,16 @@ import com.dyuproject.protostuff.RpcServiceProvider;
 import com.dyuproject.protostuff.RpcWorker;
 import com.dyuproject.protostuffdb.Datastore;
 import com.dyuproject.protostuffdb.DatastoreManager;
-import com.dyuproject.protostuffdb.KeyUtil;
-import com.dyuproject.protostuffdb.Visitor;
 import com.dyuproject.protostuffdb.WriteContext;
 
 /**
  * User service provider.
  */
-public class UserProvider extends RpcServiceProvider implements Visitor<WriteContext>
+public class UserProvider extends RpcServiceProvider// implements Visitor<WriteContext>
 {
     static final boolean WITH_BACKUP = Boolean.getBoolean("protostuffdb.with_backup");
     
-    
-    final Object[] visitorsByKind = new Object[64];
+    /*final Object[] visitorsByKind = new Object[64];
     
     @SuppressWarnings("unchecked")
     @Override
@@ -56,7 +53,7 @@ public class UserProvider extends RpcServiceProvider implements Visitor<WriteCon
         }
         
         return false;
-    }
+    }*/
     
     @Override
     public void fill(RpcService[] services, List<Integer> ids, 
@@ -66,11 +63,11 @@ public class UserProvider extends RpcServiceProvider implements Visitor<WriteCon
         fill(services, ids, getClass());
         
         // init
-        EntityRegistry.fill(visitorsByKind);
+        /*EntityRegistry.fill(visitorsByKind);
         
         store.scan(false, -1, false, 
                 KeyUtil.newTagIndexRangeKeyStart(Tags.POST_ENTITY_INIT + 1), 
-                context, this, null);
+                context, this, null);*/
         
         EntityRegistry.initSeq(store, context);
     }

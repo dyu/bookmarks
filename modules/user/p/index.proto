@@ -114,10 +114,6 @@ message BookmarkTag {
   
   // ==================================================
   
-  option code_new_index = "
-    .add(Tags.ENTITY_INIT, $KEY, 0)
-  ";
-  
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
