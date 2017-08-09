@@ -5,27 +5,28 @@ import { PojoStore } from 'coreds/lib/pstore/'
 import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
-import { BookmarkEntryItem, IdAndName, MAX_TAGS } from './context'
+import * as form from 'coreds/lib/form'
+import { BookmarkEntryItem, BookmarkEntryView, IdAndName, MAX_TAGS } from './context'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 
 const PAGE_SIZE = 10,
     MULTIPLIER = 3
 
-export class BookmarkEntryList {
-    pager: Pager
-    pstore: PojoStore<user.BookmarkEntry>
-    
+export class BookmarkEntryList extends BookmarkEntryView {
     tags = [] as IdAndName[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
-
+    
+    pupdate = form.initObservable($.$new0(), $.$d)
+    
     m = defg(this, 'm', {
         tags: [] as number[]
     })
     constructor() {
+        super()
         nullp(this, 'pager')
     }
-
+    
     static created(self: BookmarkEntryList) {
         let pstore = defp(self, 'pstore', new PojoStore([], {
             desc: true,
@@ -33,10 +34,10 @@ export class BookmarkEntryList {
             multiplier: MULTIPLIER,
             descriptor: $.$d,
             createObservable(so: ItemSO, idx: number) {
-                return $.$new('')
+                return setp($.$new(''), $.M.$.tags, [])
             },
             onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
-                return 0
+                return self.onSelect(selected, flags)
             },
             fetch(req: prk.ParamRangeKey, pager: Pager) {
                 var startObj
@@ -94,6 +95,9 @@ export class BookmarkEntryList {
     suggest(ps: any, opts: any) {
         return user.BookmarkTag.$NAME(ps, true)
     }
+    upd_tag(idx: number) {
+        console.log('upd_tag: ' + idx)
+    }
 }
 export default component({
     created(this: BookmarkEntryList) { BookmarkEntryList.created(this) },
@@ -108,7 +112,7 @@ export default component({
       <i class="icon tags hide-pp"></i>
       <input placeholder="Tag(s)" type="text" ref="tag_new"
           :disabled="tags.length === ${MAX_TAGS} || 0 !== (tag_new.state & ${PojoState.LOADING})"
-          v-suggest="{ pojo: tag_new, field: 'f', fetch: suggest, onSelect: tag_new$$ }" />
+          v-suggest="{ pojo: tag_new, field: 'f', fetch: suggest, onSelect: tag_new$$, vk: '${user.BookmarkTag.$.id}' }" />
       <div :class="'dropdown' + (!tags.length ? '' : ' active')">
         <ul class="dropdown-menu mhalf pull-right">
           <li v-for="(tag, idx) of tags" class="fluid tag">
@@ -124,7 +128,14 @@ export default component({
 <div v-show="pager.size">${ui.pager_controls}</div>
 ${ui.pager_msg}
 <ul class="ui small divided selection list">
-  <item v-for="pojo of pager.array" :pojo="pojo" />
+  <item v-for="pojo of pager.array" :pojo="pojo" :detail_id="'bookmark-entry-by-tag-detail'"
+      @toggle="toggle" @rm_tag="upd_tag" />
 </ul>
+<div style="display:none">
+  <div id="bookmark-entry-by-tag-detail" class="detail">
+    <hr />
+    ${ui.form('pupdate', $.$d, null)}
+  </div>
+</div>
 </div>`/**/
 }, BookmarkEntryList)
