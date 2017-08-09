@@ -14,8 +14,6 @@
 
 package bookmarks.user;
 
-import static com.dyuproject.protostuffdb.SerializedValueUtil.readBAO$len;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,16 +42,6 @@ import com.dyuproject.protostuffdb.tag.TagVisit;
 public final class BookmarkEntryViews
 {
     private BookmarkEntryViews() {}
-
-    private static void writeTagNameTo(Output output, int field, 
-            int tagId, boolean repeated, WriteContext context) throws IOException
-    {
-        byte[] tag = EntityRegistry.BOOKMARK_TAG_CACHE.$v(tagId, context);
-        
-        output.writeByteRange(true, field, tag, readBAO$len(BookmarkTag.FN_NAME, 
-                tag, context.$offset, context.$len, context), 
-                context.$len, repeated);
-    }
     
     private static void transferField(int number, Pipe pipe, Input input, Output output,
             WriteContext context) throws IOException
@@ -74,8 +62,9 @@ public final class BookmarkEntryViews
         
         for (int i = 0; i < serTags.length; i += 4)
         {
-            writeTagNameTo(output, BookmarkEntry.M.FN_TAGS, 
-                    ValueUtil.toInt32LE(serTags, i), true, context);
+            context.$field = ValueUtil.toInt32LE(serTags, i);
+            output.writeObject(BookmarkEntry.M.FN_TAGS, 
+                    context, BookmarkTagViews.M_SCHEMA, true);
         }
     }
     

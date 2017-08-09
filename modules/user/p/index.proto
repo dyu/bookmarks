@@ -141,6 +141,15 @@ message BookmarkTag {
   optional uint32 id = 5 [provided = true, readonly = true, immutable = true, default = 0];
   
   message PList { repeated BookmarkTag p = 1; }
+  
+  @MergeParent(partial = true, flex_modifier = true)
+  message M {
+    //required bytes key = 1;
+    required string name = 3;
+    required uint32 id = 5;
+    
+    message PList { repeated M p = 1; }
+  }
 }
 
 message UpdateTag {
@@ -276,8 +285,8 @@ message BookmarkEntry {
   
   @MergeParent
   message M {
+    repeated BookmarkTag.M tags = 28;
     required bytes page_key = 32;
-    repeated string tags = 33;
     
     message PList { repeated M p = 1; }
   }
