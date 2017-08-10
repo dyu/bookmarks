@@ -23,8 +23,6 @@ export class BookmarkEntryPage extends View {
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     pnew = form.initObservable($.$new0(), $.$d)
     
-    tag_upd = setp(setp(msg.$new(), 'f', null), 'f$', null)
-    pupdate = setp(form.initObservable($.$new0(), $.$d), 'tag_count', null)
     constructor() {
         super()
         nullp(this, 'pager')

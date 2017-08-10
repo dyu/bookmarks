@@ -1,7 +1,9 @@
+import { setp } from 'coreds/lib/util'
 import { PojoStore } from 'coreds/lib/pstore/'
-import { PojoState, Pager, SelectionFlags, PojoSO, HasState } from 'coreds/lib/types'
+import { PojoState, Pager, SelectionFlags, PojoSO } from 'coreds/lib/types'
 import { mergeFrom } from 'coreds/lib/diff'
 import * as ui from '../ui'
+import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import { filters, MAX_TAGS } from './context'
 import { user } from '../../g/user/'
@@ -68,9 +70,9 @@ export function $list(detail_id: string) {
 export abstract class View {
     pager: Pager
     pstore: PojoStore<user.BookmarkEntry>
-    pupdate: user.BookmarkEntry
-    
-    tag_upd: HasState
+
+    tag_upd = setp(setp(msg.$new(), 'f', null), 'f$', null)
+    pupdate = setp(form.initObservable($.$new0(), $.$d), 'tag_count', null)
     
     onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
         if (!(flags & SelectionFlags.CLICKED_UPDATE))

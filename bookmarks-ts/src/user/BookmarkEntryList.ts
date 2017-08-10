@@ -5,7 +5,6 @@ import { PojoStore } from 'coreds/lib/pstore/'
 import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
-import * as form from 'coreds/lib/form'
 import { IdAndName, MAX_TAGS } from './context'
 import { Item, View, $list } from './BookmarkEntryBase'
 import { user } from '../../g/user/'
@@ -17,9 +16,6 @@ const PAGE_SIZE = 10,
 export class BookmarkEntryList extends View {
     tags = [] as IdAndName[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
-    
-    tag_upd = setp(setp(msg.$new(), 'f', null), 'f$', null)
-    pupdate = setp(form.initObservable($.$new0(), $.$d), 'tag_count', null)
     
     m = defg(this, 'm', {
         tags: [] as number[]
