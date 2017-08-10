@@ -1,5 +1,5 @@
 import { PojoStore } from 'coreds/lib/pstore/'
-import { PojoState, Pager, SelectionFlags, PojoSO } from 'coreds/lib/types'
+import { PojoState, Pager, SelectionFlags, PojoSO, HasState } from 'coreds/lib/types'
 import { mergeFrom } from 'coreds/lib/diff'
 import * as ui from '../ui'
 import * as form from 'coreds/lib/form'
@@ -49,6 +49,8 @@ export abstract class View {
     pstore: PojoStore<user.BookmarkEntry>
     pupdate: user.BookmarkEntry
     
+    tag_upd: HasState
+    
     onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
         if (!(flags & SelectionFlags.CLICKED_UPDATE))
             return 0
@@ -77,7 +79,9 @@ export abstract class View {
         mergeFrom(original, selected['$d'], pupdate)
         if (pupdate_.msg)
             pupdate_.msg = ''
-
+        
+        let tags = original[$.M.$.tags]
+        pupdate['tag_count'] = !tags ? 0 : tags.length
         return 0
     }
     
@@ -118,5 +122,16 @@ export abstract class View {
             mc = form.$toggle(pager, field, pojo)
         mc && $.ForUser.updateBookmarkEntry(form.$update_req(pojo['1'] as string, mc))
             .then(this.toggle$$S).then(undefined, this.toggle$$F)
+    }
+    
+    tag_upd$$rm(idx: number) {
+        // TODO
+        console.log('rm tag: ' + idx)
+    }
+    tag_upd$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
+        // TODO
+        console.log('add tag: ' + name)
+        this['$refs'].tag_upd.value = ''
+        return false
     }
 }

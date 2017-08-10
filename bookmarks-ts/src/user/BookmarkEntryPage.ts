@@ -22,7 +22,9 @@ export class BookmarkEntryPage extends View {
     tags = [] as IdAndName[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     pnew = form.initObservable($.$new0(), $.$d)
-    pupdate = form.initObservable($.$new0(), $.$d)
+    
+    tag_upd = setp(setp(msg.$new(), 'f', null), 'f$', null)
+    pupdate = setp(form.initObservable($.$new0(), $.$d), 'tag_count', null)
     constructor() {
         super()
         nullp(this, 'pager')
@@ -117,9 +119,6 @@ export class BookmarkEntryPage extends View {
     suggest(ps: any, opts: any) {
         return user.BookmarkTag.$NAME(ps, true)
     }
-    upd_tag(idx: number) {
-        console.log('upd_tag: ' + idx)
-    }
 }
 export default component({
     created(this: BookmarkEntryPage) { BookmarkEntryPage.created(this) },
@@ -163,11 +162,17 @@ ${ui.pager_controls}
 ${ui.pager_msg}
 <ul class="ui small divided selection list">
   <item v-for="pojo of pager.array" :pojo="pojo" :detail_id="'bookmark-entry-detail'"
-      @toggle="toggle" @rm_tag="upd_tag" />
+      @toggle="toggle" @rm_tag="tag_upd$$rm" />
 </ul>
 <div style="display:none">
   <div id="bookmark-entry-detail" class="detail">
     <hr />
+    <div class="field suggest" v-clear="tag_upd">
+      <i class="icon plus"></i>
+      <input placeholder="Tag" type="text" ref="tag_upd"
+          :disabled="pupdate.tag_count === ${MAX_TAGS} || 0 !== (tag_upd.state & ${PojoState.LOADING})"
+          v-suggest="{ pojo: tag_upd, field: 'f', fetch: suggest, onSelect: tag_upd$$, vk: '${user.BookmarkTag.$.id}' }" />
+    </div>
     ${ui.form('pupdate', $.$d, null)}
   </div>
 </div>
