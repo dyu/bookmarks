@@ -3,7 +3,7 @@ import { PojoState, Pager, SelectionFlags, PojoSO, HasState } from 'coreds/lib/t
 import { mergeFrom } from 'coreds/lib/diff'
 import * as ui from '../ui'
 import * as form from 'coreds/lib/form'
-import { filters } from './context'
+import { filters, MAX_TAGS } from './context'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 const Tag = user.BookmarkTag
@@ -42,6 +42,27 @@ export const Item = {
   <div class="detail-p" v-show="pojo._.state & ${PojoState.UPDATE}" v-append:$detail_id="pojo._.state & ${PojoState.UPDATE}"></div>
 </li>
             `/**/
+}
+
+export function $list(detail_id: string) {
+    return /**/`
+<ul class="ui small divided selection list">
+  <item v-for="pojo of pager.array" :pojo="pojo" :detail_id="'${detail_id}'"
+      @toggle="toggle" @rm_tag="tag_upd$$rm" />
+</ul>
+<div style="display:none">
+  <div id="${detail_id}" class="detail">
+    <hr />
+    <div class="field suggest" v-clear="tag_upd">
+      <i class="icon plus"></i>
+      <input placeholder="Tag" type="text" ref="tag_upd"
+          :disabled="pupdate.tag_count === ${MAX_TAGS} || 0 !== (tag_upd.state & ${PojoState.LOADING})"
+          v-suggest="{ pojo: tag_upd, field: 'f', fetch: suggest, onSelect: tag_upd$$, vk: '${user.BookmarkTag.$.id}' }" />
+    </div>
+    ${ui.form('pupdate', $.$d, null)}
+  </div>
+</div>
+    `/**/
 }
 
 export abstract class View {

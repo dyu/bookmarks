@@ -7,7 +7,7 @@ import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import { IdAndName, MAX_TAGS } from './context'
-import { Item, View } from './BookmarkEntryBase'
+import { Item, View, $list } from './BookmarkEntryBase'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 
@@ -129,21 +129,6 @@ export default component({
 </div>
 <div v-show="pager.size">${ui.pager_controls}</div>
 ${ui.pager_msg}
-<ul class="ui small divided selection list">
-  <item v-for="pojo of pager.array" :pojo="pojo" :detail_id="'bookmark-entry-by-tag-detail'"
-      @toggle="toggle" @rm_tag="tag_upd$$rm" />
-</ul>
-<div style="display:none">
-  <div id="bookmark-entry-by-tag-detail" class="detail">
-    <hr />
-    <div class="field suggest" v-clear="tag_upd">
-      <i class="icon plus"></i>
-      <input placeholder="Tag" type="text" ref="tag_upd"
-          :disabled="pupdate.tag_count === ${MAX_TAGS} || 0 !== (tag_upd.state & ${PojoState.LOADING})"
-          v-suggest="{ pojo: tag_upd, field: 'f', fetch: suggest, onSelect: tag_upd$$, vk: '${user.BookmarkTag.$.id}' }" />
-    </div>
-    ${ui.form('pupdate', $.$d, null)}
-  </div>
-</div>
+${$list('bookmark-entry-by-tag-detail')}
 </div>`/**/
 }, BookmarkEntryList)
