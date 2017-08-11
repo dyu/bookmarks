@@ -219,10 +219,10 @@ export function $list(detail_id: string) {
 <div style="display:none">
   <div id="${detail_id}" class="detail">
     <hr />
-    <div class="field suggest" v-clear="tag_upd">
+    <div class="field suggest" v-clear="tag_upd" v-show="pupdate.tag_count < ${MAX_TAGS}">
       <i class="icon plus"></i>
       <input placeholder="Tag" type="text" ref="tag_upd"
-          :disabled="pupdate.tag_count === ${MAX_TAGS} || 0 !== (tag_upd.state & ${PojoState.LOADING})"
+          :disabled="0 !== (tag_upd.state & ${PojoState.LOADING})"
           v-suggest="{ pojo: tag_upd, field: 'f', fetch: suggest, onSelect: tag_upd$$, vk: '${user.BookmarkTag.$.id}' }" />
       ${msg.ui('tag_upd')}
     </div>
