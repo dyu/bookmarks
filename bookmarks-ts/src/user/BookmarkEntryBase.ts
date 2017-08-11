@@ -156,11 +156,13 @@ export abstract class View {
     tag_upd$$F(err) {
         this.pstore.loading(false)
         msg.$failed(this.tag_upd, err)
+        this._m.tag_upd && nextTick(this.tag_upd$$focus)
     }
     tag_upd$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
-        this['$refs'].tag_upd.value = ''
         if (!this.pstore.loading(true)) return false
         
+        // clear suggest input
+        this['$refs'].tag_upd.value = ''
         // store selected message
         this._m.tag_upd = message
         
@@ -222,6 +224,7 @@ export function $list(detail_id: string) {
       <input placeholder="Tag" type="text" ref="tag_upd"
           :disabled="pupdate.tag_count === ${MAX_TAGS} || 0 !== (tag_upd.state & ${PojoState.LOADING})"
           v-suggest="{ pojo: tag_upd, field: 'f', fetch: suggest, onSelect: tag_upd$$, vk: '${user.BookmarkTag.$.id}' }" />
+      ${msg.ui('tag_upd')}
     </div>
     ${ui.form('pupdate', $.$d, null)}
   </div>
