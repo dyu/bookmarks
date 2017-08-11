@@ -18,6 +18,11 @@ export function merge_fn(src: any, descriptor: any, target: user.BookmarkEntry) 
     return mergeFrom(src, descriptor, target)
 }
 
+export function onUpdate(message: user.BookmarkEntry, main: boolean, update: user.BookmarkEntry) {
+    merge_fn(update, $.$d, message)
+    return false
+}
+
 export abstract class View {
     pager: Pager
     pstore: PojoStore<user.BookmarkEntry>

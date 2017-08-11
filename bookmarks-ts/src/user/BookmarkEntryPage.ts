@@ -1,5 +1,5 @@
 import { component } from 'vuets'
-import { copyp, defp, nullp, setp } from 'coreds/lib/util'
+import { defp, nullp, setp } from 'coreds/lib/util'
 import { Pager, ItemSO, SelectionFlags/*, PojoSO*/, PojoState } from 'coreds/lib/types'
 import { PojoStore } from 'coreds/lib/pstore/'
 //import { mergeFrom } from 'coreds/lib/diff'
@@ -8,7 +8,7 @@ import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
 import { IdAndName, MAX_TAGS, mapId } from './context'
-import { merge_fn, Item, View, $list } from './BookmarkEntryBase'
+import { merge_fn, onUpdate, Item, View, $list } from './BookmarkEntryBase'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -41,9 +41,7 @@ export class BookmarkEntryPage extends View {
             onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
                 return self.onSelect(selected, flags)
             },
-            onPopulate(message: user.BookmarkEntry, main: boolean, target: user.BookmarkEntry, index: number) {
-                copyp(target, $.M.$.tags, message)
-            },
+            onUpdate,
             fetch(prk: ParamRangeKey, pager: Pager) {
                 return self.qform.send(prk)
             }
