@@ -119,7 +119,7 @@ export abstract class View {
             tags = selected[$.M.$.tags] as user.BookmarkTag.M[],
             tag_id = tags[idx][user.BookmarkTag.$.id]
         
-        $.ForUser.updateTag({ '1': selected['1'], '2': tag_id, '3': true })
+        $.ForUser.updateTag(user.UpdateTag.$new(selected['1'], tag_id, true))
                 .then(this.tag_upd$$S).then(undefined, this.tag_upd$$F)
     }
     tag_upd$$focus() {
@@ -143,7 +143,6 @@ export abstract class View {
         } else if (!count) {
             // initialize array
             array = [copy]
-            // set
             original[$.M.$.tags] = array
             selected[$.M.$.tags] = array
         } else {
@@ -173,7 +172,7 @@ export abstract class View {
         let pstore = this.pstore,
             selected = pstore.pager.pojo
         
-        $.ForUser.updateTag({ '1': selected['1'], '2': id })
+        $.ForUser.updateTag(user.UpdateTag.$new(selected['1'], id))
                 .then(this.tag_upd$$S).then(undefined, this.tag_upd$$F)
         
         msg.$prepare(this.tag_upd)
