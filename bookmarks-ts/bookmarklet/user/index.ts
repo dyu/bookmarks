@@ -1,5 +1,5 @@
 import { component } from 'vuets'
-import { defp, extractMsg, bit_clear_and_set } from 'coreds/lib/util'
+import { copyp, defp, extractMsg, bit_clear_and_set } from 'coreds/lib/util'
 import { PojoState, HasState } from 'coreds/lib/types'
 import { diffFieldTo } from 'coreds/lib/diff'
 import { bindFocus, debounce, Keys } from 'coreds-ui/lib/dom_util'
@@ -23,8 +23,8 @@ const MAX_TAGS = 4,
     SUGGEST_TAGS_LIMIT = 12
 
 interface Entry extends HasState {
-    title: string
-    notes: string
+    '6': string // title
+    '7': string // notes
     tags: user.BookmarkTag.M[]
     // suggest fields
     suggest_tags: user.BookmarkTag.M[]
@@ -101,8 +101,8 @@ export class Home {
     unique = false
     url = ''
     pnew = {
-        title: '',
-        notes: '',
+        '6': '',
+        '7': '',
         tags: [],
         suggest_tags: [],
 
@@ -115,8 +115,8 @@ export class Home {
     pnew$$F: any
 
     pupdate = {
-        title: '',
-        notes: '',
+        '6': '',
+        '7': '',
         tags: [],
         suggest_tags: [],
 
@@ -196,8 +196,8 @@ export class Home {
                     pnew = this.pnew
                 
                 this.unique = true
-                pnew.title = config.title
-                pnew.notes = config.notes
+                pnew[$.$.title] = config.title
+                pnew[$.$.notes] = config.notes
                 Home.watch(this, false)
                 nextTick(this.pnew$$focus_tag)
                 return
@@ -209,8 +209,8 @@ export class Home {
                 tagCount = tags.length
             
             this.m.original = original
-            pupdate.title = original[$.$.title]
-            pupdate.notes = original[$.$.notes]
+            pupdate[$.$.title] = original[$.$.title]
+            pupdate[$.$.notes] = original[$.$.notes]
             pupdate.tags = tags
             Home.watch(this, true)
             if (tagCount < MAX_TAGS)
@@ -223,8 +223,8 @@ export class Home {
                 pnew = this.pnew
             
             this.unique = true
-            pnew.title = config.title
-            pnew.notes = config.notes
+            pnew[$.$.title] = config.title
+            pnew[$.$.notes] = config.notes
         })
     }
     pupdate$$str(e, field: number) {
@@ -273,15 +273,11 @@ export class Home {
     }
     pnew$$() {
         let pnew = this.pnew,
-            p = {} as user.BookmarkEntry,
-            title = pnew.title,
-            notes = pnew.notes
+            p = {} as user.BookmarkEntry
         
         p[$.$.url] = this.url
-        if (title)
-            p[$.$.title] = title
-        if (notes)
-            p[$.$.notes] = notes
+        copyp(p, $.$.title, pnew)
+        copyp(p, $.$.notes, pnew)
         
         this.prepare(pnew)
         
@@ -446,11 +442,11 @@ export default component({
   </div>
   <div v-if="!unique">
     <div class="mdl input">
-      <input v-model.lazy.trim="pupdate.title" @change="pupdate$$str($event, ${$.$.title})"
+      <input v-model.lazy.trim="pupdate['${$.$.title}']" @change="pupdate$$str($event, ${$.$.title})"
           :disabled="!!(pupdate.state & ${PojoState.LOADING})" placeholder="Title" />
     </div>
     <div class="mdl input">
-      <input v-model.lazy.trim="pupdate.notes" @change="pupdate$$str($event, ${$.$.notes})"
+      <input v-model.lazy.trim="pupdate['${$.$.notes}']" @change="pupdate$$str($event, ${$.$.notes})"
           :disabled="!!(pupdate.state & ${PojoState.LOADING})" placeholder="Notes" />
     </div>
     <div class="msg" :class="{ error: ${PojoState.ERROR} === (pupdate.state & ${PojoState.MASK_STATUS}) }"
