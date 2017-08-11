@@ -8,7 +8,7 @@ import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
 import { IdAndName, MAX_TAGS, mapId } from './context'
-import { Item, View, $list } from './BookmarkEntryBase'
+import { merge_fn, Item, View, $list } from './BookmarkEntryBase'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -34,6 +34,7 @@ export class BookmarkEntryPage extends View {
             pageSize: PAGE_SIZE,
             multiplier: MULTIPLIER,
             descriptor: $.$d,
+            merge_fn,
             createObservable(so: ItemSO, idx: number) {
                 return setp($.$new(''), $.M.$.tags, [])
             },

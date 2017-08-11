@@ -6,7 +6,7 @@ import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
 import { IdAndName, MAX_TAGS } from './context'
-import { Item, View, $list } from './BookmarkEntryBase'
+import { merge_fn, Item, View, $list } from './BookmarkEntryBase'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 
@@ -31,6 +31,7 @@ export class BookmarkEntryList extends View {
             pageSize: PAGE_SIZE,
             multiplier: MULTIPLIER,
             descriptor: $.$d,
+            merge_fn,
             createObservable(so: ItemSO, idx: number) {
                 return setp($.$new(''), $.M.$.tags, [])
             },

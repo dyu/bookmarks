@@ -1,5 +1,6 @@
-import { setp } from 'coreds/lib/util'
-import { PojoStore } from 'coreds/lib/pstore/'
+import { nextTick } from 'vue'
+import { copyp, defg, setp, $any } from 'coreds/lib/util'
+import { PojoStore, shallowCopyTo } from 'coreds/lib/pstore/'
 import { PojoState, Pager, SelectionFlags, PojoSO } from 'coreds/lib/types'
 import { mergeFrom } from 'coreds/lib/diff'
 import * as ui from '../ui'
@@ -9,12 +10,24 @@ import { filters, MAX_TAGS } from './context'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
 
+const empty_array = []
+
+export function merge_fn(src: any, descriptor: any, target: user.BookmarkEntry) {
+    let tags = src[$.M.$.tags]
+    target[$.M.$.tags] = tags || empty_array
+    return mergeFrom(src, descriptor, target)
+}
+
 export abstract class View {
     pager: Pager
     pstore: PojoStore<user.BookmarkEntry>
 
     tag_upd = setp(setp(msg.$new(), 'f', null), 'f$', null)
     pupdate = setp(form.initObservable($.$new0(), $.$d), 'tag_count', null)
+    
+    _m = defg(this, '_m', {
+        tag_upd: $any(null) as user.BookmarkTag.M
+    })
     
     onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
         if (!(flags & SelectionFlags.CLICKED_UPDATE))
@@ -93,10 +106,53 @@ export abstract class View {
         // TODO
         console.log('rm tag: ' + idx)
     }
+    tag_upd$$focus() {
+        this['$refs'].tag_upd.focus()
+    }
+    tag_upd$$S(data: user.ParamInt) {
+        let pstore = this.pstore,
+            selected = pstore.pager.pojo,
+            original = pstore.getOriginal(selected),
+            array = original[$.M.$.tags] as user.BookmarkTag.M[],
+            entry = shallowCopyTo({}, this._m.tag_upd) as user.BookmarkTag.M,
+            pupdate = this.pupdate,
+            count = pupdate['tag_count']
+        
+        if (!count) {
+            // initialize array
+            array = [entry]
+            // set
+            original[$.M.$.tags] = array
+            selected[$.M.$.tags] = array
+        } else {
+            // insert
+            array.splice(data['1'], 0, entry)
+        }
+        // increment count
+        pupdate['tag_count'] = count + 1
+        
+        this.pstore.loading(false)
+        msg.$success(this.tag_upd)
+        nextTick(this.tag_upd$$focus)
+    }
+    tag_upd$$F(err) {
+        this.pstore.loading(false)
+        msg.$failed(this.tag_upd, err)
+    }
     tag_upd$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
-        // TODO
-        console.log('add tag: ' + name)
         this['$refs'].tag_upd.value = ''
+        if (!this.pstore.loading(true)) return false
+        
+        // store selected message
+        this._m.tag_upd = message
+        
+        let pstore = this.pstore,
+            selected = pstore.pager.pojo
+        
+        $.ForUser.updateTag({ '1': selected['1'], '2': id })
+                .then(this.tag_upd$$S).then(undefined, this.tag_upd$$F)
+        
+        msg.$prepare(this.tag_upd)
         return false
     }
 }
