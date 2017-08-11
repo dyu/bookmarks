@@ -128,29 +128,24 @@ export abstract class View {
     tag_upd$$S(data: user.ParamInt) {
         let pstore = this.pstore,
             selected = pstore.pager.pojo,
-            original = pstore.getOriginal(selected),
-            array = original[$.M.$.tags] as user.BookmarkTag.M[],
+            array = selected[$.M.$.tags] as user.BookmarkTag.M[],
             entry = this._m.tag_upd,
-            copy = entry && shallowCopyTo({}, entry) as user.BookmarkTag.M,
-            pupdate = this.pupdate,
-            count = pupdate['tag_count'] as number,
-            diff = 1
+            copy = entry && shallowCopyTo({}, entry) as user.BookmarkTag.M
         
         if (!entry) {
             // remove
             array.splice(this._m.tag_rm_idx, 1)
-            diff = -1
-        } else if (!count) {
+        } else if (!array.length) {
             // initialize array
             array = [copy]
-            original[$.M.$.tags] = array
+            pstore.getOriginal(selected)[$.M.$.tags] = array
             selected[$.M.$.tags] = array
         } else {
             // insert
             array.splice(data['1'], 0, copy)
         }
-        // increment count
-        pupdate['tag_count'] = count + diff
+        // update count
+        this.pupdate['tag_count'] = array.length
         
         this.pstore.loading(false)
         if (entry) {
