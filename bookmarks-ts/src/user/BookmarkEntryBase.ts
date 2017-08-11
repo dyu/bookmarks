@@ -31,7 +31,8 @@ export abstract class View {
     pupdate = setp(form.initObservable($.$new0(), $.$d), 'tag_count', null)
     
     _m = defg(this, '_m', {
-        tag_upd: $any(null) as user.BookmarkTag.M
+        tag_upd: $any(null),
+        tag_rm_idx: 0
     })
     
     onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
@@ -108,8 +109,18 @@ export abstract class View {
     }
     
     tag_upd$$rm(idx: number) {
-        // TODO
-        console.log('rm tag: ' + idx)
+        if (!this.pstore.loading(true)) return false
+        
+        this._m.tag_upd = null
+        this._m.tag_rm_idx = idx
+        
+        let pstore = this.pstore,
+            selected = pstore.pager.pojo,
+            tags = selected[$.M.$.tags] as user.BookmarkTag.M[],
+            tag_id = tags[idx][user.BookmarkTag.$.id]
+        
+        $.ForUser.updateTag({ '1': selected['1'], '2': tag_id, '3': true })
+                .then(this.tag_upd$$S).then(undefined, this.tag_upd$$F)
     }
     tag_upd$$focus() {
         this['$refs'].tag_upd.focus()
@@ -119,26 +130,34 @@ export abstract class View {
             selected = pstore.pager.pojo,
             original = pstore.getOriginal(selected),
             array = original[$.M.$.tags] as user.BookmarkTag.M[],
-            entry = shallowCopyTo({}, this._m.tag_upd) as user.BookmarkTag.M,
+            entry = this._m.tag_upd,
+            copy = entry && shallowCopyTo({}, entry) as user.BookmarkTag.M,
             pupdate = this.pupdate,
-            count = pupdate['tag_count']
+            count = pupdate['tag_count'],
+            diff = 1
         
-        if (!count) {
+        if (!entry) {
+            // remove
+            array.splice(this._m.tag_rm_idx, 1)
+            diff = -1
+        } else if (!count) {
             // initialize array
-            array = [entry]
+            array = [copy]
             // set
             original[$.M.$.tags] = array
             selected[$.M.$.tags] = array
         } else {
             // insert
-            array.splice(data['1'], 0, entry)
+            array.splice(data['1'], 0, copy)
         }
         // increment count
-        pupdate['tag_count'] = count + 1
+        pupdate['tag_count'] = count + diff
         
         this.pstore.loading(false)
-        msg.$success(this.tag_upd)
-        nextTick(this.tag_upd$$focus)
+        if (entry) {
+            msg.$success(this.tag_upd)
+            nextTick(this.tag_upd$$focus)
+        }
     }
     tag_upd$$F(err) {
         this.pstore.loading(false)
