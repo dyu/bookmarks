@@ -1,5 +1,5 @@
 import { nextTick } from 'vue'
-import { copyp, defg, setp, $any } from 'coreds/lib/util'
+import { defg, setp } from 'coreds/lib/util'
 import { PojoStore, shallowCopyTo } from 'coreds/lib/pstore/'
 import { PojoState, Pager, SelectionFlags, PojoSO } from 'coreds/lib/types'
 import { mergeFrom } from 'coreds/lib/diff'
@@ -31,7 +31,7 @@ export abstract class View {
     pupdate = setp(form.initObservable($.$new0(), $.$d), 'tag_count', null)
     
     _m = defg(this, '_m', {
-        tag_upd: $any(null),
+        tag_upd: null as any,
         tag_upd_idx: 0
     })
     
