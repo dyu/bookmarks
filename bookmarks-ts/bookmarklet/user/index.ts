@@ -1,13 +1,12 @@
 import { component } from 'vuets'
-import { defp, extractMsg, bit_clear_and_set, base64ToBytes, to_int32LE } from 'coreds/lib/util'
+import { defp, extractMsg, bit_clear_and_set } from 'coreds/lib/util'
 import { PojoState, HasState } from 'coreds/lib/types'
 import { diffFieldTo } from 'coreds/lib/diff'
 import { bindFocus, debounce, Keys } from 'coreds-ui/lib/dom_util'
-import * as Vue from 'vue'
+import { nextTick } from 'vue'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry,
     M = user.BookmarkEntry.M
-const nextTick = Vue.nextTick
 
 interface Config {
     url: string
@@ -23,37 +22,12 @@ function $validateNotes() {}*/
 const MAX_TAGS = 4,
     SUGGEST_TAGS_LIMIT = 12
 
-interface Tag {
-    id: number
-    name : string
-    state: number
-}
-
-const enum TagState {
-    CURRENT = 32
-}
-
-export function toTagArray(serTags: string, names: string[]): Tag[] {
-    let list: Tag[] = [],
-        bytes = base64ToBytes(serTags)
-    
-    for (let i = 0, j = 0, len = bytes.length; i < len; i += 4) {
-        let id = to_int32LE(bytes, i),
-            name = names[j++]/*,
-            color = tag && tag[Tag0.color] ? ('#' + tag[Tag0.color]) : DEFAULT_TAG_COLOR*/
-        
-        list.push({ id, name, state: 0 })
-    }
-
-    return list
-}
-
 interface Entry extends HasState {
     title: string
     notes: string
-    tags: Tag[]
+    tags: user.BookmarkTag.M[]
     // suggest fields
-    suggest_tags: Tag[]
+    suggest_tags: user.BookmarkTag.M[]
     tag_idx: number
     tag_name: string
 }
@@ -62,21 +36,13 @@ interface M {
     original: Entry
 }
 
-function mapTag(item): Tag {
-    return {
-        id: item['3'],
-        name: item['1'],
-        state: 0
-    }
-}
-
-function mapId(item: Tag): number {
-    return item.id
+function mapId(item: user.BookmarkTag.M): number {
+    return item[user.BookmarkTag.M.$.id]
 }
 
 function handleKeyEvent(e: KeyboardEvent, pojo: Entry, self: Home, fn_name: string): boolean {
-    let suggest_tags: Tag[],
-        tag: Tag,
+    let suggest_tags: user.BookmarkTag.M[],
+        tag: user.BookmarkTag.M,
         idx: number
     switch (e.which) {
         case Keys.ESCAPE:
@@ -90,12 +56,10 @@ function handleKeyEvent(e: KeyboardEvent, pojo: Entry, self: Home, fn_name: stri
             
             if (idx !== 0) {
                 tag = suggest_tags[idx - 1]
-                tag.state ^= TagState.CURRENT
             }
             
             tag = suggest_tags[idx]
-            tag.state |= TagState.CURRENT
-
+            // selected idx
             pojo.tag_idx = idx
             break
         case Keys.UP:
@@ -108,17 +72,13 @@ function handleKeyEvent(e: KeyboardEvent, pojo: Entry, self: Home, fn_name: stri
                 // select last
                 idx = suggest_tags.length - 1
                 tag = suggest_tags[idx]
-                tag.state |= TagState.CURRENT
+                // selected idx
                 pojo.tag_idx = idx
                 break
             }
-
-            tag = suggest_tags[idx--]
-            tag.state ^= TagState.CURRENT
-
-            tag = suggest_tags[idx]
-            tag.state |= TagState.CURRENT
-
+            
+            tag = suggest_tags[--idx]
+            // selected idx
             pojo.tag_idx = idx
             break
         case Keys.ENTER:
@@ -176,7 +136,7 @@ export class Home {
     }
     pnew_tag$$F: any
     pnew_tag$$focus: any
-
+    
     m: M
 
     static created(self: Home) {
@@ -245,7 +205,7 @@ export class Home {
 
             let original = array[0],
                 pupdate = this.pupdate,
-                tags = toTagArray(original[$.$.serTags], original[M.$.tags]),
+                tags = original[M.$.tags],
                 tagCount = tags.length
             
             this.m.original = original
@@ -302,9 +262,9 @@ export class Home {
         
         this.prepare(pojo)
         
-        user.BookmarkTag.$NAME({"1": val, "4": {"1": false, "2": SUGGEST_TAGS_LIMIT}}).then((data) => {
+        user.BookmarkTag.$NAME({"1": val, "4": {"1": false, "2": SUGGEST_TAGS_LIMIT}}, true).then((data) => {
             let array = data['1'] as any[]
-            pojo.suggest_tags = array && array.length ? array.map(mapTag) : []
+            pojo.suggest_tags = array || []
             pojo.tag_idx = -1
             
             this.success(pojo)
@@ -329,8 +289,8 @@ export class Home {
             window.close()
         }).then(undefined, this.pnew$$F)
     }
-    addTag(tag: Tag) {
-        let id = tag.id,
+    addTag(tag: user.BookmarkTag.M) {
+        let id = mapId(tag),
             pnew = this.pnew,
             tags = pnew.tags,
             i = 0,
@@ -340,7 +300,7 @@ export class Home {
         pnew.tag_name = ''
 
         for (; i < len; i++) {
-            if (id === tags[i].id) {
+            if (id === mapId(tags[i])) {
                 // dup
                 nextTick(this.pnew$$focus_tag)
                 return
@@ -351,15 +311,15 @@ export class Home {
         if (tags.length < MAX_TAGS)
             nextTick(this.pnew$$focus_tag)
     }
-    rmTag(tag: Tag, update?: boolean) {
-        let id = tag.id,
+    rmTag(tag: user.BookmarkTag.M, update?: boolean) {
+        let id = mapId(tag),
             pojo = update ? this.pupdate : this.pnew,
             tags = pojo.tags,
             i = 0,
             len = tags.length
         
         for (; i < len; i++) {
-            if (id === tags[i].id) {
+            if (id === mapId(tags[i])) {
                 if (!update)
                     tags.splice(i, 1)
                 break
@@ -388,8 +348,8 @@ export class Home {
 
         nextTick(this.pupdate$$focus_tag)
     }
-    insertTag(tag: Tag) {
-        let id = tag.id,
+    insertTag(tag: user.BookmarkTag.M) {
+        let id = mapId(tag),
             pupdate = this.pupdate,
             tags = pupdate.tags,
             i = 0,
@@ -399,7 +359,7 @@ export class Home {
         pupdate.tag_name = ''
 
         for (; i < len; i++) {
-            if (id === tags[i].id) {
+            if (id === mapId(tags[i])) {
                 // dup
                 nextTick(this.pupdate$$focus_tag)
                 return
@@ -466,8 +426,8 @@ export default component({
     </div>
     <div class="dropdown" :class="{ active: pnew.suggest_tags.length }">
       <ul class="dropdown-menu mfluid">
-        <li v-for="tag in pnew.suggest_tags" :class="{ current: !!(tag.state & ${TagState.CURRENT}) }">
-          <a @click.prevent="addTag(tag)">{{tag.name}}</a>
+        <li v-for="(tag, idx) of pnew.suggest_tags" :class="{ current: idx === pnew.tag_idx }">
+          <a @click.prevent="addTag(tag)">{{ tag['${user.BookmarkTag.M.$.name}'] }}</a>
         </li>
       </ul>
     </div>
@@ -476,8 +436,11 @@ export default component({
           :disabled="!!(pnew.state & ${PojoState.LOADING}) || (!!pnew.tag_name && !pnew.tags.length)"><b>Submit</b></button>
     </div>
     <ul class="tags">
-      <li v-for="tag in pnew.tags">
-        <a>{{tag.name}}<button class="b" @click.prevent="rmTag(tag, false)">x</button></a>
+      <li v-for="tag of pnew.tags">
+        <a>
+          {{ tag['${user.BookmarkTag.M.$.name}'] }}
+          <button class="b" @click.prevent="rmTag(tag, false)">x</button>
+        </a>
       </li>
     </ul>
   </div>
@@ -499,15 +462,18 @@ export default component({
     </div>
     <div class="dropdown" :class="{ active: pupdate.suggest_tags.length }">
       <ul class="dropdown-menu mfluid">
-        <li v-for="tag in pupdate.suggest_tags" :class="{ current: !!(tag.state & ${TagState.CURRENT}) }">
-          <a @click.prevent="insertTag(tag)">{{tag.name}}</a>
+        <li v-for="(tag, idx) of pupdate.suggest_tags" :class="{ current: idx === pupdate.tag_idx }">
+          <a @click.prevent="insertTag(tag)">{{ tag['${user.BookmarkTag.M.$.name}'] }}</a>
         </li>
       </ul>
     </div>
     <ul class="tags">
-      <li v-for="tag in pupdate.tags">
-        <a>{{tag.name}}<button class="b" @click.prevent="rmTag(tag, true)"
-            :disabled="!!(pupdate.state & ${PojoState.LOADING})">x</button></a>
+      <li v-for="tag of pupdate.tags">
+        <a>
+          {{ tag['${user.BookmarkTag.M.$.name}'] }}
+          <button class="b" @click.prevent="rmTag(tag, true)"
+              :disabled="!!(pupdate.state & ${PojoState.LOADING})">x</button>
+        </a>
       </li>
     </ul>
   </div>

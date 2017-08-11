@@ -1,15 +1,12 @@
 declare function require(path: string): any;
 
-function resolveRpcHost(host: string) {
-    let colon = host.lastIndexOf(':'),
-        rpc_port = parseInt(host.substring(colon + 1), 10) - 1
-    
-    return 'http://' + host.substring(0, colon + 1) + rpc_port
+function isLocal(host: string) {
+    return host === '127.0.0.1' || host === 'localhost'
 }
 
 let rpc_host = window['rpc_host']
-if (!rpc_host)
-    window['rpc_host'] = resolveRpcHost(window.location.host)
+if (!rpc_host && '8080' === window.location.port && isLocal(window.location.hostname))
+    window['rpc_host'] = 'http://127.0.0.1:5010'
 
 import * as Vue from 'vue'
 
