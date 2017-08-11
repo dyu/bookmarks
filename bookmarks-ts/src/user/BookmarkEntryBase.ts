@@ -133,7 +133,7 @@ export abstract class View {
             entry = this._m.tag_upd,
             copy = entry && shallowCopyTo({}, entry) as user.BookmarkTag.M,
             pupdate = this.pupdate,
-            count = pupdate['tag_count'],
+            count = pupdate['tag_count'] as number,
             diff = 1
         
         if (!entry) {
