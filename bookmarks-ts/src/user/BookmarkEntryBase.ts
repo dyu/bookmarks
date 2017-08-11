@@ -32,7 +32,7 @@ export abstract class View {
     
     _m = defg(this, '_m', {
         tag_upd: $any(null),
-        tag_rm_idx: 0
+        tag_upd_idx: 0
     })
     
     onSelect(selected: user.BookmarkEntry, flags: SelectionFlags): number {
@@ -112,7 +112,7 @@ export abstract class View {
         if (!this.pstore.loading(true)) return false
         
         this._m.tag_upd = null
-        this._m.tag_rm_idx = idx
+        this._m.tag_upd_idx = idx
         
         let pstore = this.pstore,
             selected = pstore.pager.pojo,
@@ -134,7 +134,7 @@ export abstract class View {
         
         if (!entry) {
             // remove
-            array.splice(this._m.tag_rm_idx, 1)
+            array.splice(this._m.tag_upd_idx, 1)
         } else if (!array.length) {
             // initialize array
             array = [copy]
