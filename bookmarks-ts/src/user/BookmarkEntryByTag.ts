@@ -13,7 +13,7 @@ const $ = user.BookmarkEntry
 const PAGE_SIZE = 10,
     MULTIPLIER = 3
 
-export class BookmarkEntryList extends View {
+export class BookmarkEntryByTag extends View {
     tags = [] as IdAndName[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     
@@ -25,7 +25,7 @@ export class BookmarkEntryList extends View {
         nullp(this, 'pager')
     }
     
-    static created(self: BookmarkEntryList) {
+    static created(self: BookmarkEntryByTag) {
         let pstore = defp(self, 'pstore', new PojoStore([], {
             desc: true,
             pageSize: PAGE_SIZE,
@@ -89,7 +89,7 @@ export class BookmarkEntryList extends View {
     }
 }
 export default component({
-    created(this: BookmarkEntryList) { BookmarkEntryList.created(this) },
+    created(this: BookmarkEntryByTag) { BookmarkEntryByTag.created(this) },
     components: {
         Item
     },
@@ -118,4 +118,4 @@ export default component({
 ${ui.pager_msg}
 ${$list('bookmark-entry-by-tag-detail')}
 </div>`/**/
-}, BookmarkEntryList)
+}, BookmarkEntryByTag)

@@ -6,7 +6,7 @@ import { user } from '../../g/user/'
 
 import { default as BookmarkTagPageV } from './BookmarkTagPage'
 import { default as BookmarkEntryPageV } from './BookmarkEntryPage'
-import { default as BookmarkEntryListV } from './BookmarkEntryList'
+import { default as BookmarkEntryByTagV } from './BookmarkEntryByTag'
 
 export class HomePage {
     backup_enabled = true
@@ -37,14 +37,14 @@ export default component({
     components: {
         BookmarkTagPageV,
         BookmarkEntryPageV,
-        BookmarkEntryListV
+        BookmarkEntryByTagV
     },
     template: /**/`
 <div class="container-full-width">
 <div class="row">
   <div class="col-pl-100 col-tp-50 col-tl-66">
     <BookmarkEntryPageV />
-    <BookmarkEntryListV />
+    <BookmarkEntryByTagV />
   </div>
   <div class="col-pl-100 col-tp-50 col-tl-33">
     <BookmarkTagPageV ref="tag_v" />
