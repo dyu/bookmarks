@@ -8,6 +8,7 @@ import static com.dyuproject.protostuffdb.SerializedValueUtil.readString;
 
 import java.io.IOException;
 
+import com.dyuproject.protostuff.KeyBuilder;
 import com.dyuproject.protostuff.ds.ParamRangeKey;
 import com.dyuproject.protostuffdb.AbstractStoreTest;
 import com.dyuproject.protostuffdb.DSRuntimeExceptions;
@@ -163,9 +164,9 @@ public class UserTest extends AbstractStoreTest
         serTags = readByteArray(BookmarkEntry.FN_SER_TAGS, value, context);
         assertEquals(4, serTags.length);
         
-        assertTrue(store.exists(true, context, 
-                TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), t1.id, entity.key, 0)
-                .$append8(TagIndex1.KIND).$push()));
+        KeyBuilder kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
+                t1.id, entity.key, 0).$push();
+        assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
         req = new UpdateTag(entity.key, t1.id);
         req.remove = true;
@@ -198,9 +199,9 @@ public class UserTest extends AbstractStoreTest
         
         assertEquals("example.com", entity.normalized);
         
-        assertTrue(store.exists(true, context, 
-                TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), t1.id, entity.key, 0)
-                .$append8(TagIndex1.KIND).$push()));
+        KeyBuilder kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
+                t1.id, entity.key, 0).$push();
+        assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
         return entity;
     }
@@ -234,17 +235,17 @@ public class UserTest extends AbstractStoreTest
         
         assertEquals("example.com", entity.normalized);
         
-        assertTrue(store.exists(true, context, 
-                TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), t1.id, entity.key, 0)
-                .$append8(TagIndex1.KIND).$push()));
+        KeyBuilder kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
+                t1.id, entity.key, 0).$push();
+        assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
-        assertTrue(store.exists(true, context, 
-                TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), t2.id, entity.key, 0)
-                .$append8(TagIndex1.KIND).$push()));
+        kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
+                t2.id, entity.key, 0).$push();
+        assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
-        assertTrue(store.exists(true, context, 
-                TagIndex2.$$TAG1_ID__TAG2_ID__ENTRY_KEY(context.kb(), t1.id, t2.id, entity.key, 0)
-                .$append8(TagIndex2.KIND).$push()));
+        kb = TagIndex2.$$TAG1_ID__TAG2_ID__ENTRY_KEY(context.kb(), 
+                t1.id, t2.id, entity.key, 0).$push();
+        assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
         return entity;
     }

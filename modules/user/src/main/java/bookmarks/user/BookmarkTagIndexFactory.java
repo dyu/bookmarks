@@ -29,7 +29,8 @@ public final class BookmarkTagIndexFactory extends
 
     private BookmarkTagIndexFactory()
     {
-        super(TagIndex1.EM, TagIndex1.FN_TAG1_ID, TagIndex1.IDX_TAG1_ID__ENTRY_KEY,
+        super(true,
+                TagIndex1.EM, TagIndex1.FN_TAG1_ID, TagIndex1.IDX_TAG1_ID__ENTRY_KEY,
                 TagIndex1.VO_ENTRY_KEY, TagIndex2.EM, TagIndex2.FN_TAG2_ID,
                 TagIndex2.IDX_TAG1_ID__TAG2_ID__ENTRY_KEY, TagIndex2.VO_ENTRY_KEY, TagIndex3.EM,
                 TagIndex3.FN_TAG3_ID, TagIndex3.IDX_TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY,
