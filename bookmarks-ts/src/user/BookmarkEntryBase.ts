@@ -64,8 +64,10 @@ export abstract class View {
         if (pupdate_.msg)
             pupdate_.msg = ''
         
-        let tags = original[$.M.$.tags]
-        pupdate['tag_count'] = !tags ? 0 : tags.length
+        let tags = original[$.M.$.tags],
+            count = !tags ? 0 : tags.length
+        pupdate['tag_count'] = count
+        count !== MAX_TAGS && nextTick(this.tag_upd$$focus)
         return 0
     }
     
