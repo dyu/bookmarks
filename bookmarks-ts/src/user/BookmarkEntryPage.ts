@@ -1,13 +1,12 @@
 import { component } from 'vuets'
 import { defp, nullp, setp } from 'coreds/lib/util'
 import { Pager, ItemSO, SelectionFlags/*, PojoSO*/, PojoState } from 'coreds/lib/types'
-import { PojoStore } from 'coreds/lib/pstore/'
-//import { mergeFrom } from 'coreds/lib/diff'
+import { PojoStore, shallowCopyTo } from 'coreds/lib/pstore/'
 import { ParamRangeKey } from 'coreds/lib/prk'
 import * as msg from 'coreds-ui/lib/msg'
 import * as form from 'coreds/lib/form'
 import * as ui from '../ui/'
-import { IdAndName, MAX_TAGS, mapId } from './context'
+import { MAX_TAGS, mapId } from './context'
 import { merge_fn, onUpdate, Item, View, $list } from './BookmarkEntryBase'
 import { qd, QForm } from '../../g/user/BookmarkEntryQForm'
 import { user } from '../../g/user/'
@@ -19,7 +18,7 @@ const PAGE_SIZE = 10,
 export class BookmarkEntryPage extends View {
     qform = new QForm()
     
-    tags = [] as IdAndName[]
+    tags = [] as user.BookmarkTag.M[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     pnew = form.initObservable($.$new0(), $.$d)
     
@@ -104,10 +103,10 @@ export class BookmarkEntryPage extends View {
             return false
         
         for (let tag of tags) {
-            if (id === tag.id) return false
+            if (id === tag[user.BookmarkTag.M.$.id]) return false
         }
         
-        tags.push({ id, name })
+        tags.push(shallowCopyTo({}, message) as user.BookmarkTag.M)
         return false
     }
     rm_tag(idx: number) {
@@ -134,8 +133,10 @@ export default component({
         <div class="dropdown-menu mfluid2 pull-right">
           ${ui.form('pnew', $.$d, 'bookmark_entry_ff', /**/`
           <div class="tags inline">
-            <span v-for="(tag, idx) of tags" class="ui label" :style="tag.styles">
-              {{ tag.name }}
+            <span v-for="(tag, idx) of tags" class="ui label">
+              <span :style="{ color: '#' + tag['${user.BookmarkTag.M.$.color}'] }">
+                {{ tag['${user.BookmarkTag.M.$.name}'] }}
+              </span>
               <i class="icon action close" @click="rm_tag(idx, true)"></i>
             </span>
           </div>

@@ -4,13 +4,8 @@ import { user } from '../../g/user/'
 export const MAX_TAGS = 4
 //export const ERR_MAX_TAGS = `Maximum of ${MAX_TAGS} tags allowed.`
 
-export interface IdAndName {
-    id: number
-    name: string
-}
-
-export function mapId(item: IdAndName) {
-    return item.id
+export function mapId(item: user.BookmarkTag.M) {
+    return item[user.BookmarkTag.M.$.id]
 }
 
 export interface Stores {

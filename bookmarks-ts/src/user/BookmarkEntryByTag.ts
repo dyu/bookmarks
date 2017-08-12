@@ -1,11 +1,11 @@
 import { component } from 'vuets'
 import { defg, defp, nullp, setp } from 'coreds/lib/util'
 import { Pager, ItemSO, SelectionFlags, PojoState } from 'coreds/lib/types'
-import { PojoStore } from 'coreds/lib/pstore/'
+import { PojoStore, shallowCopyTo } from 'coreds/lib/pstore/'
 import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
-import { IdAndName, MAX_TAGS } from './context'
+import { MAX_TAGS } from './context'
 import { merge_fn, onUpdate, Item, View, $list } from './BookmarkEntryBase'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -14,7 +14,7 @@ const PAGE_SIZE = 10,
     MULTIPLIER = 3
 
 export class BookmarkEntryByTag extends View {
-    tags = [] as IdAndName[]
+    tags = [] as user.BookmarkTag.M[]
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     
     m = defg(this, 'm', {
@@ -54,7 +54,7 @@ export class BookmarkEntryByTag extends View {
         this.pstore.cbFetchFailed(err)
     }
     
-    tag_new$$(fk: string, id: number, name: string) {
+    tag_new$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
         this['$refs'].tag_new.value = ''
         
         let tags = this.tags
@@ -62,10 +62,10 @@ export class BookmarkEntryByTag extends View {
             return false
         
         for (let tag of tags) {
-            if (id === tag.id) return false
+            if (id === tag[user.BookmarkTag.M.$.id]) return false
         }
         
-        tags.push({ id, name })
+        tags.push(shallowCopyTo({}, message) as user.BookmarkTag.M)
         this.m.tags.push(id)
         
         let pstore = this.pstore
@@ -105,7 +105,9 @@ export default component({
       <div :class="'dropdown' + (!tags.length ? '' : ' active')">
         <ul class="dropdown-menu mhalf pull-right">
           <li v-for="(tag, idx) of tags" class="fluid tag">
-            {{ tag.name }}
+            <span :style="{ color: '#' + tag['${user.BookmarkTag.M.$.color}'] }">
+              {{ tag['${user.BookmarkTag.M.$.name}'] }}
+            </span>
             <i class="icon action close" @click="rm_tag(idx)"></i>
           </li>
         </ul>
