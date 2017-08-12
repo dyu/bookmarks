@@ -43,31 +43,37 @@ export abstract class View {
             state = selected_.state,
             pupdate = this.pupdate,
             pupdate_: PojoSO,
-            original
-
+            original = this.pstore.getOriginal(selected),
+            tags = original[$.M.$.tags],
+            tag_count = !tags ? 0 : tags.length
+        
         if ((flags & SelectionFlags.REFRESH)) {
-            if (!(state & PojoState.UPDATE))
+            if (!(state & PojoState.UPDATE)) {
+                tag_count !== MAX_TAGS && nextTick(this.tag_upd$$focus)
                 return 0
+            }
         } else if (!(state & PojoState.UPDATE)) {
             selected_.state = state | PojoState.UPDATE
-            if (selected['1'] === pupdate['1'])
+            if (selected['1'] === pupdate['1']) {
+                tag_count !== MAX_TAGS && nextTick(this.tag_upd$$focus)
                 return 0
+            }
+                
         } else if (selected['1'] === pupdate['1']) {
             selected_.state = state ^ PojoState.UPDATE
+            
+            tag_count !== MAX_TAGS && nextTick(this.tag_upd$$focus)
             return 0
         }
-
+        
         pupdate_ = pupdate['_'] as PojoSO
-        original = this.pstore.getOriginal(selected)
 
         mergeFrom(original, selected['$d'], pupdate)
         if (pupdate_.msg)
             pupdate_.msg = ''
         
-        let tags = original[$.M.$.tags],
-            count = !tags ? 0 : tags.length
-        pupdate['tag_count'] = count
-        count !== MAX_TAGS && nextTick(this.tag_upd$$focus)
+        pupdate['tag_count'] = tag_count
+        tag_count !== MAX_TAGS && nextTick(this.tag_upd$$focus)
         return 0
     }
     
