@@ -40,14 +40,6 @@ export class BookmarkEntryList extends View {
             },
             onUpdate,
             fetch(req: prk.ParamRangeKey, pager: Pager) {
-                var startObj
-                if (req[prk.$.startKey]) {
-                    // set as entryKey
-                    req[prk.$.parentKey] = req[prk.$.startKey]
-                    startObj = self.pstore.startObj
-                    // the real startKey
-                    req[prk.$.startKey] = startObj.$d ? startObj[$.M.$.pageKey] : startObj[$.M.$.pageKey]
-                }
                 return $.ForUser.listBookmarkEntryByTag($.PTags.$new(req, self.m.tags))
                         .then(self.fetch$$S).then(undefined, self.fetch$$F)
             }
