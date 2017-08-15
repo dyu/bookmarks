@@ -53,7 +53,7 @@ export default component({
     <i style="margin-right:-5px" class="icon ellipsis-vert" v-toggle="'.1'"></i>
     <div class="dropdown pull-right">
       <ul class="dropdown-menu mhalf">
-        <div :class="'ui message status-' + (backup_state & ${PojoState.MASK_STATUS})" 
+        <div :class="'ui msg status-' + (backup_state & ${PojoState.MASK_STATUS})" 
             v-show="backup_msg">
           <i class="icon close" @click.prevent="backup_msg = null"></i>
           <span v-text="backup_msg"></span>
