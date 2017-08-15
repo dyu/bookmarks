@@ -238,7 +238,7 @@ message BookmarkEntry {
   
     ACTIVE = 224 [ raw_csv_values = "$KEY" ];
     URL = 225 [ unique_prefix = 0, raw_csv_values = "$KEY" ];
-    NORMALIZED = 226 [ raw_csv_values = "FN_NORMALIZED" ];
+    NORMALIZED = 226 [ raw_csv_values = "FN_NORMALIZED, $KEY" ];
     IDENTIFIER = 227 [ raw_csv_values = "$KEY" ];
     TAG_COUNT = 228 [ raw_csv_values = "$KEY" ];
     DATE = 229 [ raw_csv_values = "$KEY" ];
