@@ -387,7 +387,7 @@ export class Home {
         
         this.prepare(pnew_tag)
         
-        user.BookmarkTag.ForUser.create({"3": name}).then((data) => {
+        user.BookmarkTag.ForUser.create({ "3": name }).then((data) => {
             this.success(pnew_tag, `${pnew_tag.name} added.`)
             // clear
             pnew_tag.name = ''
