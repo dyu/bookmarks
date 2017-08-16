@@ -9,7 +9,8 @@
 </div>
 </template>
 <script>
-import Suggest from 'coreds-ui/lib/c/suggest'
+import * as ui from './ui'
+import { $customize } from 'coreds-ui/lib/c/suggest'
 import Calendar from 'coreds-ui/lib/c/calendar'
 import Home from './user/'
 export default {
@@ -17,7 +18,7 @@ export default {
     return {}
   },
   components: {
-    Suggest,
+    Suggest: $customize(ui.suggest_controls),
     Calendar,
     Home
   }
