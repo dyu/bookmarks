@@ -475,7 +475,7 @@ export default component({
   </div>
   <div id="bk-tag">
     <div class="mdl input">
-      <input id="tag-new" placeholder="Add tag" v-model.trim="pnew_tag.name" @change="newTag($event)"
+      <input id="tag-new" placeholder="Create new tag" v-model.trim="pnew_tag.name" @change="newTag($event)"
           :disabled="!!(pnew_tag.state & ${PojoState.LOADING})" />
     </div>
     <div class="msg" :class="{ error: ${PojoState.ERROR} === (pnew_tag.state & ${PojoState.MASK_STATUS}) }"
