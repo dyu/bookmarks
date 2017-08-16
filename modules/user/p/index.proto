@@ -140,7 +140,7 @@ message BookmarkTag {
   
   @MergeParent(partial = true, flex_modifier = true)
   message M {
-    //required bytes key = 1;
+    required bytes key = 1;
     required string name = 3;
     required string color = 4;
     required uint32 id = 5;
