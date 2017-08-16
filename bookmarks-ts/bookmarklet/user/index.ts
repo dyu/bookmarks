@@ -406,11 +406,11 @@ export default component({
   </div>
   <div v-if="unique">
     <div class="mdl input">
-      <input v-model.lazy.trim="pnew.title" placeholder="Title"
+      <input v-model.lazy.trim="pnew['${$.$.title}']" placeholder="Title"
           :disabled="!!(pnew.state & ${PojoState.LOADING})" />
     </div>
     <div class="mdl input">
-      <input v-model.lazy.trim="pnew.notes" placeholder="Notes"
+      <input v-model.lazy.trim="pnew['${$.$.notes}']" placeholder="Notes"
           :disabled="!!(pnew.state & ${PojoState.LOADING})" />
     </div>
     <div class="msg" :class="{ error: ${PojoState.ERROR} === (pnew.state & ${PojoState.MASK_STATUS}) }"
