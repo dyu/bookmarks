@@ -166,7 +166,7 @@ export abstract class View {
         msg.$failed(this.tag_upd, err)
         this._m.tag_upd && nextTick(this.tag_upd$$focus)
     }
-    tag_upd$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
+    tag_upd$$(fk: string, id: number, message: user.BookmarkTag.M) {
         if (!this.pstore.loading(true)) return false
         
         // clear suggest input

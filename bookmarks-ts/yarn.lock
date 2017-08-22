@@ -610,9 +610,9 @@ core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-coreds-ui@^0.10.3:
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/coreds-ui/-/coreds-ui-0.10.3.tgz#de7c9442418240dc9a598e4ccf2edc60a0fa6fa9"
+coreds-ui@^0.10.6:
+  version "0.10.6"
+  resolved "https://registry.yarnpkg.com/coreds-ui/-/coreds-ui-0.10.6.tgz#d129342570d5874ab5c48ce4dff845928d9f1ba3"
   dependencies:
     "@types/hammerjs" "^2.0.32"
     hammerjs "^2.0.8"

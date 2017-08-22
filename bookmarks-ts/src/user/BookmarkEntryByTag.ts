@@ -54,7 +54,7 @@ export class BookmarkEntryByTag extends View {
         this.pstore.cbFetchFailed(err)
     }
     
-    tag_new$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
+    tag_new$$(fk: string, id: number, message: user.BookmarkTag.M) {
         this['$refs'].tag_new.value = ''
         
         let tags = this.tags
