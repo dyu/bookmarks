@@ -32,7 +32,7 @@ function field_suggest(pojo: string, fd: any, display: string): string {
 <div class="ui input">
   <input type="text" :disabled="${pojo}.disable_" placeholder="${display}"
       :class="!${pojo}.disable_ ? '' : 'disabled'"
-      v-suggest:${Flags.CBFN_AFTER_SET}="{ pojo: ${pojo}, field: '${fd._}', fetch: suggest, onSelect: ${pojo}$$ }" />
+      v-suggest:${Flags.CBFN_AFTER_SET|Flags.CBFN_ON_UNSET}="{ pojo: ${pojo}, field: '${fd._}', fetch: suggest, onSelect: ${pojo}$$ }" />
 </div>
 `/**/
 }
