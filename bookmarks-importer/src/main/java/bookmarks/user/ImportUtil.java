@@ -14,6 +14,8 @@
 
 package bookmarks.user;
 
+import static com.dyuproject.protostuffdb.SerializedValueUtil.readBAO$len;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -322,9 +324,9 @@ public final class ImportUtil
                         v, voffset, vlen);
                 if (tagCount != 0)
                 {
-                    int offset = SerializedValueUtil.readByteArrayOffsetWithTypeAsSize(
+                    int offset = readBAO$len(
                             BookmarkEntry.FN_SER_TAGS, v, voffset, vlen, context),
-                            len = context.type;
+                            len = context.$len;
                     
                     if (tagCount != (len / 4))
                         throw new RuntimeException("Corrupt data.");

@@ -126,9 +126,9 @@ public final class Main
         // load jni
         final WriteContext context = DSTool.CONTEXT;
         final LsmdbDatastoreManager manager = new LsmdbDatastoreManager(
-                Jni.BUFFERS[1], dir);
+                Jni.buf(0), dir);
         final WriteContext tmpContext = new WriteContext(
-                Jni.BUFFERS[2], 0, Jni.PARTITION_SIZE);
+                Jni.bufDb(0), Jni.bufTmp(0), 0, Jni.PARTITION_SIZE);
         final HashMap<String,BookmarkTag> tagMap = new HashMap<String,BookmarkTag>();
         Datastore store;
         try
@@ -165,9 +165,9 @@ public final class Main
         // load jni
         final WriteContext context = DSTool.CONTEXT;
         final LsmdbDatastoreManager manager = new LsmdbDatastoreManager(
-                Jni.BUFFERS[1], dir);
+                Jni.buf(0), dir);
         final WriteContext tmpContext = new WriteContext(
-                Jni.BUFFERS[2], 0, Jni.PARTITION_SIZE);
+                Jni.bufDb(0), Jni.bufTmp(0), 0, Jni.PARTITION_SIZE);
         final HashMap<String,BookmarkTag> tagMap = new HashMap<String,BookmarkTag>();
         int tagCurrentId = 0;
         final Datastore store;
