@@ -95,7 +95,7 @@ export class BookmarkEntryPage extends View {
             .then(this.pnew$$S).then(undefined, this.pnew$$F)
     }
     
-    tag_new$$(fk: string, id: number, name: string, message: user.BookmarkTag.M) {
+    tag_new$$(fk: string, id: number, message: user.BookmarkTag.M) {
         this['$refs'].tag_new.value = ''
         
         let tags = this.tags
