@@ -10,7 +10,6 @@ import java.util.Properties;
 
 import com.dyuproject.protostuff.Pipe;
 import com.dyuproject.protostuff.RpcHeader;
-import com.dyuproject.protostuff.RpcLogin;
 import com.dyuproject.protostuff.RpcResponse;
 import com.dyuproject.protostuff.RpcService;
 import com.dyuproject.protostuff.RpcServiceProvider;
@@ -72,12 +71,6 @@ public class UserProvider extends RpcServiceProvider// implements Visitor<WriteC
         }
     }
     
-    @Override
-    public byte[] authenticate(RpcLogin login, Datastore store, WriteContext context)
-    {
-        return null;
-    }
-
     public static final UserServices.ForUser FOR_USER = new UserServices.ForUser()
     {
         @Override
