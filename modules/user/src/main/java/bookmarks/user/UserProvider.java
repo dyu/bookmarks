@@ -21,7 +21,7 @@ import com.dyuproject.protostuffdb.WriteContext;
 /**
  * User service provider.
  */
-public class UserProvider extends RpcServiceProvider// implements Visitor<WriteContext>
+public final class UserProvider extends RpcServiceProvider// implements Visitor<WriteContext>
 {
     static final boolean WITH_BACKUP = Boolean.getBoolean("protostuffdb.with_backup");
     
