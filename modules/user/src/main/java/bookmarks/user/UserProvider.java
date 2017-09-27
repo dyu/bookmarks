@@ -36,14 +36,15 @@ public final class UserProvider extends RpcServiceProvider// implements Visitor<
     }
     
     @Override
-    public boolean handleLogUpdates(byte[] buf, int offset, int len)
+    public void handleLogUpdates(RpcWorker worker, 
+            byte[] buf, int offset, int len)
     {
-        processLogUpdates(buf, offset, len);
-        return false;
+        processLogUpdates(worker, buf, offset, len);
     }
     
     @Override
-    protected void processLogEntity(int kind, byte[] k, int koffset, 
+    protected void processLogEntity(RpcWorker worker, int kind, 
+            byte[] k, int koffset, 
             byte[] v, int voffset, int vlen)
     {
         int id, newId;
