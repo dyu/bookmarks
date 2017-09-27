@@ -2,6 +2,8 @@
 
 package bookmarks.user;
 
+import static com.dyuproject.protostuffdb.SerializedValueUtil.asInt32;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -24,37 +26,6 @@ public class UserProvider extends RpcServiceProvider// implements Visitor<WriteC
 {
     static final boolean WITH_BACKUP = Boolean.getBoolean("protostuffdb.with_backup");
     
-    /*final Object[] visitorsByKind = new Object[64];
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public boolean visit(byte[] key, byte[] v, int voffset, int vlen, 
-            WriteContext context, int index)
-    {
-        Visitor<WriteContext> vkind = null;
-        final int tag = 0xFF&key[1];
-        
-        switch(tag)
-        {
-            case Tags.INIT:
-                // TODO leverage initialization?
-                return false;
-                
-            case Tags.ENTITY_INIT:
-                // add to list if product
-                vkind = (Visitor<WriteContext>)visitorsByKind[key[2]];
-                if (vkind != null)
-                    vkind.visit(key, v, voffset, vlen, context, 0);
-                return false;
-                
-            case Tags.POST_ENTITY_INIT:
-                // TODO do something after init and entity init?
-                return false;
-        }
-        
-        return false;
-    }*/
-    
     @Override
     public void fill(RpcService[] services, List<Integer> ids, 
             Datastore store, WriteContext context, Properties options, 
@@ -62,16 +33,45 @@ public class UserProvider extends RpcServiceProvider// implements Visitor<WriteC
     {
         fill(services, ids, getClass());
         
-        // init
-        /*EntityRegistry.fill(visitorsByKind);
-        
-        store.scan(false, -1, false, 
-                KeyUtil.newTagIndexRangeKeyStart(Tags.POST_ENTITY_INIT + 1), 
-                context, this, null);*/
-        
         EntityRegistry.initSeq(store, context);
     }
-
+    
+    @Override
+    public boolean handleLogUpdates(byte[] buf, int offset, int len)
+    {
+        processLogUpdates(buf, offset, len);
+        return false;
+    }
+    
+    @Override
+    protected void processLogEntity(int kind, byte[] k, int koffset, 
+            byte[] v, int voffset, int vlen)
+    {
+        int id, newId;
+        switch (kind)
+        {
+            case BookmarkTag.KIND:
+                id = asInt32(BookmarkTag.VO_ID, v, voffset, vlen);
+                newId = EntityRegistry.BOOKMARK_TAG_CACHE.newId();
+                if (id == newId)
+                {
+                    // insert
+                    EntityRegistry.BOOKMARK_TAG_CACHE.add(k, koffset, v, voffset, vlen);
+                }
+                else if (id < newId)
+                {
+                    // update
+                    EntityRegistry.BOOKMARK_TAG_CACHE.update(id, v, voffset, vlen);
+                }
+                else
+                {
+                    System.err.println("Unordered log update on kind: " + kind);
+                    System.exit(1);
+                }
+                break;
+        }
+    }
+    
     @Override
     public byte[] authenticate(RpcLogin login, Datastore store, WriteContext context)
     {
