@@ -11,4 +11,5 @@ target
 .pub
 .generated
 /ansible/hosts.ini
+/bookmarks-ts/*.exe
 /bookmarks-ts/bin/*.tar.gz
