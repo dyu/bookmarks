@@ -110,6 +110,7 @@ export class BookmarkTagPage {
             return
 
         pnew['1'] = (lastSeen = this.pstore.getLastSeenObj()) && lastSeen['1']
+        pnew[$.$.id] = lastSeen && lastSeen[$.$.id]
 
         $.ForUser.create(pnew)
             .then(this.pnew$$S).then(undefined, this.pnew$$F)
