@@ -1,7 +1,13 @@
 #!/bin/sh
 ARGS=$(cat ARGS.txt)
 
-if [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
+if [ "$1" = "mt" ]
+    BIN=/opt/protostuffdb/bin/hprotostuffdb-rmaster-mt
+    ARGS="$ARGS -Dprotostuffdb.with_backup=true -Dprotostuffdb.readers=1"
+elif [ "$1" = "m" ]
+    BIN=/opt/protostuffdb/bin/hprotostuffdb-rmaster
+    ARGS="$ARGS -Dprotostuffdb.with_backup=true"
+elif [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
     BIN=/opt/protostuffdb/bin/hprotostuffdb
     ARGS="$ARGS -Dprotostuffdb.with_backup=true"
 elif [ -e /opt/protostuffdb/bin/protostuffdb ]; then

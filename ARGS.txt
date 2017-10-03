@@ -1,1 +1,1 @@
--Xms128m -Xmx128m -XX:NewRatio=1
+-Xms128m -Xmx128m -XX:NewRatio=1 -Des.key=bookmark123456781234567812345678 -Des.iv=1234567812345678
