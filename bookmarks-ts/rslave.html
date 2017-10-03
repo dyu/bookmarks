@@ -9,11 +9,48 @@
   </head>
   <body>
     <div id="app"></div>
-    <script>
-    window.fetch || document.write('<script src="/assets/js/fetch.min.js"><\/script>')
-    window.rpc_host = window.location.protocol + '//' + window.location.hostname + ':5015'
-    </script>
-    <script src="dist/build.js"></script>
+    <script>(function(){
+    function appendEl(tag, key, val) {
+        var el = document.createElement(tag)
+        el[key] = val
+        document.body.appendChild(el)
+        return el
+    }
+    function checkStatus(res) {
+        var status = res.status
+        if (status < 200 || status > 299)
+            throw status
+        
+        return res.text()
+    }
+    var protocol = window.location.protocol,
+        hostname = window.location.hostname,
+        master_prefix = '//' + hostname + ':5010',
+        slave_prefix = '//' + hostname + ':5015',
+        rpc_config_d, 
+        uri_w_map
+    
+    window.rpc_host = window.location.protocol // hack
+    window.rpc_config = {
+        get$$: function(uri, opts) {
+            if (!rpc_config_d) rpc_config_d = window['rpc_config_d']
+            
+            var prefix = uri_w_map[uri] ? master_prefix : slave_prefix
+            return rpc_config_d.get$$(prefix + uri, opts)
+        },
+        post$$: function(uri, data) {
+            if (!rpc_config_d) rpc_config_d = window['rpc_config_d']
+            
+            var prefix = uri_w_map[uri] ? master_prefix : slave_prefix
+            return rpc_config_d.post$$(prefix + uri, data)
+        }
+    }
+    window.fetch || appendEl('script', 'src', '/assets/js/fetch.min.js')
+    window.fetch('g/user/w/UserServices.json').then(checkStatus).then(function(data) {
+        uri_w_map = JSON.parse(data)
+        appendEl('script', 'src', 'dist/build.js')
+    })
+    })();</script>
     <link rel="stylesheet" href="dist/app.css" />
   </body>
 </html>
