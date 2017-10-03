@@ -17,6 +17,8 @@ BIN=/opt/protostuffdb/bin/ws-cli-backup
 
 MASTER_PORT=$(cat ../PORT.txt)
 
+[ "$1" != "0" ] && MASTER_PORT=`expr $MASTER_PORT + 1`
+
 CONNECT_URL="ws://127.0.0.1:$MASTER_PORT/bookmark123456781234567812345678"
 
 DATE=$(date)
