@@ -1,10 +1,10 @@
 #!/bin/sh
 ARGS=$(cat ARGS.txt)
 
-if [ "$1" = "mt" ]
+if [ "$1" = "mt" ]; then
     BIN=/opt/protostuffdb/bin/hprotostuffdb-rmaster-mt
     ARGS="$ARGS -Dprotostuffdb.with_backup=true -Dprotostuffdb.readers=1"
-elif [ "$1" = "m" ]
+elif [ "$1" = "m" ]; then
     BIN=/opt/protostuffdb/bin/hprotostuffdb-rmaster
     ARGS="$ARGS -Dprotostuffdb.with_backup=true"
 elif [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
