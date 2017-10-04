@@ -13,7 +13,7 @@ fi
 
 cd $SCRIPT_DIR
 
-head --lines=-7 rslave.html > dist/rslave.html
+head --lines=-8 rslave.html > dist/rslave.html
 printf '    uri_w_map = ' >> dist/rslave.html
 tr -d ' \t\n\r\f' < g/user/w/UserServices.json >> dist/rslave.html
-printf '\n    appendEl("script", "src", "dist/build.js")\n    })();</script>\n  </body>\n</html>\n' >> dist/rslave.html
+printf '\n    appendEl("script", "src", "build.js")\n    })();</script>\n    <link rel="stylesheet" href="app.css" />\n  </body>\n</html>\n' >> dist/rslave.html
