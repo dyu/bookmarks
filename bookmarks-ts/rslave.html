@@ -26,8 +26,9 @@
     var protocol = window.location.protocol,
         http = 0 === protocol.indexOf('http'),
         hostname = http ? window.location.hostname : '127.0.0.1',
-        master_prefix = '//' + (window.master_ip || hostname) + ':5010',
-        slave_prefix = '//' + hostname + ':5015',
+        master_ip = window.master_ip,
+        master_prefix = '//' + (master_ip || hostname) + ':5010',
+        slave_prefix = '//' + hostname + (master_ip ? ':5010' : ':5015'),
         rpc_config_d,
         uri_w_map
     
