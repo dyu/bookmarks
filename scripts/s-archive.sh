@@ -8,7 +8,7 @@ OUT_DIR=target/bin
 
 TAR_FILE=$OUT_DIR/bookmarks-linux-standalone-x64.tar.gz
 
-DIST="bookmarks-ts/dist/build.js bookmarks-ts/dist/bookmarklet.js"
+DIST="bookmarks-ts/dist/build.js bookmarks-ts/dist/bookmarklet.js bookmarks-ts/dist/app.css bookmarks-ts/dist/bookmarklet.css"
 
 echo "========== tar.gz"
 rm -f $TAR_FILE
