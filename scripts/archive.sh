@@ -5,10 +5,18 @@
 TAR_FILE=target/bookmarks-linux-x64.tar.gz
 ZIP_FILE=target/bookmarks-win-x64.zip
 
+LBIN=target/protostuffdb
+WBIN=target/protostuffdb.exe
+
+if [ "$1" = "r" ]; then
+    LBIN=target/hprotostuffdb-rmaster
+    WBIN=target/protostuffdb-rslave.exe
+fi
+
 echo "========== tar.gz"
 rm -f $TAR_FILE
-tar -cvzf $TAR_FILE target/protostuffdb -T scripts/files.txt
+tar -cvzf $TAR_FILE $LBIN bookmarks-ts/opt-nw -T scripts/files.txt
 
 echo "\n========== zip"
 rm -f $ZIP_FILE
-zip -r $ZIP_FILE target/protostuffdb.exe bookmarks-ts/node-chrome-app.vbs -@ < scripts/files.txt
+zip -r $ZIP_FILE $WBIN bookmarks-ts/opt-nw.exe -@ < scripts/files.txt

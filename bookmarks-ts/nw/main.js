@@ -37,9 +37,13 @@ function findSubDir(baseDir, subDirPrefix) {
 }
 
 function resolveBin(child_cwd) {
-    if (win32) return path.join(child_cwd, 'target/protostuffdb')
+    var bin
+    if (win32) {
+        if (fs.existsSync(bin = path.join(child_cwd, 'target/protostuffdb-rslave.exe'))) return bin
+        return path.join(child_cwd, 'target/protostuffdb.exe')
+    }
     
-    var bin = path.join(child_cwd, 'target/hprotostuffdb-rjre')
+    bin = path.join(child_cwd, 'target/hprotostuffdb-rmaster')
     if (fs.existsSync(bin) || fs.existsSync(bin = path.join(child_cwd, 'target/hprotostuffdb')))
         return bin
     
@@ -62,14 +66,14 @@ function startProtostuffdb() {
         target_cwd = child_cwd
     } else if (isDir(target_cwd = 'C:/opt/jre/bin/server') ||
             isDir(target_cwd = 'C:/Program Files/Java/jdk1.7.0_79/jre/bin/server')) {
-        bin += '.exe'
+        
     } else if (fs.existsSync(p = path.join(child_cwd, 'JDK_DIR.txt'))) {
         if (!isDir(target_cwd = path.join(fs.readFileSync(p, 'utf8').trim(), 'jre/bin/server'))) {
             println('JDK_DIR.txt did not contain a valid jdk path.')
             process.exit(1)
             return
         }
-        bin += '.exe'
+        
     } else if (!isDir('C:/Program Files/Java') ||
             !(p = findSubDir('C:/Program Files/Java', 'jdk1.7')) ||
             !isDir(target_cwd = path.join(p, 'jre/bin/server'))) {
@@ -77,8 +81,6 @@ function startProtostuffdb() {
         println('E.g.\nC:/path/to/jdk1.7.0_79')
         process.exit(1)
         return
-    } else {
-        bin += '.exe'
     }
 
     pdb = spawn(bin, child_args, { cwd: target_cwd })
