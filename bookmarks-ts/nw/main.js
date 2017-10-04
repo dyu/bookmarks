@@ -7,6 +7,7 @@ var fs = require('fs'),
     start_str = 'jni rpc: ',
     pdb_started = false,
     hide_backup = false,
+    master_ip,
     pdb,
     wnd,
     rpc_host
@@ -36,11 +37,19 @@ function findSubDir(baseDir, subDirPrefix) {
     return null
 }
 
+function readFileSync(filename) {
+    return fs.existsSync(filename) && fs.readFileSync(filename, 'utf8').trim()
+}
+
 function resolveBin(child_cwd, port, raw_child_args) {
     var bin
     if (win32) {
-        if (fs.existsSync(bin = path.join(child_cwd, 'target/protostuffdb-rslave.exe')))
+        if (fs.existsSync(bin = path.join(child_cwd, 'target/protostuffdb-rslave.exe'))) {
+            if ((master_ip = readFileSync(path.join(child_cwd, 'master_ip.txt'))))
+                raw_child_args.push('-Dprotostuffdb.master=ws://' + master_ip + ':' + port)
+            
             return bin
+        }
         
         return path.join(child_cwd, 'target/protostuffdb.exe')
     }
@@ -63,9 +72,9 @@ function startProtostuffdb() {
         port = fs.readFileSync(path.join(child_cwd, 'PORT.txt'), 'utf8').trim(),
         raw_args = fs.readFileSync(path.join(child_cwd, 'ARGS.txt'), 'utf8').trim(),
         extra_args = raw_args.split(' '),
-        raw_child_args = ['127.0.0.1:' + port],
+        raw_child_args = ['127.0.0.1:' + port, path.join(__dirname, 'g/user/UserServices.json')],
         bin = resolveBin(child_cwd, port, raw_child_args),
-        child_args = getChildArgs(raw_child_args.concat([path.join(__dirname, 'g/user/UserServices.json')]), extra_args, child_cwd),
+        child_args = getChildArgs(raw_child_args, extra_args, child_cwd),
         target_cwd,
         p
     
@@ -144,10 +153,18 @@ function onOpen(w) {
     w.show()
 }
 
+function indexHtml() {
+    if (bookmarkletOnly) return 'nw/bookmarklet.html'
+    if (!master_ip) return 'index.html'
+    
+    global.master_ip = master_ip
+    return 'rslave.html'
+}
+
 function openWindow() {
     global.rpc_host = rpc_host
     global.hide_backup = hide_backup
-    nw.Window.open(bookmarkletOnly ? 'nw/bookmarklet.html' : 'index.html', { show: false, show_in_taskbar: !win32 }, onOpen)
+    nw.Window.open(indexHtml(), { show: false, show_in_taskbar: !win32 }, onOpen)
 
     require('./dist/bookmarklet-nw')
 }

@@ -10,7 +10,7 @@ WBIN=target/protostuffdb.exe
 
 if [ "$1" = "r" ]; then
     LBIN=target/hprotostuffdb-rmaster
-    WBIN=target/protostuffdb-rslave.exe
+    WBIN='target/protostuffdb-rslave.exe bookmarks-ts/rslave.html'
 fi
 
 echo "========== tar.gz"
