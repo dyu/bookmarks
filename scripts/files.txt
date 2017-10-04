@@ -6,7 +6,7 @@ bookmarks-all/target/bookmarks-all-jarjar.jar
 bookmarks-ts/bookmarklet/index.html
 bookmarks-ts/index.html
 bookmarks-ts/favicon.ico
-bookmarks-ts/g/user/UserServices.json
+bookmarks-ts/g
 bookmarks-ts/assets
 bookmarks-ts/dist
 bookmarks-ts/package.json
