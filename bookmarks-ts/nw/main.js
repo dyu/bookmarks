@@ -45,8 +45,11 @@ function resolveBin(child_cwd, port, raw_child_args) {
     var bin
     if (win32) {
         if (fs.existsSync(bin = path.join(child_cwd, 'target/protostuffdb-rslave.exe'))) {
-            if ((master_ip = readFileSync(path.join(child_cwd, 'master_ip.txt'))))
+            if ((master_ip = readFileSync(path.join(child_cwd, 'master_ip.txt')))) {
                 raw_child_args.push('-Dprotostuffdb.master=ws://' + master_ip + ':' + port)
+                raw_child_args.push('-Dprotostuffdb.timer_interval=2000')
+                raw_child_args.push('-Dprotostuffdb.rep_ack_interval=1')
+            }
             
             return bin
         }
