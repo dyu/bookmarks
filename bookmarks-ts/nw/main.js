@@ -16,8 +16,8 @@ function println(str) {
     process.stdout.write(str + '\n')
 }
 
-function getChildArgs(initial_args, extra_args, child_cwd) {
-    return initial_args.concat(extra_args, [
+function getChildArgs(initial_args, child_cwd) {
+    return initial_args.concat([
         '-Djava.class.path=' + path.join(child_cwd, 'bookmarks-all/target/bookmarks-all-jarjar.jar'),
         'bookmarks.all.Main',
         child_cwd
@@ -74,10 +74,9 @@ function startProtostuffdb() {
         child_cwd = path.join(__dirname, '..'),
         port = fs.readFileSync(path.join(child_cwd, 'PORT.txt'), 'utf8').trim(),
         raw_args = fs.readFileSync(path.join(child_cwd, 'ARGS.txt'), 'utf8').trim(),
-        extra_args = raw_args.split(' '),
-        raw_child_args = ['127.0.0.1:' + port, path.join(__dirname, 'g/user/UserServices.json')],
+        raw_child_args = ['127.0.0.1:' + port, path.join(__dirname, 'g/user/UserServices.json')].concat(raw_args.split(' ')),
         bin = resolveBin(child_cwd, port, raw_child_args),
-        child_args = getChildArgs(raw_child_args, extra_args, child_cwd),
+        child_args = getChildArgs(raw_child_args, child_cwd),
         target_cwd,
         p
     
