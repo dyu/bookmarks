@@ -160,7 +160,7 @@ function indexHtml() {
     if (!master_ip) return 'index.html'
     
     global.master_ip = master_ip
-    return 'rslave.html'
+    return 'dist/rslave.html'
 }
 
 function openWindow() {
