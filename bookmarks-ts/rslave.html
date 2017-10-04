@@ -27,10 +27,10 @@
         hostname = window.location.hostname,
         master_prefix = '//' + (window.master_ip || hostname) + ':5010',
         slave_prefix = '//' + hostname + ':5015',
-        rpc_config_d, 
+        rpc_config_d,
         uri_w_map
     
-    window.rpc_host = window.location.protocol // hack
+    window.rpc_host = 0 === protocol.indexOf('http') ? protocol : 'http'
     window.rpc_config = {
         get$$: function(uri, opts) {
             if (!rpc_config_d) rpc_config_d = window['rpc_config_d']
