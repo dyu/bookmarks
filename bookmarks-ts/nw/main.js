@@ -36,15 +36,22 @@ function findSubDir(baseDir, subDirPrefix) {
     return null
 }
 
-function resolveBin(child_cwd) {
+function resolveBin(child_cwd, port, raw_child_args) {
     var bin
     if (win32) {
-        if (fs.existsSync(bin = path.join(child_cwd, 'target/protostuffdb-rslave.exe'))) return bin
+        if (fs.existsSync(bin = path.join(child_cwd, 'target/protostuffdb-rslave.exe')))
+            return bin
+        
         return path.join(child_cwd, 'target/protostuffdb.exe')
     }
     
-    bin = path.join(child_cwd, 'target/hprotostuffdb-rmaster')
-    if (fs.existsSync(bin) || fs.existsSync(bin = path.join(child_cwd, 'target/hprotostuffdb')))
+    if (fs.existsSync(bin = path.join(child_cwd, 'target/hprotostuffdb-rmaster'))) {
+        // bind to any address
+        raw_child_args[0] = port
+        return bin
+    }
+    
+    if (fs.existsSync(bin = path.join(child_cwd, 'target/hprotostuffdb')))
         return bin
     
     return path.join(child_cwd, 'target/protostuffdb')
@@ -53,11 +60,12 @@ function resolveBin(child_cwd) {
 function startProtostuffdb() {
     var spawn = require('child_process').spawn,
         child_cwd = path.join(__dirname, '..'),
-        bin = resolveBin(child_cwd),
         port = fs.readFileSync(path.join(child_cwd, 'PORT.txt'), 'utf8').trim(),
         raw_args = fs.readFileSync(path.join(child_cwd, 'ARGS.txt'), 'utf8').trim(),
         extra_args = raw_args.split(' '),
-        child_args = getChildArgs(['127.0.0.1:' + port, path.join(__dirname, 'g/user/UserServices.json')], extra_args, child_cwd),
+        raw_child_args = ['127.0.0.1:' + port],
+        bin = resolveBin(child_cwd, port, raw_child_args),
+        child_args = getChildArgs(raw_child_args.concat([path.join(__dirname, 'g/user/UserServices.json')]), extra_args, child_cwd),
         target_cwd,
         p
     
