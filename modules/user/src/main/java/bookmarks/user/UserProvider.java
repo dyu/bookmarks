@@ -37,7 +37,7 @@ public final class UserProvider extends RpcServiceProvider// implements Visitor<
     
     @Override
     public void handleLogUpdates(RpcWorker worker, 
-            byte[] buf, int offset, int len)
+            byte[] buf, int offset, int len) throws IOException
     {
         processLogUpdates(worker, buf, offset, len);
     }
@@ -45,7 +45,7 @@ public final class UserProvider extends RpcServiceProvider// implements Visitor<
     @Override
     protected void processLogEntity(RpcWorker worker, int kind, 
             byte[] k, int koffset, 
-            byte[] v, int voffset, int vlen)
+            byte[] v, int voffset, int vlen) throws IOException
     {
         int id, newId;
         switch (kind)
