@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="padding: 0 0.5em">
   <div id="popup" class="popup">&nbsp;</div>
   <div style="display:none">
     <Suggest />

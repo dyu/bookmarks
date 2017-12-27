@@ -87,7 +87,7 @@ export default component({
     },
     template: /**/`
 <div>
-  <BookmarkEntryByTagV ref="bytag" />
+  <BookmarkEntryByTagV ref="bytag" :skip_tag_input="true" />
   <div v-if="backup_enabled" style="position:fixed; top:0; right:0">
     <i style="margin-right:-5px" class="icon ellipsis-vert" v-toggle="'.1'"></i>
     <div class="dropdown pull-right">

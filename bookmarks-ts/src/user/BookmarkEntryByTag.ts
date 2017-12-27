@@ -103,14 +103,14 @@ export class BookmarkEntryByTag extends View {
 }
 export default component({
     created(this: BookmarkEntryByTag) { BookmarkEntryByTag.created(this) },
-    props: { skip_header: { type: Boolean, required: false } },
+    props: { skip_tag_input: { type: Boolean, required: false } },
     components: {
         Item
     },
     template: /**/`
 <div v-pager="pager">
-<div v-if="!skip_header" class="list-header">
-  <div class="right">
+<div class="list-header">
+  <div v-if="!skip_tag_input" class="right">
     <div class="icon input">
       <i class="icon tags hide-pp"></i>
       <input placeholder="Tag(s)" type="text" ref="tag_new"
@@ -128,9 +128,9 @@ export default component({
       </div>
     </div>
   </div>
-  <input type="text" placeholder="BookmarksByTag" ${ui.lsearch_attrs($.$.title)} />
+  <input type="text" :placeholder="skip_tag_input ? 'Bookmarks' : 'BookmarksByTag'" ${ui.lsearch_attrs($.$.title)} />
 </div>
-<div v-show="skip_header || !!pager.size">${ui.pager_controls}</div>
+<div v-show="skip_tag_input || !!pager.size">${ui.pager_controls}</div>
 ${ui.pager_msg}
 ${$list('bookmark-entry-by-tag-detail')}
 </div>`/**/
