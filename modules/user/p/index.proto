@@ -204,6 +204,8 @@ message BookmarkEntry {
     rpc listBookmarkEntry(ParamRangeKey) returns (BookmarkEntry.M.PList);
     
     rpc listBookmarkEntryByTag(PTags) returns (BookmarkEntry.M.PList);
+    
+    rpc listBookmarkEntryByTagName(PTags.Names) returns (BookmarkEntry.M.PList);
   }
   
   // ==================================================
@@ -285,7 +287,7 @@ message BookmarkEntry {
     repeated BookmarkTag.M tags = 28;
     required bytes page_key = 32;
     
-    message PList { repeated M p = 1; }
+    message PList { repeated M p = 1; repeated BookmarkTag.M t = 2; }
   }
   
   message PList { repeated BookmarkEntry p = 1; }
@@ -305,6 +307,13 @@ message BookmarkEntry {
     repeated uint32 tag_id = 1;
     
     required ParamRangeKey prk = 2;
+    
+    message Names {
+      @NotNull
+      @Size(min = 1, max = 4)
+      //@Unique // resolved during sort
+      repeated string tag = 1;
+    }
   }
   
   @Exclude(server = true)

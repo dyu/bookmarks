@@ -14,7 +14,10 @@
 
 package bookmarks.user;
 
+import static com.dyuproject.protostuffdb.SerializedValueUtil.asInt32;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,12 +27,16 @@ import com.dyuproject.protostuff.Output;
 import com.dyuproject.protostuff.Pipe;
 import com.dyuproject.protostuff.RpcHeader;
 import com.dyuproject.protostuff.RpcResponse;
+import com.dyuproject.protostuff.RpcRuntimeExceptions;
 import com.dyuproject.protostuff.RpcWorker;
 import com.dyuproject.protostuff.ds.ParamRangeKey;
+import com.dyuproject.protostuffdb.DSRuntimeExceptions;
 import com.dyuproject.protostuffdb.Datastore;
+import com.dyuproject.protostuffdb.KV;
 import com.dyuproject.protostuffdb.MustBeUnique;
 import com.dyuproject.protostuffdb.ProtostuffPipe;
 import com.dyuproject.protostuffdb.ValueUtil;
+import com.dyuproject.protostuffdb.VisitorSession;
 import com.dyuproject.protostuffdb.WriteContext;
 
 /**
@@ -157,6 +164,148 @@ public final class BookmarkEntryViews
         {
             pipe.clear();
         }
+        
+        return true;
+    }
+    
+    static void pipeTo(RpcResponse res, 
+            VisitorSession session, List<KV> tags) throws IOException
+    {
+        final WriteContext context = res.context;
+        final KeyBuilder kb = context.kb();
+        switch (tags.size())
+        {
+            case 1:
+                kb.begin(TagIndex1.IDX_TAG1_ID__ENTRY_KEY, TagIndex1.EM)
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
+                        .$pushRange();
+                break;
+            case 2:
+                kb.begin(TagIndex2.IDX_TAG1_ID__TAG2_ID__ENTRY_KEY, TagIndex2.EM)
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(1).value))
+                        .$pushRange();
+                break;
+            case 3:
+                kb.begin(TagIndex3.IDX_TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY, TagIndex3.EM)
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(1).value))
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(2).value))
+                        .$pushRange();
+                break;
+            case 4:
+                kb.begin(TagIndex4.IDX_TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY, TagIndex4.EM)
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(1).value))
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(2).value))
+                        .$append(asInt32(BookmarkTag.VO_ID, tags.get(3).value))
+                        .$pushRange();
+                break;
+            default:
+                throw DSRuntimeExceptions.operationFailure("The tags cannot exceed 4.");
+        }
+        
+        final ProtostuffPipe pipe = context.pipe.init(BookmarkEntry.EM, 
+                PS, BookmarkEntry.M.PList.FN_P, true);
+        try
+        {
+            session.visitRange(false, 31, true, 
+                    null, 
+                    RpcResponse.PIPED_VISITOR, res, 
+                    true, false,
+                    kb.buf(), kb.offset(-1), kb.len(-1),
+                    kb.buf(), kb.offset(), kb.len());
+        }
+        finally
+        {
+            pipe.clear();
+        }
+    }
+    
+    static ArrayList<KV> appendTo(ArrayList<KV> listOut,
+            List<String> tags, VisitorSession session, 
+            RpcResponse res, int fieldNumber,
+            WriteContext context) throws IOException
+    {
+        final KeyBuilder kb = context.kb();
+        final KV kv = new KV();
+        if (listOut == null && tags.size() > 1)
+            listOut = new ArrayList<KV>(4);
+        
+        for (String name : tags)
+        {
+            if (!session.pget(kv, BookmarkTag.$$NAME(kb, name).$push()))
+                throw DSRuntimeExceptions.operationFailure(name + " not found.");
+            
+            if (listOut != null)
+                listOut.add(new KV(kv.key, kv.value));
+        }
+        
+        if (res == null)
+            return listOut;
+        
+        final ProtostuffPipe pipe = context.pipe.em(BookmarkTag.EM);
+        try
+        {
+            if (listOut == null)
+            {
+                res.output.writeObject(fieldNumber, 
+                        pipe.set(kv.key, kv.value),
+                        BookmarkTag.M.getPipeSchema(), 
+                        true);
+            }
+            else
+            {
+                Collections.sort(listOut, MustBeUnique.CMP_HK_END);
+                for (KV entry : listOut)
+                {
+                    res.output.writeObject(fieldNumber, 
+                            pipe.set(entry.key, entry.value),
+                            BookmarkTag.M.getPipeSchema(), 
+                            true);
+                }
+            }
+        }
+        finally
+        {
+            pipe.clear();
+        }
+        
+        return listOut;
+    }
+    
+    static boolean listBookmarkEntryByTagName(final BookmarkEntry.PTags.Names req, Datastore store,
+            final RpcResponse res, Pipe.Schema<BookmarkEntry.M.PList> resPipeSchema, 
+            final RpcHeader header) throws IOException
+    {
+        if (req.tag.size() > 1)
+        {
+            try
+            {
+                Collections.sort(req.tag, MustBeUnique.CMP_STRING);
+            }
+            catch (MustBeUnique e)
+            {
+                return res.fail("The tags must be unique.");
+            }
+        }
+        
+        store.session(res.context, new VisitorSession.Handler<Void>()
+        {
+            @Override
+            public void handle(VisitorSession session, Void param)
+            {
+                try
+                {
+                    pipeTo(res, session, appendTo(new ArrayList<KV>(), req.tag, 
+                            session, res, BookmarkEntry.M.PList.FN_T, res.context));
+                }
+                catch (IOException e)
+                {
+                    throw RpcRuntimeExceptions.pipe(e);
+                }
+            }
+        }, null);
         
         return true;
     }
