@@ -5,7 +5,7 @@ import { PojoStore, shallowCopyTo } from 'coreds/lib/pstore/'
 import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
-import { MAX_TAGS } from './context'
+import { MAX_TAGS, mapId } from './context'
 import { merge_fn, onUpdate, Item, View, $list } from './BookmarkEntryBase'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -40,8 +40,8 @@ export class BookmarkEntryByTag extends View {
             },
             onUpdate,
             fetch(req: prk.ParamRangeKey, pager: Pager) {
-                return $.ForUser.listBookmarkEntryByTag($.PTags.$new(req, self.m.tags))
-                        .then(self.fetch$$S).then(undefined, self.fetch$$F)
+                let p = !self.tags.length ? $.ForUser.listBookmarkEntry(req) : $.ForUser.listBookmarkEntryByTag($.PTags.$new(req, self.m.tags))
+                return p.then(self.fetch$$S).then(undefined, self.fetch$$F)
             }
         }))
         self.pager = pstore.pager
@@ -52,6 +52,19 @@ export class BookmarkEntryByTag extends View {
     }
     fetch$$F(err) {
         this.pstore.cbFetchFailed(err)
+    }
+    
+    add_tags(tags: user.BookmarkTag.M[], entries?: user.BookmarkEntry[]) {
+        this.tags = tags
+        this.m.tags = tags.map(mapId)
+        
+        let pstore = this.pstore
+        if (!entries) {
+            pstore.replace([])
+            pstore.requestNewer()
+        } else {
+            pstore.replace(entries)
+        }
     }
     
     tag_new$$(fk: string, id: number, message: user.BookmarkTag.M) {
@@ -90,12 +103,13 @@ export class BookmarkEntryByTag extends View {
 }
 export default component({
     created(this: BookmarkEntryByTag) { BookmarkEntryByTag.created(this) },
+    props: { skip_header: { type: Boolean, required: false } },
     components: {
         Item
     },
     template: /**/`
 <div v-pager="pager">
-<div class="list-header">
+<div v-if="!skip_header" class="list-header">
   <div class="right">
     <div class="icon input">
       <i class="icon tags hide-pp"></i>
@@ -116,7 +130,7 @@ export default component({
   </div>
   <input type="text" placeholder="BookmarksByTag" ${ui.lsearch_attrs($.$.title)} />
 </div>
-<div v-show="pager.size">${ui.pager_controls}</div>
+<div v-show="skip_header || !!pager.size">${ui.pager_controls}</div>
 ${ui.pager_msg}
 ${$list('bookmark-entry-by-tag-detail')}
 </div>`/**/

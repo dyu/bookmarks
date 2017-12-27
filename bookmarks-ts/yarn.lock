@@ -2191,6 +2191,10 @@ nan@^2.3.0, nan@^2.3.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.6.2.tgz#e4ff34e6c95fdfb5aecc08de6596f43605a7db45"
 
+navigo@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/navigo/-/navigo-6.0.1.tgz#9725b1fa93da9dcd5ab5b5691ac48a6b20c10b8c"
+
 negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"

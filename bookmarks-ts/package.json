@@ -22,6 +22,8 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --hot --devtool source-map",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "tv.d": "SRC_DIR=./tagview DEST_FILE=tagview.js webpack-dev-server --inline --hot --devtool source-map",
+    "tv.b": "SRC_DIR=./tagview DEST_FILE=tagview.js cross-env NODE_ENV=production webpack --progress --hide-modules",
     "bk.d": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js webpack-dev-server --inline --hot --devtool source-map",
     "bk.b": "SRC_DIR=./bookmarklet DEST_FILE=bookmarklet.js cross-env NODE_ENV=production webpack --progress --hide-modules",
     "bk.nw": "SRC_DIR=./bookmarklet-nw DEST_FILE=bookmarklet-nw.js cross-env NODE_ENV=production webpack --progress --hide-modules",
@@ -33,6 +35,7 @@
   "dependencies": {
     "coreds": "^0.10.2",
     "coreds-ui": "^0.10.7",
+    "navigo": "^6.0.1",
     "pavilion": "^2.0.3",
     "toprogress": "^0.1.3",
     "v_": "2.1.10",
