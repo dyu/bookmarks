@@ -3,6 +3,7 @@ import { component } from 'vuets'
 import { PojoState } from 'coreds/lib/types'
 import { defg, $any, extractMsg } from 'coreds/lib/util'
 import { user } from '../g/user/'
+import { CONFIG } from '../src/util'
 
 import Navigo from 'navigo'
 
@@ -75,9 +76,11 @@ export class HomePage {
         self.backup_enabled = !window['hide_backup']
         let m = self.m
         
-        m.bytag = self['$refs'].bytag;
+        m.bytag = self['$refs'].bytag
         
-        (m.navigo = self.newNavigo()).resolve()
+        CONFIG['navigo'] = m.navigo = self.newNavigo()
+        
+        m.navigo.resolve()
     }
 }
 export default component({

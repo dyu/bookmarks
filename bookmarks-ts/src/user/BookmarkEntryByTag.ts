@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { component } from 'vuets'
 import { defg, defp, nullp, setp } from 'coreds/lib/util'
 import { Pager, ItemSO, SelectionFlags, PojoState } from 'coreds/lib/types'
@@ -6,6 +7,7 @@ import * as prk from 'coreds/lib/prk'
 import * as ui from '../ui/'
 import * as msg from 'coreds-ui/lib/msg'
 import { MAX_TAGS, mapId } from './context'
+import { CONFIG } from '../util'
 import { merge_fn, onUpdate, Item, View, $list } from './BookmarkEntryBase'
 import { user } from '../../g/user/'
 const $ = user.BookmarkEntry
@@ -18,6 +20,8 @@ export class BookmarkEntryByTag extends View {
     tag_new = setp(setp(msg.$new(), 'f', null), 'f$', null)
     
     m = defg(this, 'm', {
+        val: '',
+        tag: '',
         tags: [] as number[]
     })
     constructor() {
@@ -100,6 +104,39 @@ export class BookmarkEntryByTag extends View {
     suggest(ps: any, opts: any) {
         return user.BookmarkTag.$NAME(ps, true)
     }
+    inputTitle(e) {
+        let el = e.target,
+            val = el.value as string,
+            m = this.m
+        
+        if (!CONFIG['navigo']) {
+            // noop
+        } else if (val && val.length > 1 && '#' === val.charAt(0)) {
+            m.tag = val.substring(1)
+            nextTick(this.pushPage)
+            
+            if (!m.val) {
+                e.preventDefault()
+                e.stopImmediatePropagation()
+            }
+            
+            el.value = m.val
+        } else {
+            m.val = val
+        }
+    }
+    pushPage() {
+        let navigo = CONFIG['navigo'],
+            url = navigo.lastRouteResolved().url,
+            buf = ''
+        if (url) {
+            buf += url.substring(1)
+        }
+        buf += '/'
+        buf += this.m.tag
+        
+        navigo.navigate(buf)
+    }
 }
 export default component({
     created(this: BookmarkEntryByTag) { BookmarkEntryByTag.created(this) },
@@ -128,7 +165,7 @@ export default component({
       </div>
     </div>
   </div>
-  <input type="text" :placeholder="skip_tag_input ? 'Bookmarks' : 'BookmarksByTag'" ${ui.lsearch_attrs($.$.title)} />
+  <input type="text" :placeholder="skip_tag_input ? 'Bookmarks' : 'BookmarksByTag'" @change="inputTitle($event)" ${ui.lsearch_attrs($.$.title)} />
 </div>
 <div v-show="skip_tag_input || !!pager.size">${ui.pager_controls}</div>
 ${ui.pager_msg}
