@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "dyu-bookmarks",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Post bookmarks to https://api.dyuproject.com",
   "homepage_url": "https://github.com/dyu/bookmarks/tree/next/bookmarks-ts/extension/",
   "icons": {
@@ -12,15 +12,17 @@
   "permissions": [
     "https://api.dyuproject.com/*",
     "storage",
+    "tabs",
     "activeTab"
   ],
 
   "browser_action": {
-    "default_icon": {
-     "32" : "assets/icon.png"
-    },
-    "default_title": "dyu-bookmarks",
-    "default_popup": "popup/index.html"
+    "default_icon": "assets/icon.png",
+    "default_title": "dyu-bookmarks"
+  },
+  
+  "background": {
+    "scripts": ["background.js"]
   },
 
   "applications": {

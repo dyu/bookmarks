@@ -57,8 +57,9 @@ function mapId(tag) {
 var SUGGEST_TAGS_LIMIT = 10
 
 /* initialise variables */
+var hash = window.location.hash
 var accessToken, loading = false
-var currentTab, currentPojo, currentTags, currentTagTextAdd = '' ,currentTagIdAdd = 0, currentTagIdRemove = 0
+var currentTitle, currentPojo, currentTags, currentTagTextAdd = '' ,currentTagIdAdd = 0, currentTagIdRemove = 0
 var newUrl = false, newTags = []
 var inputToken = document.querySelector('input.accesstoken')
 var inputUrl = document.querySelector('.new-bkm input.url')
@@ -112,8 +113,6 @@ function onFailure(err) {
     showError(extractMsg(err))
 }
 
-initialize();
-
 function newPS(url) {
     return {
         "1": url,
@@ -145,7 +144,7 @@ function checkUnique$$S(data) {
     var array = data['1']
     if (!array || !array.length) {
         newUrl = true
-        inputTitle.value = currentTab.title
+        inputTitle.value = currentTitle
         return
     }
     
@@ -167,21 +166,25 @@ function checkUnique$$S(data) {
     tagContainer.innerHTML = buf
 }
 
-function checkUnique(tabs) {
-    var tab = tabs[0]
-    currentTab = tab
-    inputUrl.value = tab.url
+function checkUnique(url, title) {
+    currentTitle = title
+    inputUrl.value = url
     // show
     inputUrl.parentElement.className = 'new-bkm'
     
     loading = true
     $post('https://api.dyuproject.com/bookmarks/user/qBookmarkEntry0Url?access_token=' + accessToken,
-        JSON.stringify(newPS(tab.url)))
+        JSON.stringify(newPS(url)))
         .then(checkUnique$$S).then(undefined, onFailure)
 }
 
+function recvTabs(tabs) {
+    var tab = tabs[0]
+    checkUnique(tab.url, tab.title)
+}
+
 function queryTab() {
-    browser.tabs.query({ active: true, currentWindow: true }, checkUnique)
+    browser.tabs.query({ active: true, currentWindow: true }, recvTabs)
 }
 
 function tokenFound(result) {
@@ -190,7 +193,14 @@ function tokenFound(result) {
     
     inputToken.title = 'Access Token'
     inputToken.value = accessToken = result.access_token.value
-    queryTab()
+    
+    if (!hash) {
+        queryTab()
+        return
+    }
+    
+    var parts = hash.split('~')
+    checkUnique(decodeB32(parts[0]), decodeB32(parts[1]))
 }
 
 function initialize() {
@@ -406,5 +416,44 @@ function addBookmark() {
     }
 })
 */
+
+var alphabet = '0123456789abcdefghijklmnopqrstuv'
+var table = {}
+
+function decodeB32(str) {
+    var skip = 0, byt = 0, buf = ''
+    for (var i = 0; i < str.length; i++) {
+        var val = table[str[i].toLowerCase()]
+        if (val === undefined) continue
+        
+        val <<= 3 // move to the high bits
+        byt |= val >>> skip
+        skip += 5
+        if (skip >= 8) {
+            // we have enough to preduce output
+            buf += String.fromCharCode(byt)
+            skip -= 8
+            if (skip > 0) byt = (val << (5 - skip)) & 255
+            else byt = 0
+        }
+    }
+    
+    if (skip < 0) {
+        buf += alphabet[bits >> 3]
+    }
+    
+    return buf
+}
+
+// Invert 'alphabet'
+for (var i = 0; i < alphabet.length; i++) {
+    table[alphabet[i]] = i
+}
+
+/*if (hash) {
+    var parts = hash.split('~')
+    inputBody.value = decodeB32(parts[0]) + '\n' + decodeB32(parts[1])
+}*/
+initialize()
 
 })();
