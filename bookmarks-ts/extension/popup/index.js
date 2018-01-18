@@ -67,6 +67,10 @@ function debounce(cb, interval, immediate) {
   };
 };
 
+function mapId(tag) {
+    return tag['5']
+}
+
 var SUGGEST_TAGS_LIMIT = 10
 
 /* initialise variables */
@@ -112,6 +116,11 @@ function hideError() {
 function showError(msg) {
     msgBody.textContent = msg
     msgDiv.className = 'msg error'
+}
+
+function showSuccess(msg) {
+    msgBody.textContent = msg
+    msgDiv.className = 'msg'
 }
 
 initialize();
@@ -303,7 +312,25 @@ function addTag(e) {
         .then(suggest$$S).then(undefined, suggest$$F)
 }
 
+function addBookmark$$S(data) {
+    newUrl = false
+    showSuccess('Successful.')
+}
+
+function addBookmark$$F(err) {
+    showError(extractMsg(err))
+}
+
 function addBookmark() {
-    
+    var notes = inputBody.value || null
+    var tags = newTags
+    if (tags.length) {
+        tags = tags.map(mapId)
+    } else {
+        tags = null
+    }
+    $post('https://api.dyuproject.com/bookmarks/user/BookmarkEntry/create?access_token=' + accessToken,
+        JSON.stringify({"1": { "3": inputUrl.value, "6": inputTitle.value, "7": notes }, "2": tags }))
+        .then(addBookmark$$S).then(undefined, addBookmark$$F)
 }
 
