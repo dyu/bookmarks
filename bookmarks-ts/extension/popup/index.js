@@ -74,9 +74,9 @@ function mapId(tag) {
 var SUGGEST_TAGS_LIMIT = 10
 
 /* initialise variables */
-var accessToken, currentTab, currentPojo, currentTags, currentTagIdRemove = 0
-var newUrl = false
-var newTags = []
+var accessToken, loading = false
+var currentTab, currentPojo, currentTags, currentTagTextAdd = '' ,currentTagIdAdd = 0, currentTagIdRemove = 0
+var newUrl = false, newTags = []
 var inputToken = document.querySelector('input.accesstoken')
 var inputUrl = document.querySelector('.new-bkm input.url')
 var inputTitle = document.querySelector('.new-bkm input.title')
@@ -124,6 +124,11 @@ function showSuccess(msg) {
     msgDiv.className = 'msg'
 }
 
+function onFailure(err) {
+    loading = false
+    showError(extractMsg(err))
+}
+
 initialize();
 
 function newPS(url) {
@@ -152,6 +157,8 @@ function appendTagTo(el, id, text) {
 }
 
 function checkUnique$$S(data) {
+    loading = false
+    
     var array = data['1']
     if (!array || !array.length) {
         newUrl = true
@@ -176,10 +183,6 @@ function checkUnique$$S(data) {
     tagContainer.innerHTML = buf
 }
 
-function checkUnique$$F(err) {
-    showError(extractMsg(err))
-}
-
 function checkUnique(tabs) {
     var tab = tabs[0]
     currentTab = tab
@@ -187,9 +190,10 @@ function checkUnique(tabs) {
     // show
     inputUrl.parentElement.className = 'new-bkm'
     
+    loading = true
     $post('https://api.dyuproject.com/bookmarks/user/qBookmarkEntry0Url?access_token=' + accessToken,
         JSON.stringify(newPS(tab.url)))
-        .then(checkUnique$$S).then(undefined, checkUnique$$F)
+        .then(checkUnique$$S).then(undefined, onFailure)
 }
 
 function queryTab() {
@@ -227,14 +231,36 @@ function changeNotes(e) {
     if (newUrl) return
 }
 
+function rmTagId$$S(data) {
+    loading = false
+    
+    var tags = currentTags, id = currentTagIdRemove
+    for (var i = 0; i < tags.length; i++) {
+        if (id === tags[i]['5']) {
+            tags.splice(i, 1)
+            tagContainer.removeChild(tagContainer.children[i])
+            disable(inputTag, false)
+            break
+        }
+    }
+}
+
+function rmTagId(id) {
+    loading = true
+    currentTagIdRemove = id
+    
+    $post('https://api.dyuproject.com/bookmarks/user/BookmarkEntry/updateTag?access_token=' + accessToken,
+        JSON.stringify({"1": currentPojo['1'], "2": id, "3": true}))
+        .then(rmTagId$$S).then(undefined, onFailure)
+}
+
 function rmTag(e) {
     var el = e.target
     if (el.tagName !== 'BUTTON') return
     
     var id = parseInt(el.dataset.id, 10)
     if (!newUrl) {
-        // TODO
-        currentTagIdRemove = id
+        !loading && rmTagId(id)
         return
     }
     
@@ -247,6 +273,21 @@ function rmTag(e) {
             break
         }
     }
+}
+
+function insertTagId$$S(data) {
+    loading = false
+    
+    insertTagTo(currentTags, currentTagIdAdd, currentTagTextAdd)
+}
+
+function insertTagId(id, text) {
+    loading = true
+    currentTagIdAdd = id
+    currentTagTextAdd = text
+    $post('https://api.dyuproject.com/bookmarks/user/BookmarkEntry/updateTag?access_token=' + accessToken,
+        JSON.stringify({"1": currentPojo['1'], "2": id, "3": false}))
+        .then(insertTagId$$S).then(undefined, onFailure)
 }
 
 function insertTagTo(tags, id, text) {
@@ -267,9 +308,13 @@ function insertTagTo(tags, id, text) {
 }
 
 function selectTag(e) {
-    if (newUrl && newTags.length === 4) return
+    if (!newUrl) {
+        if (loading || currentTags.length === 4) return
+    } else if (newTags.length === 4) {
+        return
+    }
     
-    inputTag.value = ''
+    if (inputTag.value) inputTag.value = ''
     
     var el = e.target
     if (el.tagName !== 'B') {
@@ -284,7 +329,7 @@ function selectTag(e) {
     var text = el.textContent
     
     if (!newUrl) {
-        // TODO
+        insertTagId(id, text)
     } else if (newTags.length) {
         insertTagTo(newTags, id, text)
         newTags.length === 4 && disable(inputTag, true)
@@ -298,6 +343,8 @@ function selectTag(e) {
 }
 
 function suggest$$S(data) {
+    loading = false
+    
     var array = data['1']
     if (!array || !array.length) {
         suggestTagContainer.innerHTML = ''
@@ -316,32 +363,30 @@ function suggest$$S(data) {
     suggestTagContainer.innerHTML = buf
 }
 
-function suggest$$F(err) {
-    showError(extractMsg(err))
-}
-
 function suggestTag(e) {
+    if (loading) return
+    
     var val = e.target.value
     if (!val) {
         suggestTagContainer.innerHTML = ''
         return
     }
     
+    loading = true
     $post('https://api.dyuproject.com/bookmarks/user/fBookmarkTag0Name?access_token=' + accessToken,
         JSON.stringify({"1": val, "4": {"1": false, "2": SUGGEST_TAGS_LIMIT}}))
-        .then(suggest$$S).then(undefined, suggest$$F)
+        .then(suggest$$S).then(undefined, onFailure)
 }
 
 function addBookmark$$S(data) {
+    loading = false
     newUrl = false
     showSuccess('Successful.')
 }
 
-function addBookmark$$F(err) {
-    showError(extractMsg(err))
-}
-
 function addBookmark() {
+    if (loading) return
+    
     var notes = inputBody.value || null
     var tags = newTags
     if (tags.length) {
@@ -349,8 +394,9 @@ function addBookmark() {
     } else {
         tags = null
     }
+    loading = true
     $post('https://api.dyuproject.com/bookmarks/user/BookmarkEntry/create?access_token=' + accessToken,
         JSON.stringify({"1": { "3": inputUrl.value, "6": inputTitle.value, "7": notes }, "2": tags }))
-        .then(addBookmark$$S).then(undefined, addBookmark$$F)
+        .then(addBookmark$$S).then(undefined, onFailure)
 }
 
