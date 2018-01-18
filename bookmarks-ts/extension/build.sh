@@ -23,6 +23,7 @@ mkdir -p target/popup ../target
 cp -r assets target/
 cp manifest.json target/
 cp popup/index.html target/popup/
+java -jar $JAR_FILE -o target/background.js background.js && \
 java -jar $JAR_FILE -o target/popup/index.js popup/index.js && \
 cleancss -O2 popup/style.css > target/popup/style.css && \
 cd target && web-ext build
