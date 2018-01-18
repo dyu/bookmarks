@@ -118,3 +118,84 @@ p {
 .update {
   float: right;
 }
+
+.hide {
+  display: none;
+}
+
+.msg {
+  margin-top: 0.5em;
+  position: relative;
+  background-color: #DEFCD5;
+  color: #52A954;
+  padding: 1em 0.3em 0.3em 0.3em;
+}
+.msg > button.b {
+  position: absolute;
+  padding: 0.02em 0.3em;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.msg.error {
+  background-color: #F1D7D7;
+  color: #A95252;
+}
+
+button.b {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  font-weight: bold;
+  color: inherit;
+  font-size: 1rem;
+  box-shadow: none;
+}
+
+button.b[disabled="true"], button.b[disabled="disabled"], button.b[disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+input.accesstoken {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
+
+input.url {
+  color: #0080ff;
+}
+
+ul.tags {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+ul.tags > li {
+    padding-bottom: 0.5em;
+    margin: 1em 0;
+}
+ul.tags > li > a {
+  position: relative;
+  cursor: default;
+  /*background-color: #F1F1F1;*/
+  padding: 0.5em 5em 0.5em 0.5em;
+  border-bottom: 1px solid #ccc;
+}  
+    
+ul.tags > li > a > button.b {
+  position: absolute;
+  padding: 0.2em 0.4em;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 0.8rem;
+}
+ul.tags > li > a > button.b:hover {
+  color: #555;
+}

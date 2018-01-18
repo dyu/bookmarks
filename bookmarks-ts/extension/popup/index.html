@@ -6,13 +6,19 @@
   </head>
 <body>
   <div class="outer-wrapper">
-    <div class="new-bkm">
-      <input type="text" class="url" placeholder="Url" />
+    <div class="new-bkm hide">
+      <input type="text" class="url" placeholder="Url" disabled />
       <input type="text" class="title" placeholder="Title" />
-      <textarea placholder="Notes"></textarea>
+      <textarea placeholder="Notes"></textarea>
       <button class="add">Submit</button>
+      <ul class="tags"></ul>
       <div class="clearfix"></div>
+      <div class="msg hide">
+        <button type="button" class="b">x</button>
+        <div></div>
+      </div>
     </div>
+    <input type="text" class="accesstoken" placeholder="Set Access Token" />
     <div class="bkm-container"></div>
   </div>
   <script src="index.js"></script>
