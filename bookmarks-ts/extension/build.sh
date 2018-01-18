@@ -14,10 +14,10 @@ fi
 cd $SCRIPT_DIR
 
 YUI_VERSION=2.4.8
-JAR_FILE=target/yuicompressor-$YUI_VERSION.jar
+JAR_FILE=../target/yuicompressor-$YUI_VERSION.jar
 
 rm -rf target/popup target/web-ext-artifacts
-mkdir -p target/popup
+mkdir -p target/popup ../target
 [ -e $JAR_FILE ] || wget -O $JAR_FILE https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-$YUI_VERSION.jar
 
 cp -r assets target/
