@@ -24,25 +24,6 @@ function $get(location, opts) {
 function $post(location, data) {
     return fetch(location, { method: 'POST', body: data }).then(checkStatus).then(handler);
 }
-var config_default = {
-    get$$: get$$,
-    post$$: post$$
-};
-window['rpc_config_d'] = config_default;
-var config = window['rpc_config'] || config_default;
-var prefix = window['rpc_host'] || '';
-function get$$(location, opts) {
-    return $get(!prefix ? location : prefix + location, opts);
-}
-function post$$(location, data) {
-    return $post(!prefix ? location : prefix + location, data);
-}
-function post(location, data) {
-    return config.post$$(location, data);
-}
-function get(location, opts) {
-    return config.get$$(location, opts);
-}
 function noop() {}
 function extractMsg(data) {
     return Array.isArray(data) ? data[1]['1'] : String(data);
