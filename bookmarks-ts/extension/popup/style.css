@@ -123,8 +123,22 @@ p {
   display: none;
 }
 
+.suggest-tags {
+  position: relative;
+}
+
+.suggest-tags > b {
+  padding-right: 0.5em;
+  cursor: pointer;
+  font-size: 1.3em;
+}
+
+.suggest-tags > b:hover {
+  color: #0080ff;
+}
+
 .msg {
-  margin-top: 0.5em;
+  margin: 0.5em 0;
   position: relative;
   background-color: #DEFCD5;
   color: #52A954;
@@ -187,7 +201,7 @@ ul.tags > li > a {
   border-bottom: 1px solid #ccc;
 }  
     
-ul.tags > li > a > button.b {
+ul.tags > li > a > button.b, .suggest-tags > button.b {
   position: absolute;
   padding: 0.2em 0.4em;
   right: 0;

@@ -48,12 +48,37 @@ function extractMsg(data) {
     return Array.isArray(data) ? data[1]['1'] : String(data);
 }
 
+function debounce(cb, interval, immediate) {
+  var timeout;
+
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) cb.apply(context, args);
+    };          
+
+    var callNow = immediate && !timeout;
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, interval);
+
+    if (callNow) cb.apply(context, args);
+  };
+};
+
+var SUGGEST_TAGS_LIMIT = 10
+
 /* initialise variables */
 var accessToken, currentTab, currentPojo, currentTags, currentTagIdRemove = 0
+var newUrl = false
+var newTags = []
 var inputToken = document.querySelector('input.accesstoken')
 var inputUrl = document.querySelector('.new-bkm input.url')
 var inputTitle = document.querySelector('.new-bkm input.title')
 var inputBody = document.querySelector('.new-bkm textarea')
+var inputTag = document.querySelector('.new-bkm input.tag')
+var suggestTags = document.querySelector('.new-bkm .suggest-tags')
 var noteContainer = document.querySelector('.note-container')
 var addBtn = document.querySelector('.add')
 var tagsContainer = document.querySelector('.tags')
@@ -73,10 +98,17 @@ inputToken.addEventListener('change', function(e) {
         access_token: { value: e.target.value }
     }).then(initialize)
 })
+inputTag.addEventListener('keypress', debounce(addTag, 500))
+suggestTags.addEventListener('click', selectTag)
 
 /* generic error handler */
 function onError(error) {
     console.log(error);
+}
+
+function showError(msg) {
+    msgBody.textContent = msg
+    msgDiv.className = 'msg error'
 }
 
 initialize();
@@ -94,9 +126,22 @@ function createEl(tag, key, val) {
     return el
 }
 
+function createTagA(id, text) {
+    return '<a><button type="button" class="b" data-id="' + id + '">x</button>' + text + '</a>'
+}
+
+function insertBeforeTagTo(el, idx, id, text) {
+    el.insertBefore(createEl('li', 'innerHTML', createTagA(id, text)), el.children[idx])
+}
+
+function appendTagTo(el, id, text) {
+    el.appendChild(createEl('li', 'innerHTML', createTagA(id, text)))
+}
+
 function checkUnique$$S(data) {
     var array = data['1']
     if (!array || !array.length) {
+        newUrl = true
         inputTitle.value = currentTab.title
         return
     }
@@ -109,19 +154,17 @@ function checkUnique$$S(data) {
     
     if (!tags || !tags.length) return
     
+    var buf = '', tag
     for (var i = 0; i < tags.length; i++) {
-        var tag = tags[i]
-        var li = document.createElement('li')
-        var a = createEl('a', 'innerHTML', 
-                '<button type="button" class="b" data-id="' + tag['5'] + '">x</button>' + tag['3'])
-        li.appendChild(a)
-        tagsContainer.appendChild(li)
+        tag = tags[i]
+        buf += '<li>' + createTagA(tag['5'], tag['3']) + '</li>'
     }
+    
+    tagsContainer.innerHTML = buf
 }
 
 function checkUnique$$F(err) {
-    msgBody.innerText = extractMsg(err)
-    msgDiv.className = 'msg error'
+    showError(extractMsg(err))
 }
 
 function checkUnique(tabs) {
@@ -132,7 +175,8 @@ function checkUnique(tabs) {
     inputUrl.parentElement.className = 'new-bkm'
     
     $post('https://api.dyuproject.com/bookmarks/user/qBookmarkEntry0Url?access_token=' + accessToken,
-        JSON.stringify(newPS(tab.url))).then(checkUnique$$S).then(undefined, checkUnique$$F)
+        JSON.stringify(newPS(tab.url)))
+        .then(checkUnique$$S).then(undefined, checkUnique$$F)
 }
 
 function queryTab() {
@@ -152,22 +196,106 @@ function initialize() {
     browser.storage.local.get('access_token').then(tokenFound).then(undefined, noop)
 }
 
-function addBookmark() {
-    
-}
-
 function rmTag(e) {
     var el = e.target
     if (el.tagName !== 'BUTTON') return
     
-    currentTagIdRemove = parseInt(el.dataset.id, 10)
-    // TODO remove tag
-    /*var tags = currentTags
+    var id = parseInt(el.dataset.id, 10)
+    if (!newUrl) {
+        // TODO
+        currentTagIdRemove = id
+        return
+    }
+    
+    var tags = newTags
     for (var i = 0; i < tags.length; i++) {
         if (id === tags[i]['5']) {
             tags.splice(i, 1)
             tagsContainer.removeChild(tagsContainer.children[i])
             break
         }
-    }*/
+    }
 }
+
+function insertTagTo(tags, id, text) {
+    var i = 0, tag, tid
+    for (; i < tags.length; i++) {
+        tag = tags[i]
+        tid = tag['5']
+        if (tid === id) return
+        if (tid > id) {
+            tags.splice(i, 0, {"3": text, "5": id})
+            insertBeforeTagTo(tagsContainer, i, id, text)
+            return
+        }
+    }
+    
+    tags.push({"3": text, "5": id})
+    appendTagTo(tagsContainer, id, text)
+}
+
+function selectTag(e) {
+    var el = e.target
+    if (el.tagName !== 'B') {
+        if (el.tagName === 'BUTTON') {
+            suggestTags.innerHTML = ''
+            inputTag.value = ''
+            inputTag.focus()
+        }
+        return
+    }
+    
+    var id = parseInt(el.dataset.id, 10)
+    var text = el.textContent
+    
+    if (!newUrl) {
+        // TODO
+    } else if (newTags.length) {
+        insertTagTo(newTags, id, text)
+    } else {
+        newTags.push({"3": text, "5": id})
+        appendTagTo(tagsContainer, id, text)
+    }
+    
+    inputTag.focus()
+}
+
+function suggest$$S(data) {
+    var array = data['1']
+    if (!array || !array.length) {
+        suggestTags.innerHTML = ''
+        return
+    }
+    
+    var buf = ''
+    for (var i = 0; i < array.length; i++) {
+        var tag = array[i]
+        buf += '<b data-id="' + tag['5'] + '">'
+        buf += tag['3']
+        buf += '</b>'
+    }
+    
+    buf += '<button type="button" class="b" data-id="0">x</button>'
+    suggestTags.innerHTML = buf
+}
+
+function suggest$$F(err) {
+    showError(extractMsg(err))
+}
+
+function addTag(e) {
+    var val = e.target.value
+    if (!val) {
+        suggestTags.innerHTML = ''
+        return
+    }
+    
+    $post('https://api.dyuproject.com/bookmarks/user/fBookmarkTag0Name?access_token=' + accessToken,
+        JSON.stringify({"1": val, "4": {"1": false, "2": SUGGEST_TAGS_LIMIT}}))
+        .then(suggest$$S).then(undefined, suggest$$F)
+}
+
+function addBookmark() {
+    
+}
+
