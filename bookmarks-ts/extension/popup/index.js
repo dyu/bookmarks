@@ -95,6 +95,8 @@ var msgBody = msgDiv.lastElementChild
 addBtn.addEventListener('click', addBookmark)
 tagsContainer.addEventListener('click', rmTag)
 msgClose.addEventListener('click', hideError)
+inputTitle.addEventListener('change', changeTitle)
+inputBody.addEventListener('change', changeNotes)
 inputToken.addEventListener('change', function(e) {
     browser.storage.local.set({
         access_token: { value: e.target.value }
@@ -213,6 +215,19 @@ function reinitialize() {
     initialize()
 }
 
+function disable(el, disabled) {
+    el.disabled = disabled
+}
+
+function changeTitle(e) {
+    if (newUrl) return
+    
+}
+
+function changeNotes(e) {
+    if (newUrl) return
+}
+
 function rmTag(e) {
     var el = e.target
     if (el.tagName !== 'BUTTON') return
@@ -229,6 +244,7 @@ function rmTag(e) {
         if (id === tags[i]['5']) {
             tags.splice(i, 1)
             tagsContainer.removeChild(tagsContainer.children[i])
+            disable(inputTag, false)
             break
         }
     }
@@ -252,11 +268,14 @@ function insertTagTo(tags, id, text) {
 }
 
 function selectTag(e) {
+    if (newUrl && newTags.length === 4) return
+    
+    inputTag.value = ''
+    
     var el = e.target
     if (el.tagName !== 'B') {
         if (el.tagName === 'BUTTON') {
             suggestTags.innerHTML = ''
-            inputTag.value = ''
             inputTag.focus()
         }
         return
@@ -269,9 +288,11 @@ function selectTag(e) {
         // TODO
     } else if (newTags.length) {
         insertTagTo(newTags, id, text)
+        newTags.length === 4 && disable(inputTag, true)
     } else {
         newTags.push({"3": text, "5": id})
         appendTagTo(tagsContainer, id, text)
+        newTags.length === 4 && disable(inputTag, true)
     }
     
     inputTag.focus()
