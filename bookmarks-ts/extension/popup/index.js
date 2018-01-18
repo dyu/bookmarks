@@ -90,13 +90,11 @@ var msgBody = msgDiv.lastElementChild
 
 addBtn.addEventListener('click', addBookmark)
 tagsContainer.addEventListener('click', rmTag)
-msgClose.addEventListener('click', function() {
-    msgDiv.className = 'msg hide'
-})
+msgClose.addEventListener('click', hideError)
 inputToken.addEventListener('change', function(e) {
     browser.storage.local.set({
         access_token: { value: e.target.value }
-    }).then(initialize)
+    }).then(reinitialize)
 })
 inputTag.addEventListener('keypress', debounce(addTag, 500))
 suggestTags.addEventListener('click', selectTag)
@@ -104,6 +102,11 @@ suggestTags.addEventListener('click', selectTag)
 /* generic error handler */
 function onError(error) {
     console.log(error);
+}
+
+function hideError() {
+    msgDiv.className = 'msg hide'
+    msgBody.textContent = ''
 }
 
 function showError(msg) {
@@ -194,6 +197,11 @@ function tokenFound(result) {
 
 function initialize() {
     browser.storage.local.get('access_token').then(tokenFound).then(undefined, noop)
+}
+
+function reinitialize() {
+    hideError()
+    initialize()
 }
 
 function rmTag(e) {
