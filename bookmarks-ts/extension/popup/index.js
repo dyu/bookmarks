@@ -171,6 +171,7 @@ function checkUnique$$S(data) {
     currentPojo = pojo
     currentTags = tags
     inputTitle.value = pojo['6']
+    inputBody.value = pojo['7']
     
     if (!tags || !tags.length) return
     
@@ -222,13 +223,28 @@ function disable(el, disabled) {
     el.disabled = disabled
 }
 
+function updateField(fk, val) {
+    loading = true
+    $post('https://api.dyuproject.com/bookmarks/user/BookmarkEntry/update?access_token=' + accessToken,
+        JSON.stringify({"1": currentPojo['1'], "2":{"3": [{"1":parseInt(fk, 10), 2:currentPojo[fk], 3:val}]}}))
+        .then(function(data) {
+            loading = false
+            currentPojo[fk] = val
+            showSuccess('Updated.')
+        }).then(undefined, onFailure)
+}
+
+function changeField(e, fk) {
+    var val = e.target.value.trim()
+    val !== currentPojo[fk] && updateField(fk, val)
+}
+
 function changeTitle(e) {
-    if (newUrl) return
-    
+    !newUrl && !loading && changeField(e, '6')
 }
 
 function changeNotes(e) {
-    if (newUrl) return
+    !newUrl && !loading && changeField(e, '7')
 }
 
 function rmTagId$$S(data) {
@@ -400,3 +416,10 @@ function addBookmark() {
         .then(addBookmark$$S).then(undefined, onFailure)
 }
 
+/*document.body.addEventListener('keyup', function(e) {
+    if (e.which === 27) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+})
+*/
