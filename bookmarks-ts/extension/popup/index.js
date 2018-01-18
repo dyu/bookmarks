@@ -1,3 +1,5 @@
+(function() {
+
 function checkStatus(res) {
     var status = res.status;
     if (status < 200 || status > 299)
@@ -404,3 +406,5 @@ function addBookmark() {
     }
 })
 */
+
+})();
