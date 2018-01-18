@@ -1,0 +1,31 @@
+{
+
+  "manifest_version": 2,
+  "name": "dyu-bookmarks",
+  "version": "1.0.0",
+
+  "description": "Post bookmarks to https://api.dyuproject.com",
+  "icons": {
+    "48": "assets/icon.png"
+  },
+
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+
+  "browser_action": {
+    "default_icon": {
+     "32" : "assets/icon.png"
+    },
+    "default_title": "dyu-bookmarks",
+    "default_popup": "popup/index.html"
+  },
+
+  "applications": {
+    "gecko": {
+      "id": "dyu-bookmarks@dyuproject.com"
+    }
+  }
+
+}
