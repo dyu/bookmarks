@@ -82,10 +82,9 @@ var inputUrl = document.querySelector('.new-bkm input.url')
 var inputTitle = document.querySelector('.new-bkm input.title')
 var inputBody = document.querySelector('.new-bkm textarea')
 var inputTag = document.querySelector('.new-bkm input.tag')
-var suggestTags = document.querySelector('.new-bkm .suggest-tags')
-var noteContainer = document.querySelector('.note-container')
+var suggestTagContainer = document.querySelector('.new-bkm .suggest-tags')
 var addBtn = document.querySelector('.add')
-var tagsContainer = document.querySelector('.tags')
+var tagContainer = document.querySelector('.tags')
 var msgDiv = document.querySelector('.msg')
 var msgClose = msgDiv.firstElementChild
 var msgBody = msgDiv.lastElementChild
@@ -93,7 +92,7 @@ var msgBody = msgDiv.lastElementChild
 /*  add event listeners to buttons */
 
 addBtn.addEventListener('click', addBookmark)
-tagsContainer.addEventListener('click', rmTag)
+tagContainer.addEventListener('click', rmTag)
 msgClose.addEventListener('click', hideError)
 inputTitle.addEventListener('change', changeTitle)
 inputBody.addEventListener('change', changeNotes)
@@ -102,8 +101,8 @@ inputToken.addEventListener('change', function(e) {
         access_token: { value: e.target.value }
     }).then(reinitialize)
 })
-inputTag.addEventListener('keypress', debounce(addTag, 500))
-suggestTags.addEventListener('click', selectTag)
+inputTag.addEventListener('keypress', debounce(suggestTag, 500))
+suggestTagContainer.addEventListener('click', selectTag)
 
 /* generic error handler */
 function onError(error) {
@@ -174,7 +173,7 @@ function checkUnique$$S(data) {
         buf += '<li>' + createTagA(tag['5'], tag['3']) + '</li>'
     }
     
-    tagsContainer.innerHTML = buf
+    tagContainer.innerHTML = buf
 }
 
 function checkUnique$$F(err) {
@@ -243,7 +242,7 @@ function rmTag(e) {
     for (var i = 0; i < tags.length; i++) {
         if (id === tags[i]['5']) {
             tags.splice(i, 1)
-            tagsContainer.removeChild(tagsContainer.children[i])
+            tagContainer.removeChild(tagContainer.children[i])
             disable(inputTag, false)
             break
         }
@@ -258,13 +257,13 @@ function insertTagTo(tags, id, text) {
         if (tid === id) return
         if (tid > id) {
             tags.splice(i, 0, {"3": text, "5": id})
-            insertBeforeTagTo(tagsContainer, i, id, text)
+            insertBeforeTagTo(tagContainer, i, id, text)
             return
         }
     }
     
     tags.push({"3": text, "5": id})
-    appendTagTo(tagsContainer, id, text)
+    appendTagTo(tagContainer, id, text)
 }
 
 function selectTag(e) {
@@ -275,7 +274,7 @@ function selectTag(e) {
     var el = e.target
     if (el.tagName !== 'B') {
         if (el.tagName === 'BUTTON') {
-            suggestTags.innerHTML = ''
+            suggestTagContainer.innerHTML = ''
             inputTag.focus()
         }
         return
@@ -291,7 +290,7 @@ function selectTag(e) {
         newTags.length === 4 && disable(inputTag, true)
     } else {
         newTags.push({"3": text, "5": id})
-        appendTagTo(tagsContainer, id, text)
+        appendTagTo(tagContainer, id, text)
         newTags.length === 4 && disable(inputTag, true)
     }
     
@@ -301,7 +300,7 @@ function selectTag(e) {
 function suggest$$S(data) {
     var array = data['1']
     if (!array || !array.length) {
-        suggestTags.innerHTML = ''
+        suggestTagContainer.innerHTML = ''
         return
     }
     
@@ -314,17 +313,17 @@ function suggest$$S(data) {
     }
     
     buf += '<button type="button" class="b" data-id="0">x</button>'
-    suggestTags.innerHTML = buf
+    suggestTagContainer.innerHTML = buf
 }
 
 function suggest$$F(err) {
     showError(extractMsg(err))
 }
 
-function addTag(e) {
+function suggestTag(e) {
     var val = e.target.value
     if (!val) {
-        suggestTags.innerHTML = ''
+        suggestTagContainer.innerHTML = ''
         return
     }
     
