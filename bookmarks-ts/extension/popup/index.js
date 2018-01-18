@@ -21,7 +21,6 @@ function setInfo(tabs) {
   var tab = tabs[0]
   inputUrl.value = tab.url
   inputTitle.value = tab.title
-  inputBody.value = toKV(tab)
 }
 
 function initialize() {
