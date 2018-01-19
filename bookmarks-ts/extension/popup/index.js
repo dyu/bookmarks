@@ -446,8 +446,7 @@ function decodeB32(str) {
             // we have enough to preduce output
             buf += String.fromCharCode(byt)
             skip -= 8
-            if (skip > 0) byt = (val << (5 - skip)) & 255
-            else byt = 0
+            byt = skip > 0 ? ((val << (5 - skip)) & 255) : 0
         }
     }
     
