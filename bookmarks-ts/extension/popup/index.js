@@ -192,7 +192,10 @@ function queryTab() {
 
 function tokenFound(result) {
     //inputBody.value = JSON.stringify(token)
-    if (!result || !result.access_token) return
+    if (!result || !result.access_token) {
+        inputToken.focus()
+        return
+    }
     
     inputToken.title = 'Access Token'
     inputToken.value = accessToken = result.access_token.value
