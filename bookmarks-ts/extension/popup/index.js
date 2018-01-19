@@ -353,7 +353,7 @@ function selectTag(e) {
     }
     
     inputTag.value = ''
-    inputTag.focus()
+    !hash && inputTag.focus()
 }
 
 function suggest$$S(data) {

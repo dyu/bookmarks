@@ -157,6 +157,7 @@ p {
   padding-right: 0.5em;
   cursor: pointer;
   font-size: 1.3em;
+  display: inline-block;
 }
 
 .suggest-tags > b:hover {
