@@ -143,8 +143,10 @@ function checkUnique$$S(data) {
     
     var array = data['1']
     if (!array || !array.length) {
+        addBtn.className = 'add'
         newUrl = true
         inputTitle.value = currentTitle
+        inputTag.focus()
         return
     }
     
@@ -164,6 +166,7 @@ function checkUnique$$S(data) {
     }
     
     tagContainer.innerHTML = buf
+    tags.length !== 4 && inputTag.focus()
 }
 
 function checkUnique(url, title) {
@@ -317,20 +320,21 @@ function insertTagTo(tags, id, text) {
 }
 
 function selectTag(e) {
+    var el = e.target
+    if (el.tagName === 'BUTTON') {
+        suggestTagContainer.innerHTML = ''
+        inputTag.value = ''
+        inputTag.focus()
+        return
+    }
+    
     if (!newUrl) {
         if (loading || currentTags.length === 4) return
     } else if (newTags.length === 4) {
         return
     }
     
-    if (inputTag.value) inputTag.value = ''
-    
-    var el = e.target
     if (el.tagName !== 'B') {
-        if (el.tagName === 'BUTTON') {
-            suggestTagContainer.innerHTML = ''
-            inputTag.focus()
-        }
         return
     }
     
@@ -348,6 +352,7 @@ function selectTag(e) {
         newTags.length === 4 && disable(inputTag, true)
     }
     
+    inputTag.value = ''
     inputTag.focus()
 }
 
@@ -361,6 +366,8 @@ function suggest$$S(data) {
     }
     
     var buf = ''
+    buf += '<button type="button" class="b" data-id="0">x</button>'
+    
     for (var i = 0; i < array.length; i++) {
         var tag = array[i]
         buf += '<b data-id="' + tag['5'] + '">'
@@ -368,7 +375,6 @@ function suggest$$S(data) {
         buf += '</b>'
     }
     
-    buf += '<button type="button" class="b" data-id="0">x</button>'
     suggestTagContainer.innerHTML = buf
 }
 
@@ -448,6 +454,10 @@ function decodeB32(str) {
 // Invert 'alphabet'
 for (var i = 0; i < alphabet.length; i++) {
     table[alphabet[i]] = i
+}
+
+if (hash) {
+    document.documentElement.className = 'fennec'
 }
 
 /*if (hash) {

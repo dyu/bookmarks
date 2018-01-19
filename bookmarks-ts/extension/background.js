@@ -36,7 +36,7 @@ function queryTab() {
 }
 
 // browser_action (can not be set in manifest due to fennec incompatibility)
-if (browser.fennec) {
+if (-1 !== navigator.userAgent.toLowerCase().indexOf('android')) {
     browser.browserAction.onClicked.addListener(queryTab)
 } else {
     browser.browserAction.setPopup({ popup: '/popup/index.html' })
