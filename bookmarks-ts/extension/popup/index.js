@@ -190,10 +190,14 @@ function queryTab() {
     browser.tabs.query({ active: true, currentWindow: true }, recvTabs)
 }
 
+function focusToken() {
+    inputToken.focus()
+}
+
 function tokenFound(result) {
     //inputBody.value = JSON.stringify(token)
     if (!result || !result.access_token) {
-        inputToken.focus()
+        window.setTimeout(focusToken, 500)
         return
     }
     
