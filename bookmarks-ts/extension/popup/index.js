@@ -85,7 +85,7 @@ inputToken.addEventListener('change', function(e) {
         access_token: { value: e.target.value }
     }).then(reinitialize)
 })
-inputTag.addEventListener('keypress', debounce(suggestTag, 500))
+inputTag.addEventListener('input', debounce(suggestTag, 400))
 suggestTagContainer.addEventListener('click', selectTag)
 
 /* generic error handler */
