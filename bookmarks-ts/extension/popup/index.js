@@ -403,6 +403,7 @@ function suggestTag(e) {
 function addBookmark$$S(data) {
     loading = false
     newUrl = false
+    addBtn.className = 'hide'
     showSuccess('Successful.')
 }
 
