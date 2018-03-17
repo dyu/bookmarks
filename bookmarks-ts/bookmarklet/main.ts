@@ -1,11 +1,11 @@
 declare function require(path: string): any;
 
 function isLocal(host: string) {
-    return host === '127.0.0.1' || host === 'localhost'
+    return host === 'localhost' || host === '127.0.0.1' || 0 === host.indexOf('192.168.1.')
 }
 
 let rpc_host = window['rpc_host']
-if (!rpc_host && '8080' === window.location.port && isLocal(window.location.hostname))
+if (!rpc_host && 0 === window.location.port.indexOf('80') && isLocal(window.location.hostname))
     window['rpc_host'] = 'http://127.0.0.1:5010'
 
 import { setNextTick } from 'coreds/lib/util'
