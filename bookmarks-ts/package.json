@@ -33,8 +33,8 @@
     "cleancss": "cleancss --skip-rebase -O2 removeDuplicateRules:on dist/app.css > dist/app.min.css && mv dist/app.min.css dist/app.css"
   },
   "dependencies": {
-    "coreds": "^0.10.2",
-    "coreds-ui": "^0.10.7",
+    "coreds": "1.0.5",
+    "coreds-ui": "1.0.5",
     "navigo": "^6.0.1",
     "pavilion": "^2.0.3",
     "toprogress": "^0.1.3",

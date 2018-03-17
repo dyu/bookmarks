@@ -2,8 +2,11 @@ declare function require(path: string): any;
 
 // ==================================================
 
+import { setNextTick } from 'coreds/lib/util'
 import * as Vue from 'vue'
 import { TARGET, filters } from './util'
+
+setNextTick(Vue.nextTick)
 
 //import { registerDefaults } from 'coreds-ui/lib/screen_util'
 //registerDefaults()
