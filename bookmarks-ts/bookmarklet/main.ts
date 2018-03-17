@@ -8,7 +8,10 @@ let rpc_host = window['rpc_host']
 if (!rpc_host && '8080' === window.location.port && isLocal(window.location.hostname))
     window['rpc_host'] = 'http://127.0.0.1:5010'
 
+import { setNextTick } from 'coreds/lib/util'
 import * as Vue from 'vue'
+
+setNextTick(Vue.nextTick)
 
 let app = require('./App.vue')
 
