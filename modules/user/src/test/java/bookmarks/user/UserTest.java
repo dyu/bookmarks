@@ -164,8 +164,8 @@ public class UserTest extends AbstractStoreTest
         serTags = readByteArray(BookmarkEntry.FN_SER_TAGS, value, context);
         assertEquals(4, serTags.length);
         
-        KeyBuilder kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
-                t1.id, entity.key, 0).$push();
+        KeyBuilder kb = TagIndex1.$$ACTIVE__TAG1_ID__ENTRY_KEY(context.kb(), 
+                true, t1.id, entity.key, 0).$push();
         assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
         req = new UpdateTag(entity.key, t1.id);
@@ -182,7 +182,7 @@ public class UserTest extends AbstractStoreTest
         assertEquals(0, serTags.length);
         
         assertFalse(store.exists(true, context, 
-                TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), t1.id, entity.key, 0)
+                TagIndex1.$$ACTIVE__TAG1_ID__ENTRY_KEY(context.kb(), true, t1.id, entity.key, 0)
                 .$append8(TagIndex1.KIND).$push()));
     }
     
@@ -199,8 +199,8 @@ public class UserTest extends AbstractStoreTest
         
         assertEquals("example.com", entity.normalized);
         
-        KeyBuilder kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
-                t1.id, entity.key, 0).$push();
+        KeyBuilder kb = TagIndex1.$$ACTIVE__TAG1_ID__ENTRY_KEY(context.kb(), 
+                true, t1.id, entity.key, 0).$push();
         assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
         return entity;
@@ -235,16 +235,16 @@ public class UserTest extends AbstractStoreTest
         
         assertEquals("example.com", entity.normalized);
         
-        KeyBuilder kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
-                t1.id, entity.key, 0).$push();
+        KeyBuilder kb = TagIndex1.$$ACTIVE__TAG1_ID__ENTRY_KEY(context.kb(), 
+                true, t1.id, entity.key, 0).$push();
         assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
-        kb = TagIndex1.$$TAG1_ID__ENTRY_KEY(context.kb(), 
-                t2.id, entity.key, 0).$push();
+        kb = TagIndex1.$$ACTIVE__TAG1_ID__ENTRY_KEY(context.kb(), 
+                true, t2.id, entity.key, 0).$push();
         assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
-        kb = TagIndex2.$$TAG1_ID__TAG2_ID__ENTRY_KEY(context.kb(), 
-                t1.id, t2.id, entity.key, 0).$push();
+        kb = TagIndex2.$$ACTIVE__TAG1_ID__TAG2_ID__ENTRY_KEY(context.kb(), 
+                true, t1.id, t2.id, entity.key, 0).$push();
         assertNotNull(store.rawGet(kb.buf(), kb.offset(), kb.len(), context));
         
         return entity;

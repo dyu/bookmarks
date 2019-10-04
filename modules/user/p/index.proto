@@ -347,7 +347,7 @@ message TagIndex1 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
-    TAG1_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
+    ACTIVE__TAG1_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   
   // ==================================================
@@ -359,6 +359,8 @@ message TagIndex1 {
   required bytes entry_key = 3 [immutable = true];
   
   required uint32 tag1_id = 4 [readonly = true];
+  
+  optional bool active = 5 [separate_update = true, default = true, provided = true, pdv = true];
   
   message PList { repeated TagIndex1 p = 1; }
 }
@@ -377,7 +379,7 @@ message TagIndex2 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
-    TAG1_ID__TAG2_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
+    ACTIVE__TAG1_ID__TAG2_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   
   // ==================================================
@@ -391,6 +393,8 @@ message TagIndex2 {
   required uint32 tag1_id = 4 [readonly = true];
   
   required uint32 tag2_id = 5 [readonly = true];
+  
+  optional bool active = 6 [separate_update = true, default = true, provided = true, pdv = true];
   
   message PList { repeated TagIndex2 p = 1; }
 }
@@ -409,7 +413,7 @@ message TagIndex3 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
-    TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
+    ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   
   // ==================================================
@@ -425,6 +429,8 @@ message TagIndex3 {
   required uint32 tag2_id = 5 [readonly = true];
   
   required uint32 tag3_id = 6 [readonly = true];
+  
+  optional bool active = 7 [separate_update = true, default = true, provided = true, pdv = true];
   
   message PList { repeated TagIndex3 p = 1; }
 }
@@ -443,7 +449,7 @@ message TagIndex4 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
-    TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
+    ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   
   // ==================================================
@@ -461,6 +467,8 @@ message TagIndex4 {
   required uint32 tag3_id = 6 [readonly = true];
   
   required uint32 tag4_id = 7 [readonly = true];
+  
+  optional bool active = 8 [separate_update = true, default = true, provided = true, pdv = true];
   
   message PList { repeated TagIndex4 p = 1; }
 }

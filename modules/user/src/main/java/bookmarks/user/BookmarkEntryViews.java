@@ -114,25 +114,29 @@ public final class BookmarkEntryViews
         switch (tags.size())
         {
             case 1:
-                kb.begin(TagIndex1.IDX_TAG1_ID__ENTRY_KEY, TagIndex1.EM)
+                kb.begin(TagIndex1.IDX_ACTIVE__TAG1_ID__ENTRY_KEY, TagIndex1.EM)
+                        .$append8(1)
                         .$append(tags.get(0))
                         .$pushRange();
                 break;
             case 2:
-                kb.begin(TagIndex2.IDX_TAG1_ID__TAG2_ID__ENTRY_KEY, TagIndex2.EM)
+                kb.begin(TagIndex2.IDX_ACTIVE__TAG1_ID__TAG2_ID__ENTRY_KEY, TagIndex2.EM)
+                        .$append8(1)
                         .$append(tags.get(0))
                         .$append(tags.get(1))
                         .$pushRange();
                 break;
             case 3:
-                kb.begin(TagIndex3.IDX_TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY, TagIndex3.EM)
+                kb.begin(TagIndex3.IDX_ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY, TagIndex3.EM)
+                        .$append8(1)
                         .$append(tags.get(0))
                         .$append(tags.get(1))
                         .$append(tags.get(2))
                         .$pushRange();
                 break;
             case 4:
-                kb.begin(TagIndex4.IDX_TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY, TagIndex4.EM)
+                kb.begin(TagIndex4.IDX_ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY, TagIndex4.EM)
+                        .$append8(1)
                         .$append(tags.get(0))
                         .$append(tags.get(1))
                         .$append(tags.get(2))
@@ -176,25 +180,29 @@ public final class BookmarkEntryViews
         switch (tags.size())
         {
             case 1:
-                kb.begin(TagIndex1.IDX_TAG1_ID__ENTRY_KEY, TagIndex1.EM)
+                kb.begin(TagIndex1.IDX_ACTIVE__TAG1_ID__ENTRY_KEY, TagIndex1.EM)
+                        .$append8(1)
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
                         .$pushRange();
                 break;
             case 2:
-                kb.begin(TagIndex2.IDX_TAG1_ID__TAG2_ID__ENTRY_KEY, TagIndex2.EM)
+                kb.begin(TagIndex2.IDX_ACTIVE__TAG1_ID__TAG2_ID__ENTRY_KEY, TagIndex2.EM)
+                        .$append8(1)
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(1).value))
                         .$pushRange();
                 break;
             case 3:
-                kb.begin(TagIndex3.IDX_TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY, TagIndex3.EM)
+                kb.begin(TagIndex3.IDX_ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY, TagIndex3.EM)
+                        .$append8(1)
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(1).value))
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(2).value))
                         .$pushRange();
                 break;
             case 4:
-                kb.begin(TagIndex4.IDX_TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY, TagIndex4.EM)
+                kb.begin(TagIndex4.IDX_ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY, TagIndex4.EM)
+                        .$append8(1)
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(0).value))
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(1).value))
                         .$append(asInt32(BookmarkTag.VO_ID, tags.get(2).value))
