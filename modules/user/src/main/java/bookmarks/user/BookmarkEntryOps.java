@@ -14,6 +14,8 @@
 
 package bookmarks.user;
 
+import static com.dyuproject.protostuffdb.SerializedValueUtil.asBool;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -275,6 +277,9 @@ public final class BookmarkEntryOps
             if (value == null)
                 throw DSRuntimeExceptions.operationFailure("Not found.");
             
+            if (!asBool(BookmarkEntry.VO_ACTIVE, value))
+                throw DSRuntimeExceptions.operationFailure("Entity needs to be active.");
+            
             final MultiCAS mc = new MultiCAS();
             
             final int insertIdx = TagUtil.update(param.tagId, param.remove, 
@@ -330,6 +335,9 @@ public final class BookmarkEntryOps
             value = chain.vs().get(key, BookmarkEntry.EM, null);
             if (value == null)
                 throw DSRuntimeExceptions.operationFailure("Not found.");
+            
+            if (!asBool(BookmarkEntry.VO_ACTIVE, value))
+                throw DSRuntimeExceptions.operationFailure("Entity needs to be active.");
             
             final MultiCAS mc = new MultiCAS();
             
