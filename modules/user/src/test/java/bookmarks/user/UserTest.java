@@ -281,6 +281,14 @@ public class UserTest extends AbstractStoreTest
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         assertNotNull(entity.key);
+        
+        ParamRangeKey prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(BookmarkEntryViews.listBookmarkEntry(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(1, res.rawNestedCount);
+        
         MultiCAS mc = new MultiCAS()
             .addOp(new CAS.StringOp(BookmarkEntry.FN_TITLE, "", "title"));
         ParamUpdate req = new ParamUpdate(entity.key, mc);
@@ -291,6 +299,13 @@ public class UserTest extends AbstractStoreTest
         assertNotNull(value);
         assertTrue(asBool(BookmarkEntry.VO_ACTIVE, value));
         assertEquals("title", readString(BookmarkEntry.FN_TITLE, value, context));
+        
+        prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(BookmarkEntryViews.listBookmarkEntry(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(1, res.rawNestedCount);
     }
     
     public void testUpdateActive() throws IOException
@@ -304,6 +319,14 @@ public class UserTest extends AbstractStoreTest
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         assertNotNull(entity.key);
+        
+        ParamRangeKey prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(BookmarkEntryViews.listBookmarkEntry(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(1, res.rawNestedCount);
+        
         MultiCAS mc = new MultiCAS()
             .addOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
         ParamUpdate req = new ParamUpdate(entity.key, mc);
@@ -313,12 +336,20 @@ public class UserTest extends AbstractStoreTest
         byte[] value = store.get(entity.key, BookmarkEntry.EM, null, context);
         assertNotNull(value);
         assertFalse(asBool(BookmarkEntry.VO_ACTIVE, value));
+        
+        prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(BookmarkEntryViews.listBookmarkEntry(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(0, res.rawNestedCount);
     }
     
     public void testUpdateActive1() throws IOException
     {
         BookmarkTag t1 = newTag("t1");
         BookmarkEntry entity = newBookmarkEntry(t1);
+        assertNotNull(entity.key);
         
         // test view
         BookmarkEntry.PTags req = new BookmarkEntry.PTags(new ParamRangeKey(true));
@@ -329,7 +360,11 @@ public class UserTest extends AbstractStoreTest
         
         assertEquals(1, res.rawNestedCount);
         
-        assertNotNull(entity.key);
+        ParamRangeKey prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(BookmarkEntryViews.listBookmarkEntry(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
         MultiCAS mc = new MultiCAS()
             .addOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
         
@@ -342,6 +377,13 @@ public class UserTest extends AbstractStoreTest
         assertFalse(asBool(BookmarkEntry.VO_ACTIVE, value));
         
         assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(0, res.rawNestedCount);
+        
+        prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(BookmarkEntryViews.listBookmarkEntry(prk, store, reset(res), 
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         assertEquals(0, res.rawNestedCount);
