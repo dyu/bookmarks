@@ -92,6 +92,19 @@ public final class BookmarkEntryViews
         return PS;
     }
     
+    static boolean listBookmarkEntry(ParamRangeKey req, Datastore store, 
+            RpcResponse res, Pipe.Schema<BookmarkEntry.M.PList> resPipeSchema,
+            RpcHeader header) throws IOException
+    {
+        res.context.ps = PS;
+        
+        return com.dyuproject.protostuffdb.Visit.by1(
+                BookmarkEntry.IDX_ACTIVE, 1,
+                BookmarkEntry.EM, BookmarkEntry.PList.FN_P, req,
+                com.dyuproject.protostuffdb.RangeV.Store.CONTEXT_PV, store, res.context,
+                com.dyuproject.protostuffdb.RangeV.RES_PV, res);
+    }
+    
     static boolean listBookmarkEntryByTag(final BookmarkEntry.PTags req, Datastore store,
             final RpcResponse res, Pipe.Schema<BookmarkEntry.M.PList> resPipeSchema, 
             final RpcHeader header) throws IOException

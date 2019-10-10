@@ -202,7 +202,7 @@ message BookmarkEntry {
     //@X(op = update)
     rpc updateBookmarkEntry(ParamUpdate) returns (void);
     
-    @ListV
+    //@ListV
     rpc listBookmarkEntry(ParamRangeKey) returns (BookmarkEntry.M.PList);
     
     rpc listBookmarkEntryByTag(PTags) returns (BookmarkEntry.M.PList);
@@ -218,21 +218,38 @@ message BookmarkEntry {
   
     option qform_exclude = Q.UNIQUE;
     
-    DISCARDED = 1 [ f0 = "active", default_f0 = false, immutable_f0 = true ];
+    DISCARDED = 1 [
+      f0 = "active", default_f0 = false, immutable_f0 = true
+    ];
     URL = 2 [
-      f0 = "normalized", end_f0 = true, // prefix search
-      autocomplete_f0 = true
+      f0 = "active", default_f0 = true, //immutable_f0 = true,
+      f1 = "normalized", end_f1 = true, // prefix search
+        autocomplete_f1 = true,
+        f0f1 = SI.ACTIVE__NORMALIZED
     ];
-    TAG_COUNT = 3 [ f0 = "tag_count" ];
+    TAG_COUNT = 3 [
+      f0 = "active", default_f0 = true, //immutable_f0 = true,
+      f1 = "tag_count", f0f1 = SI.ACTIVE__TAG_COUNT
+    ];
     DATE = 4 [
-      f0 = "date", end_f0 = true
+      f0 = "active", default_f0 = true, //immutable_f0 = true,
+      f1 = "date", end_f1 = true, f0f1 = SI.ACTIVE__DATE
     ];
-    IDENTIFIER = 5 [ f0 = "identifier" ];
+    IDENTIFIER = 5 [
+      f0 = "active", default_f0 = true, //immutable_f0 = true,
+      f1 = "identifier", f0f1 = SI.ACTIVE__IDENTIFIER
+    ];
     RECENTLY_UPDATED = 6 [
-      f0 = "update_ts", default_f0 = 0, immutable_f0 = true, 
-        end_f0 = 281474956800000// 0xFFFFFFFFFFFFL rounded to the day
+      f0 = "active", default_f0 = true, //immutable_f0 = true,
+      f1 = "update_ts", default_f1 = 0, immutable_f1 = true, 
+        end_f1 = 281474956800000, // 0xFFFFFFFFFFFFL rounded to the day
+        f0f1 = SI.ACTIVE__UPDATE_TS
     ];
-    UNIQUE = 7 [ f0 = "url" ];
+    UNIQUE = 7 [
+      //f0 = "active", default_f0 = true, //immutable_f0 = true,
+      //f1 = "url", f0f1 = SI.ACTIVE__URL
+      f0 = "url"
+    ];
   }
   
   // ==================================================
@@ -242,11 +259,11 @@ message BookmarkEntry {
   
     ACTIVE = 224 [ gen_kb = true, dual = true, f0 = Tags.ACTIVE ];
     URL = 225 [ unique_prefix = 0, raw_csv_values = "$KEY" ];
-    NORMALIZED = 226 [ raw_csv_values = "FN_NORMALIZED, $KEY" ];
-    IDENTIFIER = 227 [ raw_csv_values = "$KEY" ];
-    TAG_COUNT = 228 [ raw_csv_values = "$KEY" ];
-    DATE = 229 [ raw_csv_values = "$KEY" ];
-    UPDATE_TS = 230 [ raw_csv_values = "$KEY" ];
+    ACTIVE__NORMALIZED = 226 [ raw_csv_values = "FN_NORMALIZED, $KEY" ];
+    ACTIVE__IDENTIFIER = 227 [ raw_csv_values = "$KEY" ];
+    ACTIVE__TAG_COUNT = 228 [ raw_csv_values = "$KEY" ];
+    ACTIVE__DATE = 229 [ raw_csv_values = "$KEY" ];
+    ACTIVE__UPDATE_TS = 230 [ raw_csv_values = "$KEY" ];
   }
   
   // ==================================================

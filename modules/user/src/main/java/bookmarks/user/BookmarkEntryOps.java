@@ -226,6 +226,8 @@ public final class BookmarkEntryOps
                             return false;
                         }
                         break;
+                    default:
+                        throw DSRuntimeExceptions.runtime("Corrupt index.");
                 }
             }
             
