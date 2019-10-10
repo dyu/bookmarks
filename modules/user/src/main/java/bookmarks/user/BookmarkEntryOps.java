@@ -166,7 +166,8 @@ public final class BookmarkEntryOps
                     .$append(key)
                     .$pushRange();
             
-            if (0 == chain.vs().visitRange(false, -1, false, null, Visitor.APPEND_EXTRACTED_KV, list, 
+            if (0 == chain.vs().visitRange(false, -1, false, null,
+                    Visitor.APPEND_EXTRACTED_KV, list, 
                     kb.buf(), kb.offset(-1), kb.len(-1), 
                     kb.buf(), kb.offset(), kb.len()))
             {
@@ -175,7 +176,11 @@ public final class BookmarkEntryOps
             
             HasKV kv = list.get(0);
             if (!ValueUtil.isEqual(key, kv.getKey()))
+            {
+                System.err.println("Error kind " + BookmarkEntry.KIND + " != " + 
+                        KeyUtil.getKind(kv.getKey()));
                 throw DSRuntimeExceptions.runtime("Corrupt index.");
+            }
             
             value = kv.getValue();
             
