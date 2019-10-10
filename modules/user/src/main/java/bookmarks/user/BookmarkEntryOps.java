@@ -15,21 +15,31 @@
 package bookmarks.user;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import com.dyuproject.protostuff.ByteString;
+import com.dyuproject.protostuff.KeyBuilder;
 import com.dyuproject.protostuff.Pipe;
 import com.dyuproject.protostuff.RpcHeader;
 import com.dyuproject.protostuff.RpcResponse;
 import com.dyuproject.protostuff.ds.CAS;
+import com.dyuproject.protostuff.ds.CAS.Query;
 import com.dyuproject.protostuff.ds.MultiCAS;
+import com.dyuproject.protostuff.ds.ParamUpdate;
+import com.dyuproject.protostuff.ds.SingleCAS;
 import com.dyuproject.protostuffdb.DSRuntimeExceptions;
 import com.dyuproject.protostuffdb.Datastore;
 import com.dyuproject.protostuffdb.DateTimeUtil;
+import com.dyuproject.protostuffdb.HasKV;
+import com.dyuproject.protostuffdb.KeyUtil;
 import com.dyuproject.protostuffdb.Op;
 import com.dyuproject.protostuffdb.OpChain;
+import com.dyuproject.protostuffdb.ValueUtil;
+import com.dyuproject.protostuffdb.Visitor;
+import com.dyuproject.protostuffdb.WriteContext;
 import com.dyuproject.protostuffdb.tag.TagUtil;
 
 /**
@@ -105,6 +115,201 @@ public final class BookmarkEntryOps
                 DateTimeUtil.startOfDayMS(now),
                 now);
     }
+    
+    static String updateBookmarkEntry(ParamUpdate req, Datastore store,
+            WriteContext context, RpcHeader header) throws IOException
+    {
+        if (BookmarkEntry.KIND != KeyUtil.getKind(req.key))
+            return "Invalid op";
+        
+        final int idx = req.mc.indexOf(BookmarkEntry.FN_ACTIVE);
+        if (idx == -1)
+            return XBookmarkEntryOps.update(req, store, context, header);
+        
+        final CAS.BoolOp op = (CAS.BoolOp)req.mc.ops.get(idx);
+        
+        if (op.getC() == op.getS())
+            return "Invalid op.";
+        
+        // store it
+        req.id = idx;
+        
+        final long value = XBookmarkEntryOps.LOCK.acquire(req.key);
+        try
+        {
+
+            if (!store.chain(null, OP_UPDATE, req, 0, context, req.key))
+                return "Update failed.  Please refresh and try again.";
+        }
+        finally
+        {
+            XBookmarkEntryOps.LOCK.release(value);
+        }
+
+
+        return null;
+    }
+    
+    private static final Op<ParamUpdate> OP_UPDATE = new Op<ParamUpdate>()
+    {
+        @Override
+        public boolean handle(OpChain chain, final byte[] key, 
+                byte[] value, int offset, int len,
+                ParamUpdate req)
+        {
+            final CAS.BoolOp opActive = (CAS.BoolOp)req.mc.ops.get(req.id);
+            final boolean oldVal = opActive.getC(),
+                    newVal = !oldVal;
+            
+            final ArrayList<HasKV> list = new ArrayList<HasKV>();
+            
+            final KeyBuilder kb = BookmarkEntry.$$ACTIVE(chain.context.kb(), oldVal)
+                    .$append(key)
+                    .$pushRange();
+            
+            if (0 == chain.vs().visitRange(false, -1, false, null, Visitor.APPEND_EXTRACTED_KV, list, 
+                    kb.buf(), kb.offset(-1), kb.len(-1), 
+                    kb.buf(), kb.offset(), kb.len()))
+            {
+                throw DSRuntimeExceptions.operationFailure("Not found.");
+            }
+            
+            HasKV kv = list.get(0);
+            if (!ValueUtil.isEqual(key, kv.getKey()))
+                throw DSRuntimeExceptions.runtime("Corrupt index.");
+            
+            value = kv.getValue();
+            
+            if (!chain.updateWithValue(value, key, BookmarkEntry.EM, 
+                    XBookmarkEntryOps.cas(req.mc), null,
+                    null, null, null))
+            {
+                return false;
+            }
+            
+            byte[] k;
+            for (int i = 1, l = list.size(); i < l; i++)
+            {
+                kv = list.get(i);
+                k = kv.getKey();
+                switch (KeyUtil.getKind(k))
+                {
+                    case TagIndex1.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex1.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex1.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                    case TagIndex2.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex2.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex2.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                    case TagIndex3.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex3.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex3.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                    case TagIndex4.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex4.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex4.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                }
+            }
+            
+            return true;
+        }
+    };
+    
+    static final CAS.Listener CL = new CAS.Listener()
+    {
+        
+        @Override
+        public boolean onBeforeApply(byte[] key, byte[] value, OpChain chain)
+        {
+            return true;
+        }
+        
+        @Override
+        public boolean onApply(byte[] key, byte[] oldValue, CAS cas, Query query, OpChain chain,
+                byte[] v, int voffset, int vlen)
+        {
+            CAS.BoolOp opActive = query.getAppliedOp(BookmarkEntry.FN_ACTIVE, cas);
+            if (opActive == null)
+                return true;
+            
+            // TODO update 
+            final boolean oldVal = opActive.getC(),
+                    newVal = !oldVal;
+            
+            final ArrayList<HasKV> list = new ArrayList<HasKV>();
+            
+            final KeyBuilder kb = BookmarkEntry.$$ACTIVE(chain.context.kb(), oldVal)
+                    .$append(key)
+                    .$pushRange();
+            
+            if (0 == chain.vs().visitRange(false, -1, false, null, Visitor.APPEND_EXTRACTED_KV, list, 
+                    kb.buf(), kb.offset(-1), kb.len(-1), 
+                    kb.buf(), kb.offset(), kb.len()))
+            {
+                throw DSRuntimeExceptions.runtime("Broken secondary index.");
+            }
+            
+            for (HasKV kv : list)
+            {
+                final byte[] k = kv.getKey();
+                switch (KeyUtil.getKind(k))
+                {
+                    case TagIndex1.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex1.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex1.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                    case TagIndex2.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex2.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex2.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                    case TagIndex3.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex3.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex3.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                    case TagIndex4.KIND:
+                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex4.EM, 
+                                new SingleCAS(new CAS.BoolOp(TagIndex4.FN_ACTIVE, oldVal, newVal)), 
+                                null, null, null))
+                        {
+                            return false;
+                        }
+                        break;
+                }
+            }
+            
+            return true;
+        }
+    };
     
     static boolean updateTag(UpdateTag req, 
             Datastore store, RpcResponse res,

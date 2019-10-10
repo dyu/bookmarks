@@ -46,6 +46,8 @@ enum Tags {
 
     /// Reserved for startup/initialization logic.
     POST_ENTITY_INIT = 3;
+    
+    ACTIVE = 10;
 }
 
 // ==================================================
@@ -181,7 +183,7 @@ message ReplaceTag {
 @Entity(kind = 11, seq = true, custom_ps = BookmarkEntry.M,
   update_ts = true, rev = true,
   tx_create = true, tx_validate_with_key = true,
-  no_delete = true
+  tx_update = true, no_delete = true
 )
 message BookmarkEntry {
 
@@ -197,7 +199,7 @@ message BookmarkEntry {
     
     rpc create(BookmarkEntry.PNew) returns (BookmarkEntry.M.PList);
     
-    @X(op = update)
+    //@X(op = update)
     rpc updateBookmarkEntry(ParamUpdate) returns (void);
     
     @ListV
@@ -238,7 +240,7 @@ message BookmarkEntry {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
-    ACTIVE = 224 [ raw_csv_values = "$KEY" ];
+    ACTIVE = 224 [ gen_kb = true, dual = true, f0 = Tags.ACTIVE ];
     URL = 225 [ unique_prefix = 0, raw_csv_values = "$KEY" ];
     NORMALIZED = 226 [ raw_csv_values = "FN_NORMALIZED, $KEY" ];
     IDENTIFIER = 227 [ raw_csv_values = "$KEY" ];
@@ -347,6 +349,7 @@ message TagIndex1 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
+    ACTIVE__ENTRY_KEY = 1 [ f0 = Tags.ACTIVE ];
     ACTIVE__TAG1_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   
@@ -379,6 +382,7 @@ message TagIndex2 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
+    ACTIVE__ENTRY_KEY = 1 [ f0 = Tags.ACTIVE ];
     ACTIVE__TAG1_ID__TAG2_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   
@@ -413,6 +417,7 @@ message TagIndex3 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
+    ACTIVE__ENTRY_KEY = 1 [ f0 = Tags.ACTIVE ];
     ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   
@@ -449,6 +454,7 @@ message TagIndex4 {
   @Config(link = Tags)
   @Exclude @uint8 enum SI {
   
+    ACTIVE__ENTRY_KEY = 1 [ f0 = Tags.ACTIVE ];
     ACTIVE__TAG1_ID__TAG2_ID__TAG3_ID__TAG4_ID__ENTRY_KEY = 225 [unique = true, raw_csv_values = "$KEY, FN_ENTRY_KEY"];
   }
   

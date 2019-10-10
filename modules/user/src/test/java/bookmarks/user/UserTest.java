@@ -2,6 +2,7 @@
 
 package bookmarks.user;
 
+import static com.dyuproject.protostuffdb.SerializedValueUtil.asBool;
 import static com.dyuproject.protostuffdb.SerializedValueUtil.asInt32;
 import static com.dyuproject.protostuffdb.SerializedValueUtil.readByteArray;
 import static com.dyuproject.protostuffdb.SerializedValueUtil.readString;
@@ -9,7 +10,10 @@ import static com.dyuproject.protostuffdb.SerializedValueUtil.readString;
 import java.io.IOException;
 
 import com.dyuproject.protostuff.KeyBuilder;
+import com.dyuproject.protostuff.ds.CAS;
+import com.dyuproject.protostuff.ds.MultiCAS;
 import com.dyuproject.protostuff.ds.ParamRangeKey;
+import com.dyuproject.protostuff.ds.ParamUpdate;
 import com.dyuproject.protostuffdb.AbstractStoreTest;
 import com.dyuproject.protostuffdb.DSRuntimeExceptions;
 import com.dyuproject.protostuffdb.ValueUtil;
@@ -264,5 +268,82 @@ public class UserTest extends AbstractStoreTest
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         assertEquals(1, res.rawNestedCount);
+    }
+    
+    public void testUpdate() throws IOException
+    {
+        BookmarkEntry entity = new BookmarkEntry("https://example.com");
+        assertInitialized(entity);
+        BookmarkEntry.PNew pnew = new BookmarkEntry.PNew(entity);
+        assertInitialized(pnew);
+        
+        assertTrue(BookmarkEntryOps.create(pnew, store, res, 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertNotNull(entity.key);
+        MultiCAS mc = new MultiCAS()
+            .addOp(new CAS.StringOp(BookmarkEntry.FN_TITLE, "", "title"));
+        ParamUpdate req = new ParamUpdate(entity.key, mc);
+        assertInitialized(req);
+        assertNull(BookmarkEntryOps.updateBookmarkEntry(req, store, context, header));
+        
+        byte[] value = store.get(entity.key, BookmarkEntry.EM, null, context);
+        assertNotNull(value);
+        assertTrue(asBool(BookmarkEntry.VO_ACTIVE, value));
+        assertEquals("title", readString(BookmarkEntry.FN_TITLE, value, context));
+    }
+    
+    public void testUpdateActive() throws IOException
+    {
+        BookmarkEntry entity = new BookmarkEntry("https://example.com");
+        assertInitialized(entity);
+        BookmarkEntry.PNew pnew = new BookmarkEntry.PNew(entity);
+        assertInitialized(pnew);
+        
+        assertTrue(BookmarkEntryOps.create(pnew, store, res, 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertNotNull(entity.key);
+        MultiCAS mc = new MultiCAS()
+            .addOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
+        ParamUpdate req = new ParamUpdate(entity.key, mc);
+        assertInitialized(req);
+        assertNull(BookmarkEntryOps.updateBookmarkEntry(req, store, context, header));
+        
+        byte[] value = store.get(entity.key, BookmarkEntry.EM, null, context);
+        assertNotNull(value);
+        assertFalse(asBool(BookmarkEntry.VO_ACTIVE, value));
+    }
+    
+    public void testUpdateActive1() throws IOException
+    {
+        BookmarkTag t1 = newTag("t1");
+        BookmarkEntry entity = newBookmarkEntry(t1);
+        
+        // test view
+        BookmarkEntry.PTags req = new BookmarkEntry.PTags(new ParamRangeKey(true));
+        req.addTagId(t1.id);
+        assertInitialized(req);
+        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(1, res.rawNestedCount);
+        
+        assertNotNull(entity.key);
+        MultiCAS mc = new MultiCAS()
+            .addOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
+        
+        ParamUpdate reqUpdate = new ParamUpdate(entity.key, mc);
+        assertInitialized(reqUpdate);
+        assertNull(BookmarkEntryOps.updateBookmarkEntry(reqUpdate, store, context, header));
+        
+        byte[] value = store.get(entity.key, BookmarkEntry.EM, null, context);
+        assertNotNull(value);
+        assertFalse(asBool(BookmarkEntry.VO_ACTIVE, value));
+        
+        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(0, res.rawNestedCount);
     }
 }
