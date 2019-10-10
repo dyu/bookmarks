@@ -29,7 +29,8 @@ public final class BookmarkTagIndexFactory extends
 
     private BookmarkTagIndexFactory()
     {
-        super(true, true,
+        // index id of all TagIndex* entities is 225
+        super(225, true, true,
                 TagIndex1.EM, TagIndex1.FN_TAG1_ID, TagIndex1.IDX_ACTIVE__TAG1_ID__ENTRY_KEY,
                 TagIndex1.VO_ENTRY_KEY, TagIndex2.EM, TagIndex2.FN_TAG2_ID,
                 TagIndex2.IDX_ACTIVE__TAG1_ID__TAG2_ID__ENTRY_KEY, TagIndex2.VO_ENTRY_KEY, TagIndex3.EM,
