@@ -10,12 +10,16 @@ import static com.dyuproject.protostuffdb.SerializedValueUtil.readString;
 import java.io.IOException;
 
 import com.dyuproject.protostuff.KeyBuilder;
+import com.dyuproject.protostuff.Pipe;
+import com.dyuproject.protostuff.RpcHeader;
+import com.dyuproject.protostuff.RpcResponse;
 import com.dyuproject.protostuff.ds.CAS;
 import com.dyuproject.protostuff.ds.MultiCAS;
 import com.dyuproject.protostuff.ds.ParamRangeKey;
 import com.dyuproject.protostuff.ds.ParamUpdate;
 import com.dyuproject.protostuffdb.AbstractStoreTest;
 import com.dyuproject.protostuffdb.DSRuntimeExceptions;
+import com.dyuproject.protostuffdb.Datastore;
 import com.dyuproject.protostuffdb.ValueUtil;
 
 /**
@@ -215,7 +219,10 @@ public class UserTest extends AbstractStoreTest
         BookmarkTag t1 = newTag("t1");
         newBookmarkEntry(t1);
         
-        // test view
+        if (TEST_LSMDB)
+            return;
+        
+        // test ByTag view
         BookmarkEntry.PTags req = new BookmarkEntry.PTags(new ParamRangeKey(true));
         req.addTagId(t1.id);
         assertInitialized(req);
@@ -259,7 +266,10 @@ public class UserTest extends AbstractStoreTest
         BookmarkTag t1, t2;
         newBookmarkEntry(t1 = newTag("t1"), t2 = newTag("t2"));
         
-        // test view
+        if (TEST_LSMDB)
+            return;
+        
+        // test ByTag view
         BookmarkEntry.PTags req = new BookmarkEntry.PTags(new ParamRangeKey(true));
         req.addTagId(t1.id);
         req.addTagId(t2.id);
@@ -268,6 +278,19 @@ public class UserTest extends AbstractStoreTest
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         assertEquals(1, res.rawNestedCount);
+    }
+    
+    static boolean listBookmarkEntry2(ParamRangeKey req, Datastore store, 
+            RpcResponse res, Pipe.Schema<BookmarkEntry.M.PList> resPipeSchema,
+            RpcHeader header) throws IOException
+    {
+        res.context.ps = BookmarkEntryViews.PS;
+        
+        return com.dyuproject.protostuffdb.Visit.by1(
+                Tags.ACTIVE, 1,
+                BookmarkEntry.EM, BookmarkEntry.PList.FN_P, req,
+                com.dyuproject.protostuffdb.RangeV.Store.CONTEXT_PV, store, res.context,
+                com.dyuproject.protostuffdb.RangeV.RES_PV, res);
     }
     
     public void testUpdate() throws IOException
@@ -289,6 +312,13 @@ public class UserTest extends AbstractStoreTest
         
         assertEquals(1, res.rawNestedCount);
         
+        prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(listBookmarkEntry2(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(1, res.rawNestedCount);
+        
         MultiCAS mc = new MultiCAS()
             .addOp(new CAS.StringOp(BookmarkEntry.FN_TITLE, "", "title"));
         ParamUpdate req = new ParamUpdate(entity.key, mc);
@@ -299,6 +329,13 @@ public class UserTest extends AbstractStoreTest
         assertNotNull(value);
         assertTrue(asBool(BookmarkEntry.VO_ACTIVE, value));
         assertEquals("title", readString(BookmarkEntry.FN_TITLE, value, context));
+        
+        prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(listBookmarkEntry2(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(1, res.rawNestedCount);
         
         prk = new ParamRangeKey(true);
         assertInitialized(prk);
@@ -327,6 +364,13 @@ public class UserTest extends AbstractStoreTest
         
         assertEquals(1, res.rawNestedCount);
         
+        prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(listBookmarkEntry2(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(1, res.rawNestedCount);
+        
         MultiCAS mc = new MultiCAS()
             .addOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
         ParamUpdate req = new ParamUpdate(entity.key, mc);
@@ -336,6 +380,13 @@ public class UserTest extends AbstractStoreTest
         byte[] value = store.get(entity.key, BookmarkEntry.EM, null, context);
         assertNotNull(value);
         assertFalse(asBool(BookmarkEntry.VO_ACTIVE, value));
+        
+        prk = new ParamRangeKey(true);
+        assertInitialized(prk);
+        assertTrue(listBookmarkEntry2(prk, store, reset(res), 
+                BookmarkEntry.M.PList.getPipeSchema(), header));
+        
+        assertEquals(0, res.rawNestedCount);
         
         prk = new ParamRangeKey(true);
         assertInitialized(prk);
@@ -351,14 +402,18 @@ public class UserTest extends AbstractStoreTest
         BookmarkEntry entity = newBookmarkEntry(t1);
         assertNotNull(entity.key);
         
-        // test view
         BookmarkEntry.PTags req = new BookmarkEntry.PTags(new ParamRangeKey(true));
         req.addTagId(t1.id);
         assertInitialized(req);
-        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
-                BookmarkEntry.M.PList.getPipeSchema(), header));
         
-        assertEquals(1, res.rawNestedCount);
+        if (!TEST_LSMDB)
+        {
+            // test ByTag view
+            assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
+                    BookmarkEntry.M.PList.getPipeSchema(), header));
+            
+            assertEquals(1, res.rawNestedCount);
+        }
         
         ParamRangeKey prk = new ParamRangeKey(true);
         assertInitialized(prk);
@@ -376,10 +431,14 @@ public class UserTest extends AbstractStoreTest
         assertNotNull(value);
         assertFalse(asBool(BookmarkEntry.VO_ACTIVE, value));
         
-        assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
-                BookmarkEntry.M.PList.getPipeSchema(), header));
-        
-        assertEquals(0, res.rawNestedCount);
+        if (!TEST_LSMDB)
+        {
+            // test ByTag view
+            assertTrue(BookmarkEntryViews.listBookmarkEntryByTag(req, store, reset(res), 
+                    BookmarkEntry.M.PList.getPipeSchema(), header));
+            
+            assertEquals(0, res.rawNestedCount);
+        }
         
         prk = new ParamRangeKey(true);
         assertInitialized(prk);
