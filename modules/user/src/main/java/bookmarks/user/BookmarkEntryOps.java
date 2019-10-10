@@ -26,7 +26,6 @@ import com.dyuproject.protostuff.Pipe;
 import com.dyuproject.protostuff.RpcHeader;
 import com.dyuproject.protostuff.RpcResponse;
 import com.dyuproject.protostuff.ds.CAS;
-import com.dyuproject.protostuff.ds.CAS.Query;
 import com.dyuproject.protostuff.ds.MultiCAS;
 import com.dyuproject.protostuff.ds.ParamUpdate;
 import com.dyuproject.protostuff.ds.SingleCAS;
@@ -227,85 +226,8 @@ public final class BookmarkEntryOps
                         }
                         break;
                     default:
+                        System.err.println("corrupt kind: " + KeyUtil.getKind(k));
                         throw DSRuntimeExceptions.runtime("Corrupt index.");
-                }
-            }
-            
-            return true;
-        }
-    };
-    
-    static final CAS.Listener CL = new CAS.Listener()
-    {
-        
-        @Override
-        public boolean onBeforeApply(byte[] key, byte[] value, OpChain chain)
-        {
-            return true;
-        }
-        
-        @Override
-        public boolean onApply(byte[] key, byte[] oldValue, CAS cas, Query query, OpChain chain,
-                byte[] v, int voffset, int vlen)
-        {
-            CAS.BoolOp opActive = query.getAppliedOp(BookmarkEntry.FN_ACTIVE, cas);
-            if (opActive == null)
-                return true;
-            
-            // TODO update 
-            final boolean oldVal = opActive.getC(),
-                    newVal = !oldVal;
-            
-            final ArrayList<HasKV> list = new ArrayList<HasKV>();
-            
-            final KeyBuilder kb = BookmarkEntry.$$ACTIVE(chain.context.kb(), oldVal)
-                    .$append(key)
-                    .$pushRange();
-            
-            if (0 == chain.vs().visitRange(false, -1, false, null, Visitor.APPEND_EXTRACTED_KV, list, 
-                    kb.buf(), kb.offset(-1), kb.len(-1), 
-                    kb.buf(), kb.offset(), kb.len()))
-            {
-                throw DSRuntimeExceptions.runtime("Broken secondary index.");
-            }
-            
-            for (HasKV kv : list)
-            {
-                final byte[] k = kv.getKey();
-                switch (KeyUtil.getKind(k))
-                {
-                    case TagIndex1.KIND:
-                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex1.EM, 
-                                new SingleCAS(new CAS.BoolOp(TagIndex1.FN_ACTIVE, oldVal, newVal)), 
-                                null, null, null))
-                        {
-                            return false;
-                        }
-                        break;
-                    case TagIndex2.KIND:
-                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex2.EM, 
-                                new SingleCAS(new CAS.BoolOp(TagIndex2.FN_ACTIVE, oldVal, newVal)), 
-                                null, null, null))
-                        {
-                            return false;
-                        }
-                        break;
-                    case TagIndex3.KIND:
-                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex3.EM, 
-                                new SingleCAS(new CAS.BoolOp(TagIndex3.FN_ACTIVE, oldVal, newVal)), 
-                                null, null, null))
-                        {
-                            return false;
-                        }
-                        break;
-                    case TagIndex4.KIND:
-                        if (!chain.updateWithValue(kv.getValue(), k, TagIndex4.EM, 
-                                new SingleCAS(new CAS.BoolOp(TagIndex4.FN_ACTIVE, oldVal, newVal)), 
-                                null, null, null))
-                        {
-                            return false;
-                        }
-                        break;
                 }
             }
             
