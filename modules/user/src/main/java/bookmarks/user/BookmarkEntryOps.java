@@ -120,7 +120,7 @@ public final class BookmarkEntryOps
     static String updateBookmarkEntry(ParamUpdate req, Datastore store,
             WriteContext context, RpcHeader header) throws IOException
     {
-        if (BookmarkEntry.KIND != KeyUtil.getKind(req.key))
+        if (!KeyUtil.isKey(req.key, BookmarkEntry.KIND))
             return "Invalid op";
         
         final int idx = req.mc.indexOf(BookmarkEntry.FN_ACTIVE);
@@ -233,7 +233,7 @@ public final class BookmarkEntryOps
                         }
                         break;
                     default:
-                        System.err.println("corrupt kind: " + KeyUtil.getKind(k));
+                        System.err.println("Corrupt kind: " + KeyUtil.getKind(k));
                         throw DSRuntimeExceptions.runtime("Corrupt index.");
                 }
             }
