@@ -82,7 +82,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <junit-version>3.8.2</junit-version>
-    <protostuffdb-version>0.14.0</protostuffdb-version>
+    <protostuffdb-version>0.20.0</protostuffdb-version>
   </properties>
 
   <dependencyManagement>

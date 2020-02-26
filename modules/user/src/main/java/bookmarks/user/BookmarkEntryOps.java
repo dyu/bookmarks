@@ -144,7 +144,7 @@ public final class BookmarkEntryOps
             final MultiCAS mc = new MultiCAS();
             
             final int insertIdx = TagUtil.update(param.tagId, param.remove, 
-                    BookmarkTagIndexFactory.INSTANCE, BookmarkEntry.FN_SER_TAGS, 
+                    BookmarkTagIndexFactory.INSTANCE, 
                     chain, key,
                     mc, BookmarkEntry.FN_SER_TAGS, value);
             
@@ -201,7 +201,7 @@ public final class BookmarkEntryOps
             
             // store insert index as tagId
             param.tagId = TagUtil.replace(param.tagId, param.replacementTagId, 
-                    BookmarkTagIndexFactory.INSTANCE, BookmarkEntry.FN_SER_TAGS, 
+                    BookmarkTagIndexFactory.INSTANCE, 
                     chain, key, 
                     mc, BookmarkEntry.FN_SER_TAGS, value);
             
