@@ -311,20 +311,15 @@ public final class BookmarkEntryViews
             }
         }
         
-        store.session(res.context, new VisitorSession.Handler<Void>()
-        {
-            @Override
-            public void handle(VisitorSession session, Void param)
+        store.session(res.context, (session, _param) -> {
+            try
             {
-                try
-                {
-                    pipeTo(res, session, appendTo(new ArrayList<KV>(), req.tag, 
-                            session, res, BookmarkEntry.M.PList.FN_T, res.context));
-                }
-                catch (IOException e)
-                {
-                    throw RpcRuntimeExceptions.pipe(e);
-                }
+                pipeTo(res, session, appendTo(new ArrayList<KV>(), req.tag,
+                        session, res, BookmarkEntry.M.PList.FN_T, res.context));
+            }
+            catch (IOException e)
+            {
+                throw RpcRuntimeExceptions.pipe(e);
             }
         }, null);
         

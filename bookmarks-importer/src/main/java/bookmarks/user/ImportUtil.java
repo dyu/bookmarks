@@ -194,7 +194,7 @@ public final class ImportUtil
         {
             try
             {
-                Collections.sort(pnew.tags, BookmarkEntryOps.CMP);
+                Collections.sort(pnew.tags, BookmarkEntryOps.CMP_ID);
             }
             catch (DSRuntimeExceptions.Operation e)
             {

@@ -52,17 +52,12 @@ import com.dyuproject.protostuffdb.tag.TagUtil;
 public final class BookmarkEntryOps
 {
     private BookmarkEntryOps() {}
-    
-    static final Comparator<Integer> CMP = new Comparator<Integer>()
-    {
-        @Override
-        public int compare(Integer a, Integer b)
-        {
-            if (a.intValue() == b.intValue())
-                throw DSRuntimeExceptions.operationFailure("Duplicate tag.");
-            
-            return a.intValue() - b.intValue();
-        }
+
+    static final Comparator<Integer> CMP_ID = (a, b) -> {
+        if (a.intValue() == b.intValue())
+            throw DSRuntimeExceptions.operationFailure("Duplicate tag.");
+        
+        return a.intValue() - b.intValue();
     };
     
     static boolean create(BookmarkEntry.PNew req, Datastore store, RpcResponse res,
@@ -75,7 +70,7 @@ public final class BookmarkEntryOps
         if (req.tags != null && 0 != (size = req.tags.size()))
         {
             if (size != 1)
-                Collections.sort(req.tags, CMP);
+                Collections.sort(req.tags, CMP_ID);
             
             tagId = req.tags.get(0);
             if (tagId < 1)
