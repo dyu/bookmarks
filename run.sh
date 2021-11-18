@@ -10,10 +10,12 @@ elif [ "$1" = "m" ]; then
 elif [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
     BIN=/opt/protostuffdb/bin/hprotostuffdb
     ARGS="$ARGS -Dprotostuffdb.with_backup=true"
-elif [ -e /opt/protostuffdb/bin/protostuffdb ]; then
-    BIN=/opt/protostuffdb/bin/protostuffdb
+elif [ -e target/protostuffdb-rjre ]; then
+    BIN=./target/protostuffdb-rjre
 elif [ -e target/protostuffdb ]; then
     BIN=./target/protostuffdb
+elif [ -e /opt/protostuffdb/bin/protostuffdb ]; then
+    BIN=/opt/protostuffdb/bin/protostuffdb
 else
     echo 'The target/protostuffdb binary must exist' && exit 1
 fi
