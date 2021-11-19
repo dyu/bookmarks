@@ -56,7 +56,7 @@ public final class BookmarkEntryOps
     static final Comparator<Integer> CMP_ID = (a, b) -> {
         if (a.intValue() == b.intValue())
             throw DSRuntimeExceptions.operationFailure("Duplicate tag.");
-        
+
         return a.intValue() - b.intValue();
     };
     
