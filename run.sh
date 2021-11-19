@@ -23,6 +23,9 @@ fi
 DATA_DIR=target/data/main
 JAR=bookmarks-all/target/bookmarks-all-jarjar.jar
 PORT=$(cat PORT.txt)
+UNAME=`uname`
+BIND_IP='*'
+[ "$UNAME" = "Darwin" ] && BIND_IP='127.0.0.1'
 
 jarjar() {
   cd bookmarks-all
@@ -59,5 +62,5 @@ esac
 
 mkdir -p $DATA_DIR
 
-$BIN $PORT bookmarks-ts/g/user/UserServices.json $ARGS -Djava.class.path=$JAR bookmarks.all.Main
+$BIN $BIND_IP:$PORT bookmarks-ts/g/user/UserServices.json $ARGS -Djava.class.path=$JAR bookmarks.all.Main
 
