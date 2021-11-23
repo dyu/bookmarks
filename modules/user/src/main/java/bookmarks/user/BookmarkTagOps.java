@@ -49,8 +49,9 @@ public final class BookmarkTagOps
         if (param.mc.isSet(BookmarkTag.FN_NAME))
         {
             CAS.StringOp op = (CAS.StringOp)param.mc.findOp(BookmarkTag.FN_NAME);
-            if (!op.s.isEmpty() && chain.vs().exists(true, 
-                    BookmarkTag.$$NAME(chain.context.kb(), op.s).$push()))
+            if (!op.s.isEmpty() &&
+                    BookmarkTag.EM.isValid(BookmarkTag.FN_NAME, op.s) &&
+                    chain.vs().exists(true, BookmarkTag.$$NAME(chain.context.kb(), op.s).$push()))
             {
                 throw DSRuntimeExceptions.operationFailure("Tag already exists.");
             }
