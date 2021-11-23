@@ -77,6 +77,7 @@ service ForUser {
 @Observable
 @Entity(kind = 10, seq = true,
   cache = true, serial = true,
+  rel_max_size = 133, // 127(name) + 6(color)
   tx_create = true,
   validate_update = true,
   no_delete = true
@@ -130,7 +131,7 @@ message BookmarkTag {
   @Pattern(regex = "^[a-z0-9_~:;.+!()-]{1,127}$", 
     msg = "Must all be lowercase characters and can contain [_~:;.+!()-]."
   )
-  required string name = 3 [immutable = true, autocomplete_ps = M];
+  required string name = 3 [autocomplete_ps = M];
   
   @Display(hint = "6 characters alphanumeric: a-f, A-F, 0-9")
   @Pattern(regex = "^[a-fA-F0-9]{6}$", msg = "Invalid color (must be 6 characters alphanumeric: a-f, A-F, 0-9)")

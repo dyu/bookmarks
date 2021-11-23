@@ -46,13 +46,21 @@ public final class BookmarkTagOps
 
     static MultiCAS validate(ParamUpdate param, byte[] value, OpChain chain)
     {
-        if (!param.mc.isSet(BookmarkTag.FN_COLOR))
-            return param.mc;
-        
-        CAS.StringOp op = (CAS.StringOp)param.mc.findOp(BookmarkTag.FN_COLOR);
-        if (!op.s.isEmpty())
-            op.s = BookmarkUtil.normalizeColor(op.s);
-        
+        if (param.mc.isSet(BookmarkTag.FN_NAME))
+        {
+            CAS.StringOp op = (CAS.StringOp)param.mc.findOp(BookmarkTag.FN_NAME);
+            if (!op.s.isEmpty() && chain.vs().exists(true, 
+                    BookmarkTag.$$NAME(chain.context.kb(), op.s).$push()))
+            {
+                throw DSRuntimeExceptions.operationFailure("Tag already exists.");
+            }
+        }
+        if (param.mc.isSet(BookmarkTag.FN_COLOR))
+        {
+            CAS.StringOp op = (CAS.StringOp)param.mc.findOp(BookmarkTag.FN_COLOR);
+            if (!op.s.isEmpty())
+                op.s = BookmarkUtil.normalizeColor(op.s);
+        }
         return param.mc;
     }
 }

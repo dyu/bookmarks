@@ -13,6 +13,7 @@ import com.dyuproject.protostuff.KeyBuilder;
 import com.dyuproject.protostuff.Pipe;
 import com.dyuproject.protostuff.RpcHeader;
 import com.dyuproject.protostuff.RpcResponse;
+import com.dyuproject.protostuff.RpcRuntimeExceptions;
 import com.dyuproject.protostuff.ds.CAS;
 import com.dyuproject.protostuff.ds.MultiCAS;
 import com.dyuproject.protostuff.ds.ParamRangeKey;
@@ -60,6 +61,49 @@ public class UserTest extends AbstractStoreTest
         
         return message;
     }
+    
+    public void testTagMaxSize() throws IOException
+    {
+        // 127 name length
+        newTag("1234567890" + 
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567890" +
+                "1234567");
+    }
+    
+    public void testTagMaxSizeOverflow() throws IOException
+    {
+        try
+        {
+            newTag("1234567890" + 
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "1234567890" +
+                    "12345678");
+        }
+        catch (DSRuntimeExceptions.Validation | RpcRuntimeExceptions.Validation e)
+        {
+            return;
+        }
+        fail("Expected validation exception");
+    }
 
     public void testUniqueTag() throws IOException
     {
@@ -82,6 +126,61 @@ public class UserTest extends AbstractStoreTest
         catch (DSRuntimeExceptions.Operation e)
         {
             assertTrue(e.getMessage().indexOf("exists") != -1);
+        }
+    }
+    
+    BookmarkTag updateTag(String name, String newName) throws IOException
+    {
+        BookmarkTag entity = newTag(name);
+        
+        byte[] value = store.get(entity.key, entity.em(), null, context);
+        assertNotNull(value);
+        
+        assertEquals(entity.name, readString(BookmarkTag.FN_NAME, value, context));
+        
+        BookmarkTag same = new BookmarkTag(entity.name);
+        assertInitialized(same);
+        
+        final KeyBuilder kb = context.kb();
+        
+        assertTrue(store.exists(true, context, BookmarkTag.$$NAME(kb, entity.name).$push()));
+        
+        MultiCAS mc = new MultiCAS()
+            .mergeOp(new CAS.StringOp(BookmarkTag.FN_NAME, name, newName));
+        ParamUpdate req = new ParamUpdate(entity.key, mc);
+        req.id = entity.id;
+        assertInitialized(req);
+        assertNull(XBookmarkTagOps.update(req, store, context, header));
+        
+        assertFalse(store.exists(true, context, BookmarkTag.$$NAME(kb, entity.name).$push()));
+        assertTrue(store.exists(true, context, BookmarkTag.$$NAME(kb, newName).$push()));
+        
+        return entity;
+    }
+    
+    public void testUpdateTag() throws IOException
+    {
+        updateTag("foo", "bar");
+    }
+    
+    public void testUpdateTagDup() throws IOException
+    {
+        newTag("foo");
+        BookmarkTag entity = newTag("bar");
+        
+        MultiCAS mc = new MultiCAS()
+            .mergeOp(new CAS.StringOp(BookmarkTag.FN_NAME, "bar", "foo"));
+        ParamUpdate req = new ParamUpdate(entity.key, mc);
+        req.id = entity.id;
+        assertInitialized(req);
+        try
+        {
+            XBookmarkTagOps.update(req, store, context, header);
+            fail("Expected validation exception");
+        }
+        catch (DSRuntimeExceptions.Operation e)
+        {
+            assertTrue(e.getMessage().startsWith("Tag already exists"));
         }
     }
     
@@ -320,7 +419,7 @@ public class UserTest extends AbstractStoreTest
         assertEquals(1, res.rawNestedCount);
         
         MultiCAS mc = new MultiCAS()
-            .addOp(new CAS.StringOp(BookmarkEntry.FN_TITLE, "", "title"));
+            .mergeOp(new CAS.StringOp(BookmarkEntry.FN_TITLE, "", "title"));
         ParamUpdate req = new ParamUpdate(entity.key, mc);
         assertInitialized(req);
         assertNull(BookmarkEntryOps.updateBookmarkEntry(req, store, context, header));
@@ -372,7 +471,7 @@ public class UserTest extends AbstractStoreTest
         assertEquals(1, res.rawNestedCount);
         
         MultiCAS mc = new MultiCAS()
-            .addOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
+            .mergeOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
         ParamUpdate req = new ParamUpdate(entity.key, mc);
         assertInitialized(req);
         assertNull(BookmarkEntryOps.updateBookmarkEntry(req, store, context, header));
@@ -421,7 +520,7 @@ public class UserTest extends AbstractStoreTest
                 BookmarkEntry.M.PList.getPipeSchema(), header));
         
         MultiCAS mc = new MultiCAS()
-            .addOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
+            .mergeOp(new CAS.BoolOp(BookmarkEntry.FN_ACTIVE, true, false));
         
         ParamUpdate reqUpdate = new ParamUpdate(entity.key, mc);
         assertInitialized(reqUpdate);
