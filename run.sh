@@ -7,13 +7,13 @@ if [ "$1" = "mt" ]; then
 elif [ "$1" = "m" ]; then
     BIN=/opt/protostuffdb/bin/hprotostuffdb-rmaster
     ARGS="$ARGS -Dprotostuffdb.with_backup=true"
-elif [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
-    BIN=/opt/protostuffdb/bin/hprotostuffdb
-    ARGS="$ARGS -Dprotostuffdb.with_backup=true"
 elif [ -e target/protostuffdb-rjre ]; then
     BIN=./target/protostuffdb-rjre
 elif [ -e target/protostuffdb ]; then
     BIN=./target/protostuffdb
+elif [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
+    BIN=/opt/protostuffdb/bin/hprotostuffdb
+    ARGS="$ARGS -Dprotostuffdb.with_backup=true"
 elif [ -e /opt/protostuffdb/bin/protostuffdb ]; then
     BIN=/opt/protostuffdb/bin/protostuffdb
 else
