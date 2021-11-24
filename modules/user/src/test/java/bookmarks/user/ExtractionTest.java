@@ -14,6 +14,8 @@
 
 package bookmarks.user;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 /**
@@ -38,6 +40,7 @@ public class ExtractionTest extends TestCase
         verify(p, expectedNormalized, expectedIdentifier);
     }
     
+    @Test
     public void testIt()
     {
         verify("http://foo.com", "foo.com", "foo.com");

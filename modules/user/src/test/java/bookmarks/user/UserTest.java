@@ -23,6 +23,8 @@ import com.dyuproject.protostuffdb.DSRuntimeExceptions;
 import com.dyuproject.protostuffdb.Datastore;
 import com.dyuproject.protostuffdb.ValueUtil;
 
+import org.junit.Test;
+
 /**
  * User test.
  */
@@ -62,6 +64,7 @@ public class UserTest extends AbstractStoreTest
         return message;
     }
     
+    @Test
     public void testTagMaxSize() throws IOException
     {
         // 127 name length
@@ -80,6 +83,7 @@ public class UserTest extends AbstractStoreTest
                 "1234567");
     }
     
+    @Test
     public void testTagMaxSizeOverflow() throws IOException
     {
         try
@@ -105,6 +109,7 @@ public class UserTest extends AbstractStoreTest
         fail("Expected validation exception");
     }
 
+    @Test
     public void testUniqueTag() throws IOException
     {
         BookmarkTag entity = newTag("foo");
@@ -158,11 +163,13 @@ public class UserTest extends AbstractStoreTest
         return entity;
     }
     
+    @Test
     public void testUpdateTag() throws IOException
     {
         updateTag("foo", "bar");
     }
     
+    @Test
     public void testUpdateTagDup() throws IOException
     {
         newTag("foo");
@@ -184,6 +191,7 @@ public class UserTest extends AbstractStoreTest
         }
     }
     
+    @Test
     public void testEntryRegex() throws IOException
     {
         BookmarkEntry entity = new BookmarkEntry("http://example.com");
@@ -191,6 +199,7 @@ public class UserTest extends AbstractStoreTest
         assertInitialized(entity);
     }
     
+    @Test
     public void testNonAscii() throws IOException
     {
         BookmarkEntry entity = new BookmarkEntry("http://example.com");
@@ -198,6 +207,7 @@ public class UserTest extends AbstractStoreTest
         assertTrue(entity.cachedSchema().isInitialized(entity));
     }
     
+    @Test
     public void testUniqueUrl() throws IOException
     {
         BookmarkTag t1 = newTag("t1");
@@ -236,6 +246,7 @@ public class UserTest extends AbstractStoreTest
         }
     }
     
+    @Test
     public void testOptionalTags() throws IOException
     {
         BookmarkTag t1 = newTag("t1");
@@ -313,6 +324,7 @@ public class UserTest extends AbstractStoreTest
         return entity;
     }
     
+    @Test
     public void testTag1() throws IOException
     {
         BookmarkTag t1 = newTag("t1");
@@ -360,6 +372,7 @@ public class UserTest extends AbstractStoreTest
         return entity;
     }
     
+    @Test
     public void testTag2() throws IOException
     {
         BookmarkTag t1, t2;
@@ -392,6 +405,7 @@ public class UserTest extends AbstractStoreTest
                 com.dyuproject.protostuffdb.RangeV.RES_PV, res);
     }
     
+    @Test
     public void testUpdate() throws IOException
     {
         BookmarkEntry entity = new BookmarkEntry("https://example.com");
@@ -444,6 +458,7 @@ public class UserTest extends AbstractStoreTest
         assertEquals(1, res.rawNestedCount);
     }
     
+    @Test
     public void testUpdateActive() throws IOException
     {
         BookmarkEntry entity = new BookmarkEntry("https://example.com");
@@ -495,6 +510,7 @@ public class UserTest extends AbstractStoreTest
         assertEquals(0, res.rawNestedCount);
     }
     
+    @Test
     public void testUpdateActive1() throws IOException
     {
         BookmarkTag t1 = newTag("t1");
