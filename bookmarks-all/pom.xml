@@ -111,7 +111,7 @@
               <dependency>
                 <groupId>net.sf.proguard</groupId>
                 <artifactId>proguard-anttask</artifactId>
-                <version>5.3.3</version>
+                <version>${proguard-version}</version>
               </dependency>
             </dependencies>
           </plugin>
