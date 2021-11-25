@@ -1,4 +1,10 @@
 #!/bin/sh
+
+BASE_DIR=$PWD
+UNAME=`uname`
+WIN_SUFFIX=""
+[ "$UNAME" != "Linux" ] && [ "$UNAME" != "Darwin" ] && WIN_SUFFIX='.exe'
+TARGET_BIN="target/protostuffdb$WIN_SUFFIX"
 ARGS=$(cat ARGS.txt)
 
 if [ "$1" = "mt" ]; then
@@ -8,24 +14,21 @@ elif [ "$1" = "m" ]; then
     BIN=/opt/protostuffdb/bin/hprotostuffdb-rmaster
     ARGS="$ARGS -Dprotostuffdb.with_backup=true"
 elif [ -e target/protostuffdb-rjre ]; then
-    BIN=./target/protostuffdb-rjre
-elif [ -e target/protostuffdb ]; then
-    BIN=./target/protostuffdb
+    BIN=$BASE_DIR/target/protostuffdb-rjre
+elif [ -e "$TARGET_BIN" ]; then
+    BIN=$BASE_DIR/$TARGET_BIN
 elif [ -e /opt/protostuffdb/bin/hprotostuffdb ]; then
     BIN=/opt/protostuffdb/bin/hprotostuffdb
     ARGS="$ARGS -Dprotostuffdb.with_backup=true"
-elif [ -e /opt/protostuffdb/bin/protostuffdb ]; then
-    BIN=/opt/protostuffdb/bin/protostuffdb
 else
-    echo 'The target/protostuffdb binary must exist' && exit 1
+    echo "The $TARGET_BIN binary must exist" && exit 1
 fi
 
 DATA_DIR=target/data/main
 JAR=bookmarks-all/target/bookmarks-all-jarjar.jar
 PORT=$(cat PORT.txt)
-UNAME=`uname`
 BIND_IP='*'
-[ "$UNAME" = "Darwin" ] && BIND_IP='127.0.0.1'
+[ "$UNAME" != "Linux" ] && BIND_IP='127.0.0.1'
 
 jarjar() {
   cd bookmarks-all
@@ -62,5 +65,10 @@ esac
 
 mkdir -p $DATA_DIR
 
-$BIN $BIND_IP:$PORT bookmarks-ts/g/user/UserServices.json $ARGS -Djava.class.path=$JAR bookmarks.all.Main
+if [ -n "$WIN_SUFFIX" ]; then
+[ -e target/jre/bin/server ] || { echo 'Missing windows jre: target/jre'; exit 1; }
+cd target/jre/bin/server
+fi
+
+$BIN $BIND_IP:$PORT $BASE_DIR/bookmarks-ts/g/user/UserServices.json $ARGS -Djava.class.path=$BASE_DIR/$JAR bookmarks.all.Main $BASE_DIR
 
