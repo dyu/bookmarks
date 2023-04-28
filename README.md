@@ -43,7 +43,7 @@ wget -O target/fbsgen-ds.jar https://repo1.maven.org/maven2/com/dyuproject/fbsge
 ./modules/codegen.sh
 mvn install
 
-yarn global add cleancss node-sass
+yarn global add clean-css-cli node-sass
 cd bookmarks-ts
 yarn install
 ```
